@@ -1,0 +1,876 @@
+{
+    "categorie": [
+        {
+            "order": 1,
+            "name": "Visuo-spaziale",
+            "items": [
+                {
+                    "name": "Ritmi/patterns",
+                    "level": 2
+                },
+                {
+                    "name": "Associazioni",
+                    "level": 2
+                },
+                {
+                    "name": "Abbinamenti non identici",
+                    "level": 1
+                },
+                {
+                    "name": "Orientamento Attenzione",
+                    "level": 1
+                },
+                {
+                    "name": "Sorting",
+                    "level": 1
+                },
+                {
+                    "name": "Abbinamenti 2D",
+                    "level": 1,
+                    "subcategory": "Abbinamento Generalizzato"
+                },
+                {
+                    "name": "Abbinamenti 3D/2D",
+                    "level": 1,
+                    "subcategory": "Abbinamento Generalizzato"
+                },
+                {
+                    "name": "Abbinamenti 3D",
+                    "level": 1,
+                    "subcategory": "Abbinamento Generalizzato"
+                }
+            ]
+        },
+        {
+            "order": 2,
+            "name": "Imitazione Motoria",
+            "items": [
+                {
+
+                    "name": "Apprendimento tramite Osservazione (sequenze complesse)",
+                    "level": 3
+                },
+                {
+
+                    "name": "Apprendimento tramite Osservazione (semplice)",
+                    "level": 2
+                },
+                {
+
+                    "name": "Ritmi",
+                    "level": 2
+                },
+                {
+
+                    "name": "Strutture recettive",
+                    "level": 2
+                },
+                {
+
+                    "name": "Con schermo",
+                    "level": 2
+                },
+                {
+
+                    "name": "Segui il capo",
+                    "level": 1,
+                    "subcategory": "Imitazione Generalizzata"
+                },
+                {
+
+                    "name": "Blocchi",
+                    "level": 1,
+                    "subcategory": "Imitazione Generalizzata"
+                },
+                {
+
+                    "name": "Concatenamenti",
+                    "level": 1,
+                    "subcategory": "Imitazione Generalizzata"
+                },
+                {
+
+                    "name": "Orale",
+                    "level": 1,
+                    "subcategory": "Imitazione Generalizzata"
+                },
+                {
+
+                    "name": "Fine motoria",
+                    "level": 1,
+                    "subcategory": "Imitazione Generalizzata"
+                },
+                {
+
+                    "name": "Grosso motoria",
+                    "level": 1,
+                    "subcategory": "Imitazione Generalizzata"
+                },
+                {
+
+                    "name": "Oggetto",
+                    "level": 1,
+                    "subcategory": "Imitazione Generalizzata"
+                }
+            ]
+        },
+        {
+            "order": 3,
+            "name": "Gioco",
+            "items": [
+                {
+                    "name": "Mimo",
+                    "level": 3
+                },
+                {
+                    "name": "Racconta una storia con oggetti vari",
+                    "level": 3
+                },
+                {
+                    "name": "Gioco simbolico con sostituzione",
+                    "level": 3
+                },
+                {
+                    "name": "Gioco di ruolo",
+                    "level": 3
+                },
+                {
+                    "name": "Sostituzione",
+                    "level": 3
+                },
+                {
+                    "name": "Fa finta di essere (semplice)",
+                    "level": 3
+                },
+                {
+                    "name": "Narra il proprio gioco",
+                    "level": 3
+                },
+                {
+                    "name": "Costruzioni libere",
+                    "level": 2
+                },
+                {
+                    "name": "Gioco Simbolico indipendente",
+                    "level": 2
+                },
+                {
+                    "name": "Giochi con turno",
+                    "level": 2
+                },
+                {
+                    "name": "Rispettare il turno",
+                    "level": 1
+                },
+                {
+                    "name": "Transizioni (stazioni)",
+                    "level": 1
+                },
+                {
+                    "name": "Gioco Indipendente",
+                    "level": 1
+                },
+                {
+                    "name": "Gioco Parallelo",
+                    "level": 1
+                },
+                {
+                    "name": "Gioco Imitativo",
+                    "level": 1
+                },
+                {
+                    "name": "Gioco Funzionale (puzzle/incastri)",
+                    "level": 1
+                },
+                {
+                    "name": "Causa/effetto",
+                    "level": 1
+                }
+            ]
+        },
+        {
+            "order": 4,
+            "name": "Ecoico",
+            "items": [
+                {
+                    "name": "Tono",
+                    "level": 3
+                },
+                {
+                    "name": "Tonalità",
+                    "level": 3
+                },
+                {
+                    "name": "Volume",
+                    "level": 2,
+                    "subcategory": "Frasi a due e più parole"
+                },
+                {
+                    "name": "Parole singole",
+                    "level": 1,
+                    "subcategory": "Ecoico Generalizzato"
+                },
+                {
+                    "name": "Combinazioni di suoni/dittonghi",
+                    "level": 1,
+                    "subcategory": "Ecoico Generalizzato"
+                },
+                {
+                    "name": "Fonemi/Suoni singoli",
+                    "level": 1,
+                    "subcategory": "Ecoico Generalizzato"
+                },
+                {
+                    "name": "Gioco vocale",
+                    "level": 1,
+                    "subcategory": "Ecoico Generalizzato"
+                }
+            ]
+        },
+        {
+            "order": 5,
+            "name": "MAND",
+            "items": [
+                {
+                    "name": "MAND per informazione MO verbale",
+                    "level": 3
+                },
+                {
+                    "name": "Mand per informazione MO",
+                    "level": 3
+                },
+                {
+                    "name": "Frasi complesse",
+                    "level": 3
+                },
+                {
+                    "name": "Scelte condiz. verbali",
+                    "level": 2
+                },
+                {
+                    "name": "Plurali",
+                    "level": 2
+                },
+                {
+                    "name": "Paragoni/comparativi",
+                    "level": 2
+                },
+                {
+                    "name": "Avverbi di luogo e preposizioni",
+                    "level": 2
+                },
+                {
+                    "name": "Si/No Verbale",
+                    "level": 2
+                },
+                {
+                    "name": "Si/No visibile",
+                    "level": 2
+                },
+                {
+                    "name": "Attenzione",
+                    "level": 2
+                },
+                {
+                    "name": "Aggettivi",
+                    "level": 2
+                },
+                {
+                    "name": "Frasi semplici",
+                    "level": 2
+                },
+                {
+                    "name": "Oggetto Mancante",
+                    "level": 2
+                },
+                {
+                    "name": "Azione e oggetto",
+                    "level": 2
+                },
+                {
+                    "name": "Fermare un'attività",
+                    "level": 1
+                },
+                {
+                    "name": "Aiuto",
+                    "level": 1
+                },
+                {
+                    "name": "Non-visibili",
+                    "level": 1
+                },
+                {
+                    "name": "Azioni",
+                    "level": 1
+                },
+                {
+                    "name": "Rinforzatori visibili",
+                    "level": 1
+                },
+                {
+                    "name": "Indicazione (pointing)",
+                    "level": 1
+                }
+            ]
+        },
+        {
+            "order": 6,
+            "name": "Ascoltatore",
+            "items": [
+                {
+                    "name": "Comprensione della Storia/Lezione",
+                    "level": 1
+                },
+                {
+                    "name": "Inversione pronominale",
+                    "level": 3
+                },
+                {
+                    "name": "Recita una storia narrata",
+                    "level": 3
+                },
+                {
+                    "name": "Affermazioni condizionali ",
+                    "level": 3
+                },
+                {
+                    "name": "Negazione",
+                    "level": 3
+                },
+                {
+                    "name": "Mestieri",
+                    "level": 2
+                },
+                {
+                    "name": "Plurali",
+                    "level": 2
+                },
+                {
+                    "name": "Tempo",
+                    "level": 2
+                },
+                {
+                    "name": "Genere",
+                    "level": 2
+                },
+                {
+                    "name": "Paragoni/comparativi",
+                    "level": 2
+                },
+                {
+                    "name": "Avverbi di luogo e preposizioni",
+                    "level": 2
+                },
+                {
+                    "name": "Soggetto - Azione - Oggetto",
+                    "level": 2
+                },
+                {
+                    "name": "Discriminazione multipla",
+                    "level": 2
+                },
+                {
+                    "name": "Oggetti 2-step",
+                    "level": 2
+                },
+                {
+                    "name": "Istruzioni 2-step",
+                    "level": 2
+                },
+                {
+                    "name": "Colori",
+                    "level": 1
+                },
+                {
+                    "name": "Agente esegue azione",
+                    "level": 1,
+                    "subcategory": "Naming (relazione del nome)"
+                },
+                {
+                    "name": "Azioni",
+                    "level": 1,
+                    "subcategory": "Naming (relazione del nome)"
+                },
+                {
+                    "name": "Istruzioni con oggetto",
+                    "level": 1,
+                    "subcategory": "Naming (relazione del nome)"
+                },
+                {
+                    "name": "Oggetti comuni",
+                    "level": 1,
+                    "subcategory": "Naming (relazione del nome)"
+                },
+                {
+                    "name": "Istruzioni",
+                    "level": 1
+                },
+                {
+                    "name": "Discriminazione del suono ",
+                    "level": 1
+                },
+                {
+                    "name": "Rinforzatori",
+                    "level": 1
+                },
+                {
+                    "name": "Basate sui gesti",
+                    "level": 1
+                },
+                {
+                    "name": "Istruzioni Contestuali",
+                    "level": 1
+                }
+            ]
+        },
+        {
+            "order": 7,
+            "name": "TACT",
+            "items": [
+                {
+                    "name": "Comprensione della Storia/Lezione",
+                    "level": 1
+                },
+                {
+                    "name": "Descrive eventi",
+                    "level": 3
+                },
+                {
+                    "name": "Risponde a dom. eventi passati",
+                    "level": 3
+                },
+                {
+                    "name": "Discriminazione a domande su argomento",
+                    "level": 3
+                },
+                {
+                    "name": "Risponde a descriz. Compl",
+                    "level": 3
+                },
+                {
+                    "name": "Tempi dei verbi",
+                    "level": 3
+                },
+                {
+                    "name": "Pronomi Possessivi",
+                    "level": 3
+                },
+                {
+                    "name": "Pronomi Personali",
+                    "level": 3
+                },
+                {
+                    "name": "Mestieri",
+                    "level": 2
+                },
+                {
+                    "name": "Plurali",
+                    "level": 2
+                },
+                {
+                    "name": "Tempo",
+                    "level": 2
+                },
+                {
+                    "name": "Genere",
+                    "level": 2
+                },
+                {
+                    "name": "Paragoni/comparativi",
+                    "level": 2
+                },
+                {
+                    "name": "Avverbi di luogo e preposizioni",
+                    "level": 2
+                },
+                {
+                    "name": "Domande Condizionali",
+                    "level": 2
+                },
+                {
+                    "name": "Si/No Tact",
+                    "level": 2
+                },
+                {
+                    "name": "Sensi",
+                    "level": 2
+                },
+                {
+                    "name": "Dice oggetto mancante",
+                    "level": 2
+                },
+                {
+                    "name": "Frasi semplici (prime cornici)",
+                    "level": 2
+                },
+                {
+                    "name": "Descrizioni a due parole",
+                    "level": 2
+                },
+                {
+                    "name": "Aggettivi/attributi",
+                    "level": 2
+                },
+                {
+                    "name": "Colori",
+                    "level": 1
+                },
+                {
+                    "name": "Azioni",
+                    "level": 1,
+                    "subcategory": "Naming (relazione del nome)"
+                },
+                {
+                    "name": "Combinazione nome nome",
+                    "level": 1,
+                    "subcategory": "Naming (relazione del nome)"
+                },
+                {
+                    "name": "Nomi Comuni",
+                    "level": 1,
+                    "subcategory": "Naming (relazione del nome)"
+                },
+                {
+                    "name": "Rinforzatori",
+                    "level": 1
+                }
+            ]
+        },
+        {
+            "order": 8,
+            "name": "Ascoltatore per F/CA",
+            "items": [
+                {
+                    "name": "Comprensione della Storia/Lezione",
+                    "level": 1
+                },
+                {
+                    "name": "Seleziona per classe",
+                    "level": 2
+                },
+                {
+                    "name": "Seleziona per parte/intero",
+                    "level": 2
+                },
+                {
+                    "name": "Seleziona su funzione",
+                    "level": 2
+                },
+                {
+                    "name": "Seleziona su suono",
+                    "level": 1
+                }
+            ]
+        },
+        {
+            "order": 9,
+            "name": "Intraverbale",
+            "items": [
+                {
+                    "name": "Comprensione della Storia/Lezione",
+                    "level": 1
+                },
+                {
+                    "name": "Riporta una Conversazione",
+                    "level": 1
+                },
+                {
+                    "name": "Racconta una storia",
+                    "level": 1
+                },
+                {
+                    "name": "Completa una storia",
+                    "level": 1
+                },
+                {
+                    "name": "Reciproca una storia",
+                    "level": 1
+                },
+                {
+                    "name": "Domande su argomenti",
+                    "level": 1
+                },
+                {
+                    "name": "Ragnatela Intraverbale",
+                    "level": 1
+                },
+                {
+                    "name": "Domande per Associazione",
+                    "level": 1
+                },
+                {
+                    "name": "Lettura fonetica",
+                    "level": 2
+                },
+                {
+                    "name": "Descrive oggetto assente",
+                    "level": 1
+                },
+                {
+                    "name": "Domande su oggetto singolo",
+                    "level": 2
+                },
+                {
+                    "name": "Dice nome su Descrizione",
+                    "level": 2
+                },
+                {
+                    "name": "Storia Intraverbale",
+                    "level": 2
+                },
+                {
+                    "name": "Domande Condizionali",
+                    "level": 2
+                },
+                {
+                    "name": "Domande Si/No",
+                    "level": 2
+                },
+                {
+                    "name": "Elenca Parti su Oggetto",
+                    "level": 2
+                },
+                {
+                    "name": "Dice Funzione su Oggetto",
+                    "level": 2
+                },
+                {
+                    "name": "Dice classe su membro",
+                    "level": 2
+                },
+                {
+                    "name": "Dice membro su attributo/parte",
+                    "level": 2
+                },
+                {
+                    "name": "Dice Membro su Funzione",
+                    "level": 2
+                },
+                {
+                    "name": "Dice Animale su Suono",
+                    "level": 1
+                },
+                {
+                    "name": "Dice suono su animale",
+                    "level": 1
+                },
+                {
+                    "name": "Dice animale su suono",
+                    "level": 1
+                },
+                {
+                    "name": "Segni Intraverbali",
+                    "level": 1
+                },
+                {
+                    "name": "Completamento canzoni",
+                    "level": 1
+                },
+                {
+                    "name": "Completamento frasi semplici",
+                    "level": 1
+                }
+            ]
+        },
+        {
+            "order": 10,
+            "name": "Accademico",
+            "items": [
+                {
+                    "name": "Comprensione della Storia/Lezione",
+                    "level": 1
+                },
+                {
+                    "name": "Lettura globale parole frequenti",
+                    "level": 2
+                },
+                {
+                    "name": "Lettura fonetica",
+                    "level": 2
+                },
+                {
+                    "name": "Scrive sotto dettatura (fonemi)",
+                    "level": 2
+                },
+                {
+                    "name": "Abbina fonema-parola",
+                    "level": 2
+                },
+                {
+                    "name": "Legge I fonemi",
+                    "level": 2
+                },
+                {
+                    "name": "Consegna quantità specifica",
+                    "level": 2
+                },
+                {
+                    "name": "Contare intraverbale",
+                    "level": 2
+                },
+                {
+                    "name": "Abbina quantità a numero",
+                    "level": 2
+                },
+                {
+                    "name": "Legge I numeri",
+                    "level": 2
+                },
+                {
+                    "name": "Conta Corrispondenza 1:1",
+                    "level": 2
+                },
+                {
+                    "name": "Seleziona/TACT forme",
+                    "level": 2
+                },
+                {
+                    "name": "Copia lettere e numeri",
+                    "level": 2
+                },
+                {
+                    "name": "Segue il tratteggio",
+                    "level": 2
+                },
+                {
+                    "name": "Disegna su istruzione",
+                    "level": 1
+                },
+                {
+                    "name": "Colora",
+                    "level": 1
+                },
+                {
+                    "name": "Copia disegni semplici",
+                    "level": 1
+                },
+                {
+                    "name": "Imita tratti semplici",
+                    "level": 1
+                },
+                {
+                    "name": "Scarabocchia",
+                    "level": 1
+                },
+                {
+                    "name": "Impugnatura",
+                    "level": 1
+                }
+            ]
+        },
+        {
+            "order": 11,
+            "name": "Sociale",
+            "items": [
+                {
+                    "name": "Empatia e Pro Sociale",
+                    "level": 1
+                },
+                {
+                    "name": "Risponde ai segnali Non Verbali",
+                    "level": 1
+                },
+                {
+                    "name": "Inizia una Conversazione",
+                    "level": 1
+                },
+                {
+                    "name": "Mantiene una Conversazione",
+                    "level": 1
+                },
+                {
+                    "name": "Agisce su Gesti",
+                    "level": 1
+                },
+                {
+                    "name": "Offre Istruzioni",
+                    "level": 1
+                },
+                {
+                    "name": "Esprime Confusione",
+                    "level": 1
+                },
+                {
+                    "name": "Estende i Commenti",
+                    "level": 1
+                },
+                {
+                    "name": "Consegna Messaggio",
+                    "level": 2
+                },
+                {
+                    "name": "Saluta per Primo",
+                    "level": 2
+                },
+                {
+                    "name": "Reciproca Commenti",
+                    "level": 2
+                },
+                {
+                    "name": "Attenzione Condivisa per Iniziativa (mostrare)",
+                    "level": 2
+                },
+                {
+                    "name": "Risponde al Saluto",
+                    "level": 2
+                },
+                {
+                    "name": "Attenzione Condivisa Rispondente",
+                    "level": 2
+                },
+                {
+                    "name": "Si gira al nome",
+                    "level": 3
+                },
+                {
+                    "name": "Contatto Oculare in Richiesta",
+                    "level": 3
+                }
+            ]
+        },
+        {
+            "order": 12,
+            "name": "Ragionamento Astratto",
+            "items": [
+                {
+                    "name": "Inferenze",
+                    "level": 1,
+                    "subcategory": "Prospettiva altrui"
+                },
+                {
+                    "name": "Previsioni",
+                    "level": 1,
+                    "subcategory": "Prospettiva altrui"
+                },
+                {
+                    "name": "Assurdità",
+                    "level": 1,
+                    "subcategory": "Prospettiva altrui"
+                },
+                {
+                    "name": "Spiega l'intruso",
+                    "level": 1,
+                    "subcategory": "Sequenze Temporali"
+                },
+                {
+                    "name": "Emozioni (proprie e altrui)",
+                    "level": 1,
+                    "subcategory": "Sequenze Temporali"
+                },
+                {
+                    "name": "Termini Temporali",
+                    "level": 1,
+                    "subcategory": "Sequenze Temporali"
+                },
+                {
+                    "name": "Perché",
+                    "level": 1
+                },
+                {
+                    "name": "Similitudini e Differenze",
+                    "level": 1
+                }
+            ]
+        }
+    ]
+}
