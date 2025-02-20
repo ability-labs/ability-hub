@@ -323,19 +323,23 @@
                 },
                 {
                     "name": "Inversione pronominale",
-                    "level": 3
+                    "level": 3,
+                    "subcategory": "Esegue Istruzioni Complesse - Risponde a Descrizioni Complesse"
                 },
                 {
                     "name": "Recita una storia narrata",
-                    "level": 3
+                    "level": 3,
+                    "subcategory": "Esegue Istruzioni Complesse - Risponde a Descrizioni Complesse"
                 },
                 {
                     "name": "Affermazioni condizionali ",
-                    "level": 3
+                    "level": 3,
+                    "subcategory": "Esegue Istruzioni Complesse - Risponde a Descrizioni Complesse"
                 },
                 {
                     "name": "Negazione",
-                    "level": 3
+                    "level": 3,
+                    "subcategory": "Esegue Istruzioni Complesse - Risponde a Descrizioni Complesse"
                 },
                 {
                     "name": "Mestieri",
@@ -363,19 +367,23 @@
                 },
                 {
                     "name": "Soggetto - Azione - Oggetto",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Joint Control"
                 },
                 {
                     "name": "Discriminazione multipla",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Joint Control"
                 },
                 {
                     "name": "Oggetti 2-step",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Joint Control"
                 },
                 {
                     "name": "Istruzioni 2-step",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Joint Control"
                 },
                 {
                     "name": "Colori",
@@ -426,38 +434,45 @@
         {
             "order": 7,
             "name": "TACT",
-            "items": [
+            "items":    [
                 {
                     "name": "Comprensione della Storia/Lezione",
                     "level": 1
                 },
                 {
-                    "name": "Descrive eventi",
-                    "level": 3
+                    "name": "Descrive eventi passati",
+                    "level": 3,
+                    "subcategory": "Descrizioni complesse"
                 },
                 {
                     "name": "Risponde a dom. eventi passati",
-                    "level": 3
+                    "level": 3,
+                    "subcategory": "Descrizioni complesse"
                 },
                 {
                     "name": "Discriminazione a domande su argomento",
-                    "level": 3
+                    "level": 3,
+                    "subcategory": "Descrizioni complesse"
                 },
                 {
                     "name": "Risponde a descriz. Compl",
-                    "level": 3
+                    "level": 3,
+                    "subcategory": "Descrizioni complesse"
                 },
                 {
                     "name": "Tempi dei verbi",
-                    "level": 3
+                    "level": 3,
+                    "subcategory": "Descrizioni complesse"
                 },
                 {
                     "name": "Pronomi Possessivi",
-                    "level": 3
+                    "level": 3,
+                    "subcategory": "Descrizioni complesse"
                 },
                 {
                     "name": "Pronomi Personali",
-                    "level": 3
+                    "level": 3,
+                    "subcategory": "Descrizioni complesse"
                 },
                 {
                     "name": "Mestieri",
@@ -465,51 +480,63 @@
                 },
                 {
                     "name": "Plurali",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Descrizioni"
                 },
                 {
                     "name": "Tempo",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Descrizioni"
                 },
                 {
                     "name": "Genere",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Descrizioni"
                 },
                 {
                     "name": "Paragoni/comparativi",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Descrizioni"
                 },
                 {
                     "name": "Avverbi di luogo e preposizioni",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Descrizioni"
                 },
                 {
                     "name": "Domande Condizionali",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Descrizioni"
                 },
                 {
                     "name": "Si/No Tact",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Descrizioni"
                 },
                 {
                     "name": "Sensi",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Discriminazione condizionale"
                 },
                 {
                     "name": "Dice oggetto mancante",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Discriminazione condizionale"
                 },
                 {
                     "name": "Frasi semplici (prime cornici)",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Discriminazione condizionale"
                 },
                 {
                     "name": "Descrizioni a due parole",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Discriminazione condizionale"
                 },
                 {
                     "name": "Aggettivi/attributi",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Discriminazione condizionale"
                 },
                 {
                     "name": "Colori",
@@ -628,19 +655,23 @@
                 },
                 {
                     "name": "Elenca Parti su Oggetto",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Categorizzazione"
                 },
                 {
                     "name": "Dice Funzione su Oggetto",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Categorizzazione"
                 },
                 {
                     "name": "Dice classe su membro",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Categorizzazione"
                 },
                 {
                     "name": "Dice membro su attributo/parte",
-                    "level": 2
+                    "level": 2,
+                    "subcategory": "Categorizzazione"
                 },
                 {
                     "name": "Dice Membro su Funzione",
