@@ -1,905 +1,2039 @@
 {
-    "categorie": [
+    "categories": [
         {
+            "id": "visuo-spatial",
             "order": 1,
-            "name": "Visuo-spaziale",
+            "name": {
+                "en": "Visuo-spatial",
+                "it": "Visuo-spaziale"
+            },
             "items": [
                 {
-                    "name": "Ritmi/patterns",
-                    "level": 2
+                    "id": "visuo-spatial/rhythms-and-patterns",
+                    "name": {
+                        "en": "Rhythms/Patterns",
+                        "it": "Ritmi/patterns"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Associazioni",
-                    "level": 2
+                    "id": "visuo-spatial/associazioni",
+                    "name": {
+                        "en": "Associazioni",
+                        "it": "Associazioni"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Abbinamenti non identici",
-                    "level": 1
+                    "id": "visuo-spatial/abbinamenti-non-identici",
+                    "name": {
+                        "en": "Abbinamenti non identici",
+                        "it": "Abbinamenti non identici"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Orientamento Attenzione",
-                    "level": 1
+                    "id": "visuo-spatial/orientation-attention",
+                    "name": {
+                        "en": "Orientation Attention",
+                        "it": "Orientamento Attenzione"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Sorting",
-                    "level": 1
+                    "id": "visuo-spatial/sorting",
+                    "name": {
+                        "en": "Sorting",
+                        "it": "Sorting"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Abbinamenti 2D",
-                    "level": 1,
-                    "subcategory": "Abbinamento Generalizzato"
+                    "id": "visuo-spatial/2d-matching",
+                    "name": {
+                        "en": "2D Matching",
+                        "it": "Abbinamenti 2D"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "visuo-spatial/category/generalized-matching",
+                        "name": {
+                            "en": "Generalized Matching",
+                            "it": "Abbinamento Generalizzato"
+                        }
+                    }
                 },
                 {
-                    "name": "Abbinamenti 3D/2D",
-                    "level": 1,
-                    "subcategory": "Abbinamento Generalizzato"
+                    "id": "visuo-spatial/3d-2d-matching",
+                    "name": {
+                        "en": "3D/2D Matching",
+                        "it": "Abbinamenti 3D/2D"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "visuo-spatial/category/generalized-matching",
+                        "name": {
+                            "en": "Generalized Matching",
+                            "it": "Abbinamento Generalizzato"
+                        }
+                    }
                 },
                 {
-                    "name": "Abbinamenti 3D",
-                    "level": 1,
-                    "subcategory": "Abbinamento Generalizzato"
+                    "id": "visuo-spatial/3d-matching",
+                    "name": {
+                        "en": "3D Matching",
+                        "it": "Abbinamenti 3D"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "visuo-spatial/category/generalized-matching",
+                        "name": {
+                            "en": "Generalized Matching",
+                            "it": "Abbinamento Generalizzato"
+                        }
+                    }
                 }
             ]
         },
         {
+            "id": "motor-imitation",
             "order": 2,
-            "name": "Imitazione Motoria",
+            "name": {
+                "en": "Motor Imitation",
+                "it": "Imitazione Motoria"
+            },
             "items": [
                 {
-
-                    "name": "Apprendimento tramite Osservazione (sequenze complesse)",
-                    "level": 3
+                    "id": "motor-imitation/observational-learning-complex-sequences",
+                    "name": {
+                        "en": "Observational Learning (complex sequences)",
+                        "it": "Apprendimento tramite Osservazione (sequenze complesse)"
+                    },
+                    "level": "advanced"
                 },
                 {
-
-                    "name": "Apprendimento tramite Osservazione (semplice)",
-                    "level": 2
+                    "id": "motor-imitation/observational-learning-simple",
+                    "name": {
+                        "en": "Observational Learning (simple)",
+                        "it": "Apprendimento tramite Osservazione (semplice)"
+                    },
+                    "level": "intermediate"
                 },
                 {
-
-                    "name": "Ritmi",
-                    "level": 2
+                    "id": "motor-imitation/rhythms",
+                    "name": {
+                        "en": "Rhythms",
+                        "it": "Ritmi"
+                    },
+                    "level": "intermediate"
                 },
                 {
-
-                    "name": "Strutture recettive",
-                    "level": 2
+                    "id": "motor-imitation/receptive-structures",
+                    "name": {
+                        "en": "Receptive Structures",
+                        "it": "Strutture recettive"
+                    },
+                    "level": "intermediate"
                 },
                 {
-
-                    "name": "Con schermo",
-                    "level": 2
+                    "id": "motor-imitation/with-screen",
+                    "name": {
+                        "en": "With Screen",
+                        "it": "Con schermo"
+                    },
+                    "level": "intermediate"
                 },
                 {
-
-                    "name": "Segui il capo",
-                    "level": 1,
-                    "subcategory": "Imitazione Generalizzata"
+                    "id": "motor-imitation/follow-the-leader",
+                    "name": {
+                        "en": "Follow the leader",
+                        "it": "Segui il capo"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "motor-imitation/generalized-imitation",
+                        "name": {
+                            "en": "Generalized Imitation",
+                            "it": "Imitazione Generalizzata"
+                        }
+                    }
                 },
                 {
-
-                    "name": "Blocchi",
-                    "level": 1,
-                    "subcategory": "Imitazione Generalizzata"
+                    "id": "motor-imitation/blocks",
+                    "name": {
+                        "en": "Blocks",
+                        "it": "Blocchi"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "motor-imitation/generalized-imitation",
+                        "name": {
+                            "en": "Generalized Imitation",
+                            "it": "Imitazione Generalizzata"
+                        }
+                    }
                 },
                 {
-
-                    "name": "Concatenamenti",
-                    "level": 1,
-                    "subcategory": "Imitazione Generalizzata"
+                    "id": "motor-imitation/concatenations",
+                    "name": {
+                        "en": "Concatenations",
+                        "it": "Concatenamenti"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "motor-imitation/generalized-imitation",
+                        "name": {
+                            "en": "Generalized Imitation",
+                            "it": "Imitazione Generalizzata"
+                        }
+                    }
                 },
                 {
-
-                    "name": "Orale",
-                    "level": 1,
-                    "subcategory": "Imitazione Generalizzata"
+                    "id": "motor-imitation/oral",
+                    "name": {
+                        "en": "Oral",
+                        "it": "Orale"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "motor-imitation/generalized-imitation",
+                        "name": {
+                            "en": "Generalized Imitation",
+                            "it": "Imitazione Generalizzata"
+                        }
+                    }
                 },
                 {
-
-                    "name": "Fine motoria",
-                    "level": 1,
-                    "subcategory": "Imitazione Generalizzata"
+                    "id": "motor-imitation/fine-motor-skills",
+                    "name": {
+                        "en": "Fine motor skills",
+                        "it": "Fine motoria"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "motor-imitation/generalized-imitation",
+                        "name": {
+                            "en": "Generalized Imitation",
+                            "it": "Imitazione Generalizzata"
+                        }
+                    }
                 },
                 {
-
-                    "name": "Grosso motoria",
-                    "level": 1,
-                    "subcategory": "Imitazione Generalizzata"
+                    "id": "motor-imitation/gross-motor-skills",
+                    "name": {
+                        "en": "Gross motor skills",
+                        "it": "Grosso motoria"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "motor-imitation/generalized-imitation",
+                        "name": {
+                            "en": "Generalized Imitation",
+                            "it": "Imitazione Generalizzata"
+                        }
+                    }
                 },
                 {
-
-                    "name": "Oggetto",
-                    "level": 1,
-                    "subcategory": "Imitazione Generalizzata"
+                    "id": "motor-imitation/item",
+                    "name": {
+                        "en": "Item",
+                        "it": "Oggetto"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "motor-imitation/generalized-imitation",
+                        "name": {
+                            "en": "Generalized Imitation",
+                            "it": "Imitazione Generalizzata"
+                        }
+                    }
                 }
             ]
         },
         {
+            "id": "play",
             "order": 3,
-            "name": "Gioco",
+            "name": {
+                "en": "Play",
+                "it": "Gioco"
+            },
             "items": [
                 {
-                    "name": "Mimo",
-                    "level": 3
+                    "id": "play/mime",
+                    "name": {
+                        "en": "Mime",
+                        "it": "Mimo"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Racconta una storia con oggetti vari",
-                    "level": 3
+                    "id": "play/tell-a-story-with-various-items",
+                    "name": {
+                        "en": "Tell a story with various items",
+                        "it": "Racconta una storia con oggetti vari"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Gioco simbolico con sostituzione",
-                    "level": 3
+                    "id": "play/symbolic-game-with-substitution",
+                    "name": {
+                        "en": "Symbolic game with substitution",
+                        "it": "Gioco simbolico con sostituzione"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Gioco di ruolo",
-                    "level": 3
+                    "id": "play/role-play",
+                    "name": {
+                        "en": "Role Play",
+                        "it": "Gioco di ruolo"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Sostituzione",
-                    "level": 3
+                    "id": "play/substitution",
+                    "name": {
+                        "en": "Substitution",
+                        "it": "Sostituzione"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Fa finta di essere (semplice)",
-                    "level": 3
+                    "id": "play/pretend-to-be-simple",
+                    "name": {
+                        "en": "Pretend to be (simple)",
+                        "it": "Fa finta di essere (semplice)"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Narra il proprio gioco",
-                    "level": 3
+                    "id": "play/narrates-his-own-game",
+                    "name": {
+                        "en": "Narrates his own game",
+                        "it": "Narra il proprio gioco"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Costruzioni libere",
-                    "level": 2
+                    "id": "play/free-construction-blocks",
+                    "name": {
+                        "en": "Free construction blocks",
+                        "it": "Costruzioni libere"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Gioco Simbolico indipendente",
-                    "level": 2
+                    "id": "play/independent-symbolic-game",
+                    "name": {
+                        "en": "Independent Symbolic Game",
+                        "it": "Gioco Simbolico indipendente"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Giochi con turno",
-                    "level": 2
+                    "id": "play/turn-based-games",
+                    "name": {
+                        "en": "Turn-based games",
+                        "it": "Giochi con turno"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Rispettare il turno",
-                    "level": 1
+                    "id": "play/respect-the-turn",
+                    "name": {
+                        "en": "Respect the turn",
+                        "it": "Rispettare il turno"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Transizioni (stazioni)",
-                    "level": 1
+                    "id": "play/transitions-stations",
+                    "name": {
+                        "en": "Transitions (stations)",
+                        "it": "Transizioni (stazioni)"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Gioco Indipendente",
-                    "level": 1
+                    "id": "play/independent-game",
+                    "name": {
+                        "en": "Independent Game",
+                        "it": "Gioco Indipendente"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Gioco Parallelo",
-                    "level": 1
+                    "id": "play/parallel-game",
+                    "name": {
+                        "en": "Parallel Game",
+                        "it": "Gioco Parallelo"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Gioco Imitativo",
-                    "level": 1
+                    "id": "play/imitative-game",
+                    "name": {
+                        "en": "Imitative Game",
+                        "it": "Gioco Imitativo"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Gioco Funzionale (puzzle/incastri)",
-                    "level": 1
+                    "id": "play/functional-game-puzzles-interlocking",
+                    "name": {
+                        "en": "Functional Game (puzzles/interlocking)",
+                        "it": "Gioco Funzionale (puzzle/incastri)"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Causa/effetto",
-                    "level": 1
+                    "id": "play/cause-effect",
+                    "name": {
+                        "en": "Cause/Effect",
+                        "it": "Causa/effetto"
+                    },
+                    "level": "initial"
                 }
             ]
         },
         {
+            "id": "echoic",
             "order": 4,
-            "name": "Ecoico",
+            "name": {
+                "en": "Echoic",
+                "it": "Ecoico"
+            },
             "items": [
                 {
-                    "name": "Tono",
-                    "level": 3
+                    "id": "echoic/tone",
+                    "name": {
+                        "en": "Tone",
+                        "it": "Tono"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Tonalità",
-                    "level": 3
+                    "id": "echoic/pitch",
+                    "name": {
+                        "en": "Pitch",
+                        "it": "Tonalità"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Volume",
-                    "level": 2,
-                    "subcategory": "Frasi a due e più parole"
+                    "id": "echoic/volume",
+                    "name": {
+                        "en": "Volume",
+                        "it": "Volume"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "echoic/category/two-or-more-word-phrases",
+                        "name": {
+                            "en": "Two or More Word Phrases",
+                            "it": "Frasi a due e più parole"
+                        }
+                    }
                 },
                 {
-                    "name": "Parole singole",
-                    "level": 1,
-                    "subcategory": "Ecoico Generalizzato"
+                    "id": "echoic/single-words",
+                    "name": {
+                        "en": "Single Words",
+                        "it": "Parole singole"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "echoic/category/generalized-echoic",
+                        "name": {
+                            "en": "Generalized Echoic",
+                            "it": "Ecoico Generalizzato"
+                        }
+                    }
                 },
                 {
-                    "name": "Combinazioni di suoni/dittonghi",
-                    "level": 1,
-                    "subcategory": "Ecoico Generalizzato"
+                    "id": "echoic/combinations-of-sounds-diphthongs",
+                    "name": {
+                        "en": "Combinations of sounds/diphthongs",
+                        "it": "Combinazioni di suoni/dittonghi"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "echoic/category/generalized-echoic",
+                        "name": {
+                            "en": "Generalized Echoic",
+                            "it": "Ecoico Generalizzato"
+                        }
+                    }
                 },
                 {
-                    "name": "Fonemi/Suoni singoli",
-                    "level": 1,
-                    "subcategory": "Ecoico Generalizzato"
+                    "id": "echoic/phonemes-single-sounds",
+                    "name": {
+                        "en": "Phonemes/Single Sounds",
+                        "it": "Fonemi/Suoni singoli"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "echoic/category/generalized-echoic",
+                        "name": {
+                            "en": "Generalized Echoic",
+                            "it": "Ecoico Generalizzato"
+                        }
+                    }
                 },
                 {
-                    "name": "Gioco vocale",
-                    "level": 1,
-                    "subcategory": "Ecoico Generalizzato"
+                    "id": "echoic/vocal-game",
+                    "name": {
+                        "en": "Vocal game",
+                        "it": "Gioco vocale"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "echoic/category/generalized-echoic",
+                        "name": {
+                            "en": "Generalized Echoic",
+                            "it": "Ecoico Generalizzato"
+                        }
+                    }
                 }
             ]
         },
         {
+            "id": "mand",
             "order": 5,
-            "name": "MAND",
+            "name": {
+                "en": "MAND",
+                "it": "MAND"
+            },
             "items": [
                 {
-                    "name": "MAND per informazione MO verbale",
-                    "level": 3
+                    "id": "mand/mand-for-information-verbal-mo",
+                    "name": {
+                        "en": "MAND for information verbal MO",
+                        "it": "MAND per informazione MO verbale"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Mand per informazione MO",
-                    "level": 3
+                    "id": "mand/mand-for-information-mo",
+                    "name": {
+                        "en": "MAND for informationMO",
+                        "it": "MAND per informazione MO"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Frasi complesse",
-                    "level": 3
+                    "id": "mand/complex-phrases",
+                    "name": {
+                        "en": "Complex Phrases",
+                        "it": "Frasi complesse"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Scelte condiz. verbali",
-                    "level": 2
+                    "id": "mand/verbal-conditional-choices",
+                    "name": {
+                        "en": "Verbal conditional choices",
+                        "it": "Scelte condizionali verbali"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Plurali",
-                    "level": 2
+                    "id": "mand/plurals",
+                    "name": {
+                        "en": "Plurals",
+                        "it": "Plurali"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Paragoni/comparativi",
-                    "level": 2
+                    "id": "mand/comparisons-comparatives",
+                    "name": {
+                        "en": "Comparisons/comparatives",
+                        "it": "Paragoni/comparativi"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Avverbi di luogo e preposizioni",
-                    "level": 2
+                    "id": "mand/place-adverbs-and-prepositions",
+                    "name": {
+                        "en": "Place adverbs and prepositions",
+                        "it": "Avverbi di luogo e preposizioni"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Si/No Verbale",
-                    "level": 2
+                    "id": "mand/verbal-yes-no",
+                    "name": {
+                        "en": "Verbal Yes/No",
+                        "it": "Si/No Verbale"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Si/No visibile",
-                    "level": 2
+                    "id": "mand/visibile-yes-no",
+                    "name": {
+                        "en": "Visible Yes/No",
+                        "it": "Si/No visibile"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Attenzione",
-                    "level": 2
+                    "id": "mand/attention",
+                    "name": {
+                        "en": "Attention",
+                        "it": "Attenzione"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Aggettivi",
-                    "level": 2
+                    "id": "mand/adjectives",
+                    "name": {
+                        "en": "Adjectives",
+                        "it": "Aggettivi"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Frasi semplici",
-                    "level": 2
+                    "id": "mand/simple-phrases",
+                    "name": {
+                        "en": "Simple Phrases",
+                        "it": "Frasi semplici"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Oggetto Mancante",
-                    "level": 2
+                    "id": "mand/missing-item",
+                    "name": {
+                        "en": "Missing Item",
+                        "it": "Oggetto Mancante"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Azione e oggetto",
-                    "level": 2
+                    "id": "mand/action-and-object",
+                    "name": {
+                        "en": "Action and object",
+                        "it": "Azione e oggetto"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Fermare un'attività",
-                    "level": 1
+                    "id": "mand/stop-an-activity",
+                    "name": {
+                        "en": "Stop an activity",
+                        "it": "Fermare un'attività"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Aiuto",
-                    "level": 1
+                    "id": "mand/help",
+                    "name": {
+                        "en": "Help",
+                        "it": "Aiuto"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Non-visibili",
-                    "level": 1
+                    "id": "mand/non-visible",
+                    "name": {
+                        "en": "Non-visible",
+                        "it": "Non-visibili"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Azioni",
-                    "level": 1
+                    "id": "mand/actions",
+                    "name": {
+                        "en": "Actions",
+                        "it": "Azioni"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Rinforzatori visibili",
-                    "level": 1
+                    "id": "mand/visible-reinforcer",
+                    "name": {
+                        "en": "Visible reinforcer",
+                        "it": "Rinforzatori visibili"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Indicazione (pointing)",
-                    "level": 1
+                    "id": "mand/pointing",
+                    "name": {
+                        "en": "Pointing",
+                        "it": "Indicazione (pointing)"
+                    },
+                    "level": "initial"
                 }
             ]
         },
         {
+            "id": "listener",
             "order": 6,
-            "name": "Ascoltatore",
+            "name": {
+                "en": "Listener",
+                "it": "Ascoltatore"
+            },
             "items": [
                 {
-                    "name": "Comprensione della Storia/Lezione",
-                    "level": 1
+                    "id": "listener/comprehension-of-story-lesson",
+                    "name": {
+                        "en": "Comprehension Of Story/Lesson",
+                        "it": "Comprensione della Storia/Lezione"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Inversione pronominale",
-                    "level": 3,
-                    "subcategory": "Esegue Istruzioni Complesse - Risponde a Descrizioni Complesse"
+                    "id": "listener/pronominal-inversion",
+                    "name": {
+                        "en": "Pronominal inversion",
+                        "it": "Inversione pronominale"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "listener/category/executes-complex-instructions-responds-to-complex-descriptions",
+                        "name": {
+                            "en": "Executes Complex Instructions - Responds to Complex Descriptions",
+                            "it": "Esegue Istruzioni Complesse - Risponde a Descrizioni Complesse"
+                        }
+                    }
                 },
                 {
-                    "name": "Recita una storia narrata",
-                    "level": 3,
-                    "subcategory": "Esegue Istruzioni Complesse - Risponde a Descrizioni Complesse"
+                    "id": "listener/recites-a-narrated-story",
+                    "name": {
+                        "en": "Recites a narrated story",
+                        "it": "Recita una storia narrata"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "listener/category/executes-complex-instructions-responds-to-complex-descriptions",
+                        "name": {
+                            "en": "Executes Complex Instructions - Responds to Complex Descriptions",
+                            "it": "Esegue Istruzioni Complesse - Risponde a Descrizioni Complesse"
+                        }
+                    }
                 },
                 {
-                    "name": "Affermazioni condizionali ",
-                    "level": 3,
-                    "subcategory": "Esegue Istruzioni Complesse - Risponde a Descrizioni Complesse"
+                    "id": "listener/conditional-statements",
+                    "name": {
+                        "en": "Conditional Statements",
+                        "it": "Affermazioni condizionali"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "listener/category/executes-complex-instructions-responds-to-complex-descriptions",
+                        "name": {
+                            "en": "Executes Complex Instructions - Responds to Complex Descriptions",
+                            "it": "Esegue Istruzioni Complesse - Risponde a Descrizioni Complesse"
+                        }
+                    }
                 },
                 {
-                    "name": "Negazione",
-                    "level": 3,
-                    "subcategory": "Esegue Istruzioni Complesse - Risponde a Descrizioni Complesse"
+                    "id": "listener/negation",
+                    "name": {
+                        "en": "Negation",
+                        "it": "Negazione"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "listener/category/executes-complex-instructions-responds-to-complex-descriptions",
+                        "name": {
+                            "en": "Executes Complex Instructions - Responds to Complex Descriptions",
+                            "it": "Esegue Istruzioni Complesse - Risponde a Descrizioni Complesse"
+                        }
+                    }
                 },
                 {
-                    "name": "Mestieri",
-                    "level": 2
+                    "id": "listener/professions",
+                    "name": {
+                        "en": "Professions",
+                        "it": "Mestieri"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Plurali",
-                    "level": 2
+                    "id": "listener/plurals",
+                    "name": {
+                        "en": "Plurals",
+                        "it": "Plurali"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Tempo",
-                    "level": 2
+                    "id": "listener/tense",
+                    "name": {
+                        "en": "Tense",
+                        "it": "Tempo"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Genere",
-                    "level": 2
+                    "id": "listener/genre",
+                    "name": {
+                        "en": "Genre",
+                        "it": "Genere"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Paragoni/comparativi",
-                    "level": 2
+                    "id": "listener/comparisons-comparatives",
+                    "name": {
+                        "en": "Comparisons/comparatives",
+                        "it": "Paragoni/comparativi"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Avverbi di luogo e preposizioni",
-                    "level": 2
+                    "id": "listener/place-adverbs-and-prepositions",
+                    "name": {
+                        "en": "Place Adverbs and Prepositions",
+                        "it": "Avverbi di luogo e preposizioni"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Soggetto - Azione - Oggetto",
-                    "level": 2,
-                    "subcategory": "Joint Control"
+                    "id": "listener/subject-action-object",
+                    "name": {
+                        "en": "Subject - Action - Object",
+                        "it": "Soggetto - Azione - Oggetto"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "listener/category/joint-control",
+                        "name": {
+                            "en": "Joint Control",
+                            "it": "Joint Control"
+                        }
+                    }
                 },
                 {
-                    "name": "Discriminazione multipla",
-                    "level": 2,
-                    "subcategory": "Joint Control"
+                    "id": "listener/multiple-discrimination",
+                    "name": {
+                        "en": "Multiple discrimination",
+                        "it": "Discriminazione multipla"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "listener/category/joint-control",
+                        "name": {
+                            "en": "Joint Control",
+                            "it": "Joint Control"
+                        }
+                    }
                 },
                 {
-                    "name": "Oggetti 2-step",
-                    "level": 2,
-                    "subcategory": "Joint Control"
+                    "id": "listener/2-step-items",
+                    "name": {
+                        "en": "2-step Items",
+                        "it": "Oggetti 2-step"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "listener/category/joint-control",
+                        "name": {
+                            "en": "Joint Control",
+                            "it": "Joint Control"
+                        }
+                    }
                 },
                 {
-                    "name": "Istruzioni 2-step",
-                    "level": 2,
-                    "subcategory": "Joint Control"
+                    "id": "listener/2-step-instructions",
+                    "name": {
+                        "en": "2-step Instructions",
+                        "it": "Istruzioni 2-step"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "listener/category/joint-control",
+                        "name": {
+                            "en": "Joint Control",
+                            "it": "Joint Control"
+                        }
+                    }
                 },
                 {
-                    "name": "Colori",
-                    "level": 1
+                    "id": "listener/colors",
+                    "name": {
+                        "en": "Colors",
+                        "it": "Colori"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Agente esegue azione",
-                    "level": 1,
-                    "subcategory": "Naming (relazione del nome)"
+                    "id": "listener/agent-performs-action",
+                    "name": {
+                        "en": "Agent performs action",
+                        "it": "Agente esegue azione"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "listener/category/naming-name-relationship",
+                        "name": {
+                            "en": "Naming (name relationship)",
+                            "it": "Naming (relazione del nome)"
+                        }
+                    }
                 },
                 {
-                    "name": "Azioni",
-                    "level": 1,
-                    "subcategory": "Naming (relazione del nome)"
+                    "id": "listener/actions",
+                    "name": {
+                        "en": "Actions",
+                        "it": "Azioni"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "listener/category/naming-name-relationship",
+                        "name": {
+                            "en": "Naming (name relationship)",
+                            "it": "Naming (relazione del nome)"
+                        }
+                    }
                 },
                 {
-                    "name": "Istruzioni con oggetto",
-                    "level": 1,
-                    "subcategory": "Naming (relazione del nome)"
+                    "id": "listener/instructions-with-item",
+                    "name": {
+                        "en": "Instructions with item",
+                        "it": "Istruzioni con oggetto"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "listener/category/naming-name-relationship",
+                        "name": {
+                            "en": "Naming (name relationship)",
+                            "it": "Naming (relazione del nome)"
+                        }
+                    }
                 },
                 {
-                    "name": "Oggetti comuni",
-                    "level": 1,
-                    "subcategory": "Naming (relazione del nome)"
+                    "id": "listener/common-items",
+                    "name": {
+                        "en": "Common Items",
+                        "it": "Oggetti comuni"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "listener/category/naming-name-relationship",
+                        "name": {
+                            "en": "Naming (name relationship)",
+                            "it": "Naming (relazione del nome)"
+                        }
+                    }
                 },
                 {
-                    "name": "Istruzioni",
-                    "level": 1
+                    "id": "listener/instructions",
+                    "name": {
+                        "en": "Instructions",
+                        "it": "Istruzioni"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Discriminazione del suono ",
-                    "level": 1
+                    "id": "listener/sound-discrimination",
+                    "name": {
+                        "en": "Sound discrimination",
+                        "it": "Discriminazione del suono"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Rinforzatori",
-                    "level": 1
+                    "id": "listener/reinforcers",
+                    "name": {
+                        "en": "Reinforcers",
+                        "it": "Rinforzatori"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Basate sui gesti",
-                    "level": 1
+                    "id": "listener/based-on-gestures",
+                    "name": {
+                        "en": "Based on gestures",
+                        "it": "Basate sui gesti"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Istruzioni Contestuali",
-                    "level": 1
+                    "id": "listener/contextual-instructions",
+                    "name": {
+                        "en": "Contextual Instructions",
+                        "it": "Istruzioni Contestuali"
+                    },
+                    "level": "initial"
                 }
             ]
         },
         {
+            "id": "tact",
             "order": 7,
-            "name": "TACT",
-            "items":    [
+            "name": {
+                "en": "TACT",
+                "it": "TACT"
+            },
+            "items": [
                 {
-                    "name": "Comprensione della Storia/Lezione",
-                    "level": 1
+                    "id": "tact/understanding-the-story-lesson",
+                    "name": {
+                        "en": "Understanding the Story/Lesson",
+                        "it": "Comprensione della Storia/Lezione"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Descrive eventi passati",
-                    "level": 3,
-                    "subcategory": "Descrizioni complesse"
+                    "id": "tact/describes-past-events",
+                    "name": {
+                        "en": "Describes past events",
+                        "it": "Descrive eventi passati"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "tact/category/complex-descriptions",
+                        "name": {
+                            "en": "Complex Descriptions",
+                            "it": "Descrizioni complesse"
+                        }
+                    }
                 },
                 {
-                    "name": "Risponde a dom. eventi passati",
-                    "level": 3,
-                    "subcategory": "Descrizioni complesse"
+                    "id": "tact/answers-questions-about-past-events",
+                    "name": {
+                        "en": "Answers questions about past events",
+                        "it": "Risponde a domande su eventi passati"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "tact/category/complex-descriptions",
+                        "name": {
+                            "en": "Complex Descriptions",
+                            "it": "Descrizioni complesse"
+                        }
+                    }
                 },
                 {
-                    "name": "Discriminazione a domande su argomento",
-                    "level": 3,
-                    "subcategory": "Descrizioni complesse"
+                    "id": "tact/discrimination-on-topic-questions",
+                    "name": {
+                        "en": "Discrimination on topic questions",
+                        "it": "Discriminazione a domande su argomento"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "tact/category/complex-descriptions",
+                        "name": {
+                            "en": "Complex Descriptions",
+                            "it": "Descrizioni complesse"
+                        }
+                    }
                 },
                 {
-                    "name": "Risponde a descriz. Compl",
-                    "level": 3,
-                    "subcategory": "Descrizioni complesse"
+                    "id": "tact/responds-to-complex-descriptions",
+                    "name": {
+                        "en": "Responds to Complex Descriptions",
+                        "it": "Risponde a descrizioni Complesse"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "tact/category/complex-descriptions",
+                        "name": {
+                            "en": "Complex Descriptions",
+                            "it": "Descrizioni complesse"
+                        }
+                    }
                 },
                 {
-                    "name": "Tempi dei verbi",
-                    "level": 3,
-                    "subcategory": "Descrizioni complesse"
+                    "id": "tact/verb-tenses",
+                    "name": {
+                        "en": "Verb Tenses",
+                        "it": "Tempi dei verbi"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "tact/category/complex-descriptions",
+                        "name": {
+                            "en": "Complex Descriptions",
+                            "it": "Descrizioni complesse"
+                        }
+                    }
                 },
                 {
-                    "name": "Pronomi Possessivi",
-                    "level": 3,
-                    "subcategory": "Descrizioni complesse"
+                    "id": "tact/possessive-pronouns",
+                    "name": {
+                        "en": "Possessive Pronouns",
+                        "it": "Pronomi Possessivi"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "tact/category/complex-descriptions",
+                        "name": {
+                            "en": "Complex Descriptions",
+                            "it": "Descrizioni complesse"
+                        }
+                    }
                 },
                 {
-                    "name": "Pronomi Personali",
-                    "level": 3,
-                    "subcategory": "Descrizioni complesse"
+                    "id": "tact/personal-pronouns",
+                    "name": {
+                        "en": "Personal Pronouns",
+                        "it": "Pronomi Personali"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "tact/category/complex-descriptions",
+                        "name": {
+                            "en": "Complex Descriptions",
+                            "it": "Descrizioni complesse"
+                        }
+                    }
                 },
                 {
-                    "name": "Mestieri",
-                    "level": 2
+                    "id": "tact/professions",
+                    "name": {
+                        "en": "Professions",
+                        "it": "Mestieri"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Plurali",
-                    "level": 2,
-                    "subcategory": "Descrizioni"
+                    "id": "tact/plurals",
+                    "name": {
+                        "en": "Plurals",
+                        "it": "Plurali"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "tact/category/descrizioni",
+                        "name": {
+                            "en": "Descrizioni",
+                            "it": "Descrizioni"
+                        }
+                    }
                 },
                 {
-                    "name": "Tempo",
-                    "level": 2,
-                    "subcategory": "Descrizioni"
+                    "id": "tact/tense",
+                    "name": {
+                        "en": "Tense",
+                        "it": "Tempo"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "tact/category/descriptions",
+                        "name": {
+                            "en": "Descriptions",
+                            "it": "Descrizioni"
+                        }
+                    }
                 },
                 {
-                    "name": "Genere",
-                    "level": 2,
-                    "subcategory": "Descrizioni"
+                    "id": "tact/genre",
+                    "name": {
+                        "en": "Genre",
+                        "it": "Genere"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "tact/category/descriptions",
+                        "name": {
+                            "en": "Descriptions",
+                            "it": "Descrizioni"
+                        }
+                    }
                 },
                 {
-                    "name": "Paragoni/comparativi",
-                    "level": 2,
-                    "subcategory": "Descrizioni"
+                    "id": "tact/comparisons-comparatives",
+                    "name": {
+                        "en": "Comparisons/comparatives",
+                        "it": "Paragoni/comparativi"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "tact/category/descriptions",
+                        "name": {
+                            "en": "Descriptions",
+                            "it": "Descrizioni"
+                        }
+                    }
                 },
                 {
-                    "name": "Avverbi di luogo e preposizioni",
-                    "level": 2,
-                    "subcategory": "Descrizioni"
+                    "id": "tact/place-adverbs-and-propositions",
+                    "name": {
+                        "en": "Place Adverbs and Propositions",
+                        "it": "Avverbi di luogo e preposizioni"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "tact/category/descriptions",
+                        "name": {
+                            "en": "Descriptions",
+                            "it": "Descrizioni"
+                        }
+                    }
                 },
                 {
-                    "name": "Domande Condizionali",
-                    "level": 2,
-                    "subcategory": "Descrizioni"
+                    "id": "tact/conditional-questions",
+                    "name": {
+                        "en": "Conditional Questions",
+                        "it": "Domande Condizionali"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "tact/category/descriptions",
+                        "name": {
+                            "en": "Descriptions",
+                            "it": "Descrizioni"
+                        }
+                    }
                 },
                 {
-                    "name": "Si/No Tact",
-                    "level": 2,
-                    "subcategory": "Descrizioni"
+                    "id": "tact/tact-yes-no",
+                    "name": {
+                        "en": "TACT Yes/No",
+                        "it": "Si/No TACT"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "tact/category/descriptions",
+                        "name": {
+                            "en": "Descriptions",
+                            "it": "Descrizioni"
+                        }
+                    }
                 },
                 {
-                    "name": "Sensi",
-                    "level": 2,
-                    "subcategory": "Discriminazione condizionale"
+                    "id": "tact/senses",
+                    "name": {
+                        "en": "Senses",
+                        "it": "Sensi"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "tact/category/conditional-discrimination",
+                        "name": {
+                            "en": "Conditional discrimination",
+                            "it": "Discriminazione condizionale"
+                        }
+                    }
                 },
                 {
-                    "name": "Dice oggetto mancante",
-                    "level": 2,
-                    "subcategory": "Discriminazione condizionale"
+                    "id": "tact/says-missing-item",
+                    "name": {
+                        "en": "Says missing item",
+                        "it": "Dice oggetto mancante"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "tact/category/conditional-discrimination",
+                        "name": {
+                            "en": "Conditional discrimination",
+                            "it": "Discriminazione condizionale"
+                        }
+                    }
                 },
                 {
-                    "name": "Frasi semplici (prime cornici)",
-                    "level": 2,
-                    "subcategory": "Discriminazione condizionale"
+                    "id": "tact/simple-sentences-first-frames",
+                    "name": {
+                        "en": "Simple sentences (first frames)",
+                        "it": "Frasi semplici (prime cornici)"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "tact/category/conditional-discrimination",
+                        "name": {
+                            "en": "Conditional discrimination",
+                            "it": "Discriminazione condizionale"
+                        }
+                    }
                 },
                 {
-                    "name": "Descrizioni a due parole",
-                    "level": 2,
-                    "subcategory": "Discriminazione condizionale"
+                    "id": "tact/two-word-descriptions",
+                    "name": {
+                        "en": "Two-word descriptions",
+                        "it": "Descrizioni a due parole"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "tact/category/conditional-discrimination",
+                        "name": {
+                            "en": "Conditional discrimination",
+                            "it": "Discriminazione condizionale"
+                        }
+                    }
                 },
                 {
-                    "name": "Aggettivi/attributi",
-                    "level": 2,
-                    "subcategory": "Discriminazione condizionale"
+                    "id": "tact/adjectives-attributes",
+                    "name": {
+                        "en": "Adjectives/attributes",
+                        "it": "Aggettivi/attributi"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "tact/category/conditional-discrimination",
+                        "name": {
+                            "en": "Conditional discrimination",
+                            "it": "Discriminazione condizionale"
+                        }
+                    }
                 },
                 {
-                    "name": "Colori",
-                    "level": 1
+                    "id": "tact/colors",
+                    "name": {
+                        "en": "Colors",
+                        "it": "Colori"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Azioni",
-                    "level": 1,
-                    "subcategory": "Naming (relazione del nome)"
+                    "id": "tact/actions",
+                    "name": {
+                        "en": "Actions",
+                        "it": "Azioni"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "tact/category/naming-name-relationship",
+                        "name": {
+                            "en": "Naming (name relationship)",
+                            "it": "Naming (relazione del nome)"
+                        }
+                    }
                 },
                 {
-                    "name": "Combinazione nome nome",
-                    "level": 1,
-                    "subcategory": "Naming (relazione del nome)"
+                    "id": "tact/name-name-combination",
+                    "name": {
+                        "en": "Name name combination",
+                        "it": "Combinazione nome nome"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "tact/category/naming-name-relationship",
+                        "name": {
+                            "en": "Naming (name relationship)",
+                            "it": "Naming (relazione del nome)"
+                        }
+                    }
                 },
                 {
-                    "name": "Nomi Comuni",
-                    "level": 1,
-                    "subcategory": "Naming (relazione del nome)"
+                    "id": "tact/common-names",
+                    "name": {
+                        "en": "Common Names",
+                        "it": "Nomi Comuni"
+                    },
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "tact/category/naming-name-relationship",
+                        "name": {
+                            "en": "Naming (name relationship)",
+                            "it": "Naming (relazione del nome)"
+                        }
+                    }
                 },
                 {
-                    "name": "Rinforzatori",
-                    "level": 1
+                    "id": "tact/reinforcers",
+                    "name": {
+                        "en": "Reinforcers",
+                        "it": "Rinforzatori"
+                    },
+                    "level": "initial"
                 }
             ]
         },
         {
+            "id": "listener-for-fca",
             "order": 8,
-            "name": "Ascoltatore per F/CA",
+            "name": {
+                "en": "Listener for F/CA",
+                "it": "Ascoltatore per F/CA"
+            },
             "items": [
                 {
-                    "name": "Comprensione della Storia/Lezione",
-                    "level": 1
+                    "id": "listener-for-fca/understanding-the-story-lesson",
+                    "name": {
+                        "en": "Understanding the Story/Lesson",
+                        "it": "Comprensione della Storia/Lezione"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Seleziona per classe",
-                    "level": 2
+                    "id": "listener-for-fca/select-by-class",
+                    "name": {
+                        "en": "Select by class",
+                        "it": "Seleziona per classe"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Seleziona per parte/intero",
-                    "level": 2
+                    "id": "listener-for-fca/select-by-part-whole",
+                    "name": {
+                        "en": "Select by part/whole",
+                        "it": "Seleziona per parte/intero"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Seleziona su funzione",
-                    "level": 2
+                    "id": "listener-for-fca/select-on-function",
+                    "name": {
+                        "en": "Select on function",
+                        "it": "Seleziona su funzione"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Seleziona su suono",
-                    "level": 1
+                    "id": "listener-for-fca/select-on-sound",
+                    "name": {
+                        "en": "Select on sound",
+                        "it": "Seleziona su suono"
+                    },
+                    "level": "initial"
                 }
             ]
         },
         {
+            "id": "intra-verbal",
             "order": 9,
-            "name": "Intraverbale",
+            "name": {
+                "en": "Intra-verbal",
+                "it": "Intra-verbale"
+            },
             "items": [
                 {
-                    "name": "Comprensione della Storia/Lezione",
-                    "level": 1
+                    "id": "intra-verbal/understanding-the-story-lesson",
+                    "name": {
+                        "en": "Understanding the Story/Lesson",
+                        "it": "Comprensione della Storia/Lezione"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Riporta una Conversazione",
-                    "level": 1
+                    "id": "intra-verbal/report-a-conversation",
+                    "name": {
+                        "en": "Report a Conversation",
+                        "it": "Riporta una Conversazione"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Racconta una storia",
-                    "level": 1
+                    "id": "intra-verbal/tells-a-story",
+                    "name": {
+                        "en": "Tells a story",
+                        "it": "Racconta una storia"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Completa una storia",
-                    "level": 1
+                    "id": "intra-verbal/completes-a-story",
+                    "name": {
+                        "en": "Completes a story",
+                        "it": "Completa una storia"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Reciproca una storia",
-                    "level": 1
+                    "id": "intra-verbal/reciprocates-a-story",
+                    "name": {
+                        "en": "Reciprocates a story",
+                        "it": "Reciproca una storia"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Domande su argomenti",
-                    "level": 1
+                    "id": "intra-verbal/questions-on-topics",
+                    "name": {
+                        "en": "Questions on topics",
+                        "it": "Domande su argomenti"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Ragnatela Intraverbale",
-                    "level": 1
+                    "id": "intra-verbal/intra-verbal-spider-Web",
+                    "name": {
+                        "en": "Intra-Verbal Spider Web",
+                        "it": "Ragnatela Intra-Verbale"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Domande per Associazione",
-                    "level": 1
+                    "id": "intra-verbal/questions-for-association",
+                    "name": {
+                        "en": "Questions for Association",
+                        "it": "Domande per Associazione"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Lettura fonetica",
-                    "level": 2
+                    "id": "intra-verbal/describes-an-absent-object",
+                    "name": {
+                        "en": "Describes an absent object",
+                        "it": "Descrive oggetto assente"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Descrive oggetto assente",
-                    "level": 1
+                    "id": "intra-verbal/questions-on a-single-item",
+                    "name": {
+                        "en": "Questions on a Single Item",
+                        "it": "Domande su oggetto singolo"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Domande su oggetto singolo",
-                    "level": 2
+                    "id": "intra-verbal/says-name-on-description",
+                    "name": {
+                        "en": "Says name on Description",
+                        "it": "Dice nome su Descrizione"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Dice nome su Descrizione",
-                    "level": 2
+                    "id": "intra-verbal/intra-verbal-story",
+                    "name": {
+                        "en": "Intra-Verbal Story",
+                        "it": "Storia Intra-Verbale"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Storia Intraverbale",
-                    "level": 2
+                    "id": "intra-verbal/conditional-questions",
+                    "name": {
+                        "en": "Conditional Questions",
+                        "it": "Domande Condizionali"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Domande Condizionali",
-                    "level": 2
+                    "id": "intra-verbal/yes-no-questions",
+                    "name": {
+                        "en": "Yes/No Questions",
+                        "it": "Domande Si/No"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Domande Si/No",
-                    "level": 2
+                    "id": "intra-verbal/lList-parts-on-item",
+                    "name": {
+                        "en": "List Parts on Item",
+                        "it": "Elenca Parti su Oggetto"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "intra-verbal/category/categorization",
+                        "name": {
+                            "en": "Categorization",
+                            "it": "Categorizzazione"
+                        }
+                    }
                 },
                 {
-                    "name": "Elenca Parti su Oggetto",
-                    "level": 2,
-                    "subcategory": "Categorizzazione"
+                    "id": "intra-verbal/dice-funzione-su-oggetto",
+                    "name": {
+                        "en": "Dice Funzione su Oggetto",
+                        "it": "Dice Funzione su Oggetto"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "intra-verbal/categorizzazione",
+                        "name": {
+                            "en": "Categorizzazione",
+                            "it": "Categorizzazione"
+                        }
+                    }
                 },
                 {
-                    "name": "Dice Funzione su Oggetto",
-                    "level": 2,
-                    "subcategory": "Categorizzazione"
+                    "id": "intra-verbal/says-class-on-member",
+                    "name": {
+                        "en": "Says class on member",
+                        "it": "Dice classe su membro"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "intra-verbal/category/categorization",
+                        "name": {
+                            "en": "Categorization",
+                            "it": "Categorizzazione"
+                        }
+                    }
                 },
                 {
-                    "name": "Dice classe su membro",
-                    "level": 2,
-                    "subcategory": "Categorizzazione"
+                    "id": "intra-verbal/says-member-on-attribute-part",
+                    "name": {
+                        "en": "Says member on attribute/part",
+                        "it": "Dice membro su attributo/parte"
+                    },
+                    "level": "intermediate",
+                    "subcategory": {
+                        "id": "intra-verbal/category/categorization",
+                        "name": {
+                            "en": "Categorization",
+                            "it": "Categorizzazione"
+                        }
+                    }
                 },
                 {
-                    "name": "Dice membro su attributo/parte",
-                    "level": 2,
-                    "subcategory": "Categorizzazione"
+                    "id": "intra-verbal/says-member-on-function",
+                    "name": {
+                        "en": "Says Member on Function",
+                        "it": "Dice Membro su Funzione"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Dice Membro su Funzione",
-                    "level": 2
+                    "id": "intra-verbal/says-animal-on-sound",
+                    "name": {
+                        "en": "Says Animal on Sound",
+                        "it": "Dice Animale su Suono"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Dice Animale su Suono",
-                    "level": 1
+                    "id": "intra-verbal/says-sound-on-animal",
+                    "name": {
+                        "en": "Says sound on animal",
+                        "it": "Dice suono su animale"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Dice suono su animale",
-                    "level": 1
+                    "id": "intra-verbal/intra-verbal-signs",
+                    "name": {
+                        "en": "Intra-Verbal Signs",
+                        "it": "Segni Intra-Verbali"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Dice animale su suono",
-                    "level": 1
+                    "id": "intra-verbal/song-completion",
+                    "name": {
+                        "en": "Song completion",
+                        "it": "Completamento canzoni"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Segni Intraverbali",
-                    "level": 1
-                },
-                {
-                    "name": "Completamento canzoni",
-                    "level": 1
-                },
-                {
-                    "name": "Completamento frasi semplici",
-                    "level": 1
+                    "id": "intra-verbal/simple-sentences-completion",
+                    "name": {
+                        "en": "Simple sentences completion",
+                        "it": "Completamento frasi semplici"
+                    },
+                    "level": "initial"
                 }
             ]
         },
         {
+            "id": "academic",
             "order": 10,
-            "name": "Accademico",
+            "name": {
+                "en": "Academic",
+                "it": "Accademico"
+            },
             "items": [
                 {
-                    "name": "Comprensione della Storia/Lezione",
-                    "level": 1
+                    "id": "academic/understanding-the-story-lesson",
+                    "name": {
+                        "en": "Understanding The Story/Lesson",
+                        "it": "Comprensione della Storia/Lezione"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Lettura globale parole frequenti",
-                    "level": 2
+                    "id": "academic/global-reading-of-frequent-words",
+                    "name": {
+                        "en": "Global Reading of Frequent Words",
+                        "it": "Lettura globale parole frequenti"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Lettura fonetica",
-                    "level": 2
+                    "id": "academic/phonetic-reading",
+                    "name": {
+                        "en": "Phonetic reading",
+                        "it": "Lettura fonetica"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Scrive sotto dettatura (fonemi)",
-                    "level": 2
+                    "id": "academic/can-write-under-dictation-phonemes",
+                    "name": {
+                        "en": "Can Write Under Dictation (phonemes)",
+                        "it": "Scrive sotto dettatura (fonemi)"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Abbina fonema-parola",
-                    "level": 2
+                    "id": "academic/can-match-phoneme-word",
+                    "name": {
+                        "en": "Can Match phoneme-word",
+                        "it": "Abbina fonema-parola"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Legge I fonemi",
-                    "level": 2
+                    "id": "academic/can-read-phonemes",
+                    "name": {
+                        "en": "Can Read phonemes",
+                        "it": "Legge I fonemi"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Consegna quantità specifica",
-                    "level": 2
+                    "id": "academic/can-delivery-specific-quantity",
+                    "name": {
+                        "en": "Can Delivery specific quantity",
+                        "it": "Consegna quantità specifica"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Contare intraverbale",
-                    "level": 2
+                    "id": "academic/intra-verbal-counting",
+                    "name": {
+                        "en": "Intra-verbal counting",
+                        "it": "Contare intra-verbale"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Abbina quantità a numero",
-                    "level": 2
+                    "id": "academic/can-match-quantity-to-number",
+                    "name": {
+                        "en": "Can Match quantity to number",
+                        "it": "Abbina quantità a numero"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Legge I numeri",
-                    "level": 2
+                    "id": "academic/can-read-number",
+                    "name": {
+                        "en": "Can Read Number",
+                        "it": "Legge I numeri"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Conta Corrispondenza 1:1",
-                    "level": 2
+                    "id": "academic/can-count-1-1-correspondence",
+                    "name": {
+                        "en": "Can Count 1:1 Correspondence ",
+                        "it": "Conta Corrispondenza 1:1"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Seleziona/TACT forme",
-                    "level": 2
+                    "id": "academic/can-select-tact-shapes",
+                    "name": {
+                        "en": "Can Select/TACT shapes",
+                        "it": "Seleziona/TACT forme"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Copia lettere e numeri",
-                    "level": 2
+                    "id": "academic/can-copy-letters-and-numbers",
+                    "name": {
+                        "en": "Can Copy letters and numbers",
+                        "it": "Copia lettere e numeri"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Segue il tratteggio",
-                    "level": 2
+                    "id": "academic/can-follow-the-hatching",
+                    "name": {
+                        "en": "Can Follow the hatching",
+                        "it": "Segue il tratteggio"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Disegna su istruzione",
-                    "level": 1
+                    "id": "academic/can-draw-on-instruction",
+                    "name": {
+                        "en": "Can draw on instruction",
+                        "it": "Disegna su istruzione"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Colora",
-                    "level": 1
+                    "id": "academic/can-color",
+                    "name": {
+                        "en": "Can Color",
+                        "it": "Colora"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Copia disegni semplici",
-                    "level": 1
+                    "id": "academic/can-copy-simple-drawings",
+                    "name": {
+                        "en": "Can Copy simple drawings",
+                        "it": "Copia disegni semplici"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Imita tratti semplici",
-                    "level": 1
+                    "id": "academic/can-imitate-simple-strokes",
+                    "name": {
+                        "en": "Can Imitate simple strokes",
+                        "it": "Imita tratti semplici"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Scarabocchia",
-                    "level": 1
+                    "id": "academic/scribble",
+                    "name": {
+                        "en": "Scribble",
+                        "it": "Scarabocchia"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Impugnatura",
-                    "level": 1
+                    "id": "academic/handling",
+                    "name": {
+                        "en": "Handling",
+                        "it": "Impugnatura"
+                    },
+                    "level": "initial"
                 }
             ]
         },
         {
+            "id": "social",
             "order": 11,
-            "name": "Sociale",
+            "name": {
+                "en": "Social",
+                "it": "Sociale"
+            },
             "items": [
                 {
-                    "name": "Empatia e Pro Sociale",
-                    "level": 1
+                    "id": "social/empathy-and-pro-Social",
+                    "name": {
+                        "en": "Empathy and Pro Social",
+                        "it": "Empatia e Pro Sociale"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Risponde ai segnali Non Verbali",
-                    "level": 1
+                    "id": "social/responds-to-non-verbal-signals",
+                    "name": {
+                        "en": "Responds to Non-Verbal Signals",
+                        "it": "Risponde ai segnali Non Verbali"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Inizia una Conversazione",
-                    "level": 1
+                    "id": "social/can-start-a-conversation",
+                    "name": {
+                        "en": "Can Start a Conversation",
+                        "it": "Inizia una Conversazione"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Mantiene una Conversazione",
-                    "level": 1
+                    "id": "social/can-maintain-a-conversation",
+                    "name": {
+                        "en": "Can Maintain a Conversation",
+                        "it": "Mantiene una Conversazione"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Agisce su Gesti",
-                    "level": 1
+                    "id": "social/acts-on-gestures",
+                    "name": {
+                        "en": "Acts on Gestures",
+                        "it": "Agisce su Gesti"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Offre Istruzioni",
-                    "level": 1
+                    "id": "social/offers-instructions",
+                    "name": {
+                        "en": "Offers Instructions",
+                        "it": "Offre Istruzioni"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Esprime Confusione",
-                    "level": 1
+                    "id": "social/expresses-confusion",
+                    "name": {
+                        "en": "Expresses Confusion",
+                        "it": "Esprime Confusione"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Estende i Commenti",
-                    "level": 1
+                    "id": "social/extends-comments",
+                    "name": {
+                        "en": "Extends Comments",
+                        "it": "Estende i Commenti"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Consegna Messaggio",
-                    "level": 2
+                    "id": "social/deliveries-message",
+                    "name": {
+                        "en": "Deliveries Message",
+                        "it": "Consegna Messaggio"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Saluta per Primo",
-                    "level": 2
+                    "id": "social/says-hello-first",
+                    "name": {
+                        "en": "Says hello first",
+                        "it": "Saluta per Primo"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Reciproca Commenti",
-                    "level": 2
+                    "id": "social/reciprocates-comments",
+                    "name": {
+                        "en": "Reciprocates Comments",
+                        "it": "Reciproca Commenti"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Attenzione Condivisa per Iniziativa (mostrare)",
-                    "level": 2
+                    "id": "social/shared-attention-for-initiative-show",
+                    "name": {
+                        "en": "Shared Attention for Initiative (show)",
+                        "it": "Attenzione Condivisa per Iniziativa (mostrare)"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Risponde al Saluto",
-                    "level": 2
+                    "id": "social/responds-to-the-greeting",
+                    "name": {
+                        "en": "Responds to the Greeting",
+                        "it": "Risponde al Saluto"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Attenzione Condivisa Rispondente",
-                    "level": 2
+                    "id": "social/shared-attention-respondent",
+                    "name": {
+                        "en": "Shared Attention Respondent",
+                        "it": "Attenzione Condivisa Rispondente"
+                    },
+                    "level": "intermediate"
                 },
                 {
-                    "name": "Si gira al nome",
-                    "level": 3
+                    "id": "social/he-she-turns-to-the-name",
+                    "name": {
+                        "en": "He/She turns to the name",
+                        "it": "Si gira al nome"
+                    },
+                    "level": "initial"
                 },
                 {
-                    "name": "Contatto Oculare in Richiesta",
-                    "level": 3
+                    "id": "social/eye-contact-on-request",
+                    "name": {
+                        "en": "Eye Contact on Request",
+                        "it": "Contatto Oculare in Richiesta"
+                    },
+                    "level": "initial"
                 }
             ]
         },
         {
+            "id": "abstract-reasoning",
             "order": 12,
-            "name": "Ragionamento Astratto",
+            "name": {
+                "en": "Abstract Reasoning",
+                "it": "Ragionamento Astratto"
+            },
             "items": [
                 {
-                    "name": "Inferenze",
-                    "level": 1,
-                    "subcategory": "Prospettiva altrui"
+                    "id": "abstract-reasoning/inferences",
+                    "name": {
+                        "en": "Inferences",
+                        "it": "Inferenze"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "abstract-reasoning/category/other-people-s-perspective",
+                        "name": {
+                            "en": "Other people's perspective",
+                            "it": "Prospettiva altrui"
+                        }
+                    }
                 },
                 {
-                    "name": "Previsioni",
-                    "level": 1,
-                    "subcategory": "Prospettiva altrui"
+                    "id": "abstract-reasoning/foresight",
+                    "name": {
+                        "en": "Foresight",
+                        "it": "Previsioni"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "abstract-reasoning/category/other-people-s-perspective",
+                        "name": {
+                            "en": "Other people's perspective",
+                            "it": "Prospettiva altrui"
+                        }
+                    }
                 },
                 {
-                    "name": "Assurdità",
-                    "level": 1,
-                    "subcategory": "Prospettiva altrui"
+                    "id": "abstract-reasoning/absurdity",
+                    "name": {
+                        "en": "Absurdity",
+                        "it": "Assurdità"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "abstract-reasoning/category/other-people-s-perspective",
+                        "name": {
+                            "en": "Other people's perspective",
+                            "it": "Prospettiva altrui"
+                        }
+                    }
                 },
                 {
-                    "name": "Spiega l'intruso",
-                    "level": 1,
-                    "subcategory": "Sequenze Temporali"
+                    "id": "abstract-reasoning/explain-the-intruder",
+                    "name": {
+                        "en": "Explain the intruder",
+                        "it": "Spiega l'intruso"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "abstract-reasoning/category/time-sequences",
+                        "name": {
+                            "en": "Time Sequences",
+                            "it": "Sequenze Temporali"
+                        }
+                    }
                 },
                 {
-                    "name": "Emozioni (proprie e altrui)",
-                    "level": 1,
-                    "subcategory": "Sequenze Temporali"
+                    "id": "abstract-reasoning/emotions-own-and-others",
+                    "name": {
+                        "en": "Emotions (own and others)",
+                        "it": "Emozioni (proprie e altrui)"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "abstract-reasoning/category/time-sequences",
+                        "name": {
+                            "en": "Time Sequences",
+                            "it": "Sequenze Temporali"
+                        }
+                    }
                 },
                 {
-                    "name": "Termini Temporali",
-                    "level": 1,
-                    "subcategory": "Sequenze Temporali"
+                    "id": "abstract-reasoning/time-terms",
+                    "name": {
+                        "en": "Time Terms",
+                        "it": "Termini Temporali"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "abstract-reasoning/category/time-sequences",
+                        "name": {
+                            "en": "Time Sequences",
+                            "it": "Sequenze Temporali"
+                        }
+                    }
                 },
                 {
-                    "name": "Perché",
-                    "level": 1
+                    "id": "abstract-reasoning/why",
+                    "name": {
+                        "en": "Why",
+                        "it": "Perché"
+                    },
+                    "level": "advanced"
                 },
                 {
-                    "name": "Similitudini e Differenze",
-                    "level": 1
+                    "id": "abstract-reasoning/similarities-and-differences",
+                    "name": {
+                        "en": "Similarities and Differences",
+                        "it": "Similitudini e Differenze"
+                    },
+                    "level": "advanced"
                 }
             ]
         }
