@@ -49,10 +49,10 @@
                     "level": "initial"
                 },
                 {
-                    "id": "visuo-spatial/2d-matching",
+                    "id": "visuo-spatial/3d-2d-matching",
                     "name": {
-                        "en": "2D Matching",
-                        "it": "Abbinamenti 2D"
+                        "en": "3D/2D Matching",
+                        "it": "Abbinamenti 3D/2D"
                     },
                     "level": "initial",
                     "subcategory": {
@@ -64,10 +64,10 @@
                     }
                 },
                 {
-                    "id": "visuo-spatial/3d-2d-matching",
+                    "id": "visuo-spatial/2d-matching",
                     "name": {
-                        "en": "3D/2D Matching",
-                        "it": "Abbinamenti 3D/2D"
+                        "en": "2D Matching",
+                        "it": "Abbinamenti 2D"
                     },
                     "level": "initial",
                     "subcategory": {
