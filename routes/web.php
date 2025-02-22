@@ -17,4 +17,22 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::view(
+    '/ebic',
+    'ebic',
+    [
+        'content' => (new \App\Repositories\EBICDataRepository(json_decode(
+            file_get_contents(
+                database_path('datasets/ebic.json')
+            ), true
+        ),
+            json_decode(
+                file_get_contents(
+                    database_path('datasets/ebic-table.json')
+                ), true
+            )
+        ))
+    ]
+);
+
 require __DIR__.'/auth.php';
