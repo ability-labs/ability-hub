@@ -17,17 +17,17 @@
                     "level": "intermediate"
                 },
                 {
-                    "id": "visuo-spatial/associazioni",
+                    "id": "visuo-spatial/associations",
                     "name": {
-                        "en": "Associazioni",
+                        "en": "Associations",
                         "it": "Associazioni"
                     },
                     "level": "intermediate"
                 },
                 {
-                    "id": "visuo-spatial/abbinamenti-non-identici",
+                    "id": "visuo-spatial/non-identical-matching",
                     "name": {
-                        "en": "Abbinamenti non identici",
+                        "en": "Non-identical matching",
                         "it": "Abbinamenti non identici"
                     },
                     "level": "initial"
@@ -144,9 +144,9 @@
                     "level": "intermediate"
                 },
                 {
-                    "id": "motor-imitation/follow-the-leader",
+                    "id": "motor-imitation/follow-the-head",
                     "name": {
-                        "en": "Follow the leader",
+                        "en": "Follow the head",
                         "it": "Segui il capo"
                     },
                     "level": "initial",
@@ -1440,7 +1440,7 @@
                     "level": "advanced"
                 },
                 {
-                    "id": "intra-verbal/intra-verbal-spider-Web",
+                    "id": "intra-verbal/intra-verbal-spider-web",
                     "name": {
                         "en": "Intra-Verbal Spider Web",
                         "it": "Ragnatela Intra-Verbale"
@@ -1504,7 +1504,7 @@
                     "level": "intermediate"
                 },
                 {
-                    "id": "intra-verbal/lList-parts-on-item",
+                    "id": "intra-verbal/list-parts-on-item",
                     "name": {
                         "en": "List Parts on Item",
                         "it": "Elenca Parti su Oggetto"
@@ -1519,9 +1519,9 @@
                     }
                 },
                 {
-                    "id": "intra-verbal/dice-funzione-su-oggetto",
+                    "id": "intra-verbal/says-function-on-item",
                     "name": {
-                        "en": "Dice Funzione su Oggetto",
+                        "en": "Says Function on Item",
                         "it": "Dice Funzione su Oggetto"
                     },
                     "level": "intermediate",
@@ -1792,7 +1792,7 @@
             },
             "items": [
                 {
-                    "id": "social/empathy-and-pro-Social",
+                    "id": "social/empathy-and-pro-social",
                     "name": {
                         "en": "Empathy and Pro Social",
                         "it": "Empatia e Pro Sociale"
