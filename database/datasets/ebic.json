@@ -538,7 +538,7 @@
                     "level": "intermediate"
                 },
                 {
-                    "id": "mand/plurals",
+                    "id": "multi/plurals",
                     "name": {
                         "en": "Plurals",
                         "it": "Plurali"
@@ -546,7 +546,7 @@
                     "level": "intermediate"
                 },
                 {
-                    "id": "mand/comparisons-comparatives",
+                    "id": "multi/comparisons-comparatives",
                     "name": {
                         "en": "Comparisons/comparatives",
                         "it": "Paragoni/comparativi"
@@ -554,7 +554,7 @@
                     "level": "intermediate"
                 },
                 {
-                    "id": "mand/place-adverbs-and-prepositions",
+                    "id": "multi/place-adverbs-and-prepositions",
                     "name": {
                         "en": "Place adverbs and prepositions",
                         "it": "Avverbi di luogo e preposizioni"
@@ -618,6 +618,14 @@
                     "level": "intermediate"
                 },
                 {
+                    "id": "multi/colors",
+                    "name": {
+                        "en": "Colors",
+                        "it": "Colori"
+                    },
+                    "level": "initial"
+                },
+                {
                     "id": "mand/stop-an-activity",
                     "name": {
                         "en": "Stop an activity",
@@ -676,12 +684,12 @@
             },
             "items": [
                 {
-                    "id": "listener/comprehension-of-story-lesson",
+                    "id": "multi/understanding-the-story-lesson",
                     "name": {
-                        "en": "Comprehension Of Story/Lesson",
+                        "en": "Understanding the Story/Lesson",
                         "it": "Comprensione della Storia/Lezione"
                     },
-                    "level": "initial"
+                    "level": "advanced"
                 },
                 {
                     "id": "listener/pronominal-inversion",
@@ -744,7 +752,7 @@
                     }
                 },
                 {
-                    "id": "listener/professions",
+                    "id": "multi/professions",
                     "name": {
                         "en": "Professions",
                         "it": "Mestieri"
@@ -752,7 +760,7 @@
                     "level": "intermediate"
                 },
                 {
-                    "id": "listener/plurals",
+                    "id": "multi/plurals",
                     "name": {
                         "en": "Plurals",
                         "it": "Plurali"
@@ -760,7 +768,7 @@
                     "level": "intermediate"
                 },
                 {
-                    "id": "listener/tense",
+                    "id": "multi/tense",
                     "name": {
                         "en": "Tense",
                         "it": "Tempo"
@@ -768,7 +776,7 @@
                     "level": "intermediate"
                 },
                 {
-                    "id": "listener/genre",
+                    "id": "multi/genre",
                     "name": {
                         "en": "Genre",
                         "it": "Genere"
@@ -776,7 +784,7 @@
                     "level": "intermediate"
                 },
                 {
-                    "id": "listener/comparisons-comparatives",
+                    "id": "multi/comparisons-comparatives",
                     "name": {
                         "en": "Comparisons/comparatives",
                         "it": "Paragoni/comparativi"
@@ -784,7 +792,7 @@
                     "level": "intermediate"
                 },
                 {
-                    "id": "listener/place-adverbs-and-prepositions",
+                    "id": "multi/place-adverbs-and-prepositions",
                     "name": {
                         "en": "Place Adverbs and Prepositions",
                         "it": "Avverbi di luogo e preposizioni"
@@ -852,7 +860,7 @@
                     }
                 },
                 {
-                    "id": "listener/colors",
+                    "id": "multi/colors",
                     "name": {
                         "en": "Colors",
                         "it": "Colori"
@@ -970,7 +978,7 @@
             },
             "items": [
                 {
-                    "id": "tact/understanding-the-story-lesson",
+                    "id": "multi/understanding-the-story-lesson",
                     "name": {
                         "en": "Understanding the Story/Lesson",
                         "it": "Comprensione della Storia/Lezione"
@@ -1083,7 +1091,7 @@
                     }
                 },
                 {
-                    "id": "tact/professions",
+                    "id": "multi/professions",
                     "name": {
                         "en": "Professions",
                         "it": "Mestieri"
@@ -1091,7 +1099,7 @@
                     "level": "intermediate"
                 },
                 {
-                    "id": "tact/plurals",
+                    "id": "multi/plurals",
                     "name": {
                         "en": "Plurals",
                         "it": "Plurali"
@@ -1106,7 +1114,7 @@
                     }
                 },
                 {
-                    "id": "tact/tense",
+                    "id": "multi/tense",
                     "name": {
                         "en": "Tense",
                         "it": "Tempo"
@@ -1121,7 +1129,7 @@
                     }
                 },
                 {
-                    "id": "tact/genre",
+                    "id": "multi/genre",
                     "name": {
                         "en": "Genre",
                         "it": "Genere"
@@ -1136,7 +1144,7 @@
                     }
                 },
                 {
-                    "id": "tact/comparisons-comparatives",
+                    "id": "multi/comparisons-comparatives",
                     "name": {
                         "en": "Comparisons/comparatives",
                         "it": "Paragoni/comparativi"
@@ -1151,7 +1159,7 @@
                     }
                 },
                 {
-                    "id": "tact/place-adverbs-and-propositions",
+                    "id": "multi/place-adverbs-and-prepositions",
                     "name": {
                         "en": "Place Adverbs and Propositions",
                         "it": "Avverbi di luogo e preposizioni"
@@ -1271,7 +1279,7 @@
                     }
                 },
                 {
-                    "id": "tact/colors",
+                    "id": "multi/colors",
                     "name": {
                         "en": "Colors",
                         "it": "Colori"
@@ -1342,12 +1350,20 @@
             },
             "items": [
                 {
-                    "id": "listener-for-fca/understanding-the-story-lesson",
+                    "id": "multi/understanding-the-story-lesson",
                     "name": {
                         "en": "Understanding the Story/Lesson",
                         "it": "Comprensione della Storia/Lezione"
                     },
                     "level": "advanced"
+                },
+                {
+                    "id": "multi/professions",
+                    "name": {
+                        "en": "Professions",
+                        "it": "Mestieri"
+                    },
+                    "level": "intermediate"
                 },
                 {
                     "id": "listener-for-fca/select-by-class",
@@ -1392,7 +1408,7 @@
             },
             "items": [
                 {
-                    "id": "intra-verbal/understanding-the-story-lesson",
+                    "id": "multi/understanding-the-story-lesson",
                     "name": {
                         "en": "Understanding the Story/Lesson",
                         "it": "Comprensione della Storia/Lezione"
@@ -1622,9 +1638,9 @@
             },
             "items": [
                 {
-                    "id": "academic/understanding-the-story-lesson",
+                    "id": "multi/understanding-the-story-lesson",
                     "name": {
-                        "en": "Understanding The Story/Lesson",
+                        "en": "Understanding the Story/Lesson",
                         "it": "Comprensione della Storia/Lezione"
                     },
                     "level": "advanced"
