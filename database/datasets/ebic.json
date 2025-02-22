@@ -46,7 +46,14 @@
                         "en": "Sorting",
                         "it": "Sorting"
                     },
-                    "level": "initial"
+                    "level": "initial",
+                    "subcategory": {
+                        "id": "visuo-spatial/category/generalized-matching",
+                        "name": {
+                            "en": "Generalized Matching",
+                            "it": "Abbinamento Generalizzato"
+                        }
+                    }
                 },
                 {
                     "id": "visuo-spatial/3d-2d-matching",
