@@ -2006,6 +2006,21 @@
                     }
                 },
                 {
+                    "id": "abstract-reasoning/explain-the-error",
+                    "name": {
+                        "en": "Explain the error",
+                        "it": "Spiega l'errore"
+                    },
+                    "level": "advanced",
+                    "subcategory": {
+                        "id": "abstract-reasoning/category/time-sequences",
+                        "name": {
+                            "en": "Time Sequences",
+                            "it": "Sequenze Temporali"
+                        }
+                    }
+                },
+                {
                     "id": "abstract-reasoning/emotions-own-and-others",
                     "name": {
                         "en": "Emotions (own and others)",
