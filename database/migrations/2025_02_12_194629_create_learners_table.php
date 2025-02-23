@@ -15,7 +15,12 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('first_name');
             $table->string('last_name');
-            $table->timestamps();
+            $table->dateTime('birth_date');
+
+            $table->foreignUuid('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->timestamps();
         });
     }
