@@ -1,3 +1,5 @@
+@inject('content', 'App\Repositories\EBICDataRepository')
+
 <style>
     .rotate {
 
@@ -25,11 +27,11 @@
 </style>
 
 
-<table cellpadding="0" cellspacing="0">
+<table class="table-auto">
     <thead>
     <tr>
         @foreach($content->data['categories'] as $category)
-            <th style="text-transform: uppercase; border: 1px solid black; font-family: 'arial',serif;  background-color: #3399ff; ">{{ $category['name']['it'] }}</th>
+            <th>{{ $category['name'][config('app.locale')] }}</th>
         @endforeach
     </tr>
     </thead>
@@ -60,11 +62,12 @@
                 <td id="{{$cell['type'] === 'filled' ? $cell['content']['id'] : 'empty-'.$cell['xCoordinate'].'-'.$cell['yCoordinate']}}"
                     data-original-color="{{ $color }}"
                     data-type="{{ $cell['type'] }}"
-                    style="background-color: {{ $color }}; border: 1px solid black; text-align: center; font-size: 0.75em; font-weight: bold; font-family: 'arial',serif"
+                    class="text-xs text-center border"
+                    style="background-color: {{ $color }}"
                     colspan="{{ $cell['colspan'] }}" rowspan="{{ $cell['rowspan'] }}">
                     @if($cell['type'] === 'filled')
-                        <p title="{{$cell['content']['name']['it']}}" style="width: 100%; height: 32px; overflow: hidden">
-                            {{$cell['content']['name']['it']}}
+                        <p title="{{$cell['content']['name'][config('app.locale')]}}">
+                            {{$cell['content']['name'][config('app.locale')]}}
                         </p>
                     @endif
                 </td>
@@ -75,7 +78,7 @@
     <thead>
     <tr>
         @foreach($content->data['categories'] as $category)
-            <th style="text-transform: uppercase; border: 1px solid black; font-family: 'arial',serif; background-color: #3399ff; ">{{ $category['name']['it'] }}</th>
+            <th>{{ $category['name'][config('app.locale')] }}</th>
         @endforeach
     </tr>
     </thead>

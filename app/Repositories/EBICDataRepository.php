@@ -7,11 +7,24 @@ use Illuminate\Support\Collection;
 class EBICDataRepository
 {
 
+    public array $data;
+
+    public array $table;
+
     public function __construct(
-        public $data,
-        public $table
     )
     {
+        $this->data = json_decode(
+            file_get_contents(
+                database_path('datasets/ebic.json')
+            ), true
+        );
+
+        $this->table =  json_decode(
+            file_get_contents(
+                database_path('datasets/ebic-table.json')
+            ), true
+        );
     }
 
     public function getTableContent(): Collection
