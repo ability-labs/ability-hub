@@ -73,16 +73,24 @@ class LearnerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Learner $learner)
+    public function show(Request $request, Learner $learner)
     {
+        if ($request->user()->cannot('view', $learner)) {
+            abort(403);
+        }
+
         return view('learners.show', ['learner' => $learner]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Learner $learner)
+    public function edit(Request $request, Learner $learner)
     {
+        if ($request->user()->cannot('update', $learner)) {
+            abort(403);
+        }
+
         return view('learners.edit', ['learner' => $learner]);
     }
 
@@ -91,6 +99,10 @@ class LearnerController extends Controller
      */
     public function update(UpdateLearnerRequest $request, Learner $learner, UpdateLearnerAction $updateLearnerAction)
     {
+        if ($request->user()->cannot('update', $learner)) {
+            abort(403);
+        }
+
         $attributes = $request->validate(self::VALIDATION_RULES);
         $updateLearnerAction->execute($learner, $attributes);
 
@@ -100,8 +112,12 @@ class LearnerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Learner $learner)
+    public function destroy(Request $request, Learner $learner)
     {
+        if ($request->user()->cannot('forceDelete', $learner)) {
+            abort(403);
+        }
+
         $learner->delete();
 
         return redirect()->route('learners.index')->with('success');

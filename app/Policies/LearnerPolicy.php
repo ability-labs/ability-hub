@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\UserType;
 use App\Models\Learner;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -13,7 +14,7 @@ class LearnerPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->type === UserType::ADMINISTRATOR;
     }
 
     /**
@@ -21,7 +22,7 @@ class LearnerPolicy
      */
     public function view(User $user, Learner $learner): bool
     {
-        return false;
+        return $learner->user_id === $user->id;
     }
 
     /**
@@ -29,7 +30,7 @@ class LearnerPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +38,7 @@ class LearnerPolicy
      */
     public function update(User $user, Learner $learner): bool
     {
-        return false;
+        return $learner->user_id === $user->id;
     }
 
     /**
@@ -45,7 +46,7 @@ class LearnerPolicy
      */
     public function delete(User $user, Learner $learner): bool
     {
-        return false;
+        return $learner->user_id === $user->id;
     }
 
     /**
@@ -53,7 +54,7 @@ class LearnerPolicy
      */
     public function restore(User $user, Learner $learner): bool
     {
-        return false;
+        return $learner->user_id === $user->id;
     }
 
     /**
@@ -61,6 +62,6 @@ class LearnerPolicy
      */
     public function forceDelete(User $user, Learner $learner): bool
     {
-        return false;
+        return $learner->user_id === $user->id;
     }
 }
