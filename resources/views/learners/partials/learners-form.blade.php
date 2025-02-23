@@ -40,7 +40,10 @@
         @enderror
     </div>
 
-    <div class="flex justify-end">
+    <div class="flex justify-between">
+        <a href="{{ route('operators.index') }}" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+            {{ __('Back') }}
+        </a>
         <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
             {{ $isEdit ? __('Update') : __('Create') }}
         </button>
