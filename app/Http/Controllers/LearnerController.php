@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\StoreLearnerAction;
-use App\Actions\UpdateLearnerAction;
+use App\Actions\Learners\StoreLearnerAction;
+use App\Actions\Learners\UpdateLearnerAction;
 use App\Http\Requests\StoreLearnerRequest;
 use App\Http\Requests\UpdateLearnerRequest;
 use App\Models\Learner;

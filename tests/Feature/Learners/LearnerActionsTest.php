@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Learners;
 
-use App\Actions\StoreLearnerAction;
-use App\Actions\UpdateLearnerAction;
+use App\Actions\Learners\StoreLearnerAction;
+use App\Actions\Learners\UpdateLearnerAction;
 use App\Models\Learner;
 use Tests\TestCase;
 
