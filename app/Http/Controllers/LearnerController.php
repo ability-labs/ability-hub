@@ -36,7 +36,7 @@ class LearnerController extends Controller
         $sort = array_key_exists('sort', $params) ? $params['sort'] : 'created_at';
         $sort_order = array_key_exists('sort', $params) ? $params['sort_order'] : 'DESC';
 
-        $query = Learner::query()
+        $query = $request->user()->learners()
             ->orderBy($sort, $sort_order);
 
         if (array_key_exists('search', $params)) {
