@@ -6,6 +6,7 @@ use Database\Factories\DisciplineFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Translatable\HasTranslations;
 
 class Discipline extends Model
@@ -16,4 +17,9 @@ class Discipline extends Model
     public $translatable = [
         'name'
     ];
+
+    public function operators(): BelongsToMany
+    {
+        return $this->belongsToMany(Operator::class);
+    }
 }

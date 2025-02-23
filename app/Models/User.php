@@ -54,4 +54,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Learner::class);
     }
+
+    public function operators(): HasMany
+    {
+        return $this->hasMany(Operator::class);
+    }
 }
