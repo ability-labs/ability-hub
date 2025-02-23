@@ -34,6 +34,7 @@
             <tr>
                 <th class="px-6 py-3 border-b border-gray-200">{{ __('Firstname') }}</th>
                 <th class="px-6 py-3 border-b border-gray-200">{{ __('Lastname') }}</th>
+                <th class="px-6 py-3 border-b border-gray-200">{{ __('Age') }}</th>
                 <th class="px-6 py-3 border-b border-gray-200">
                     @if(in_array('birth_date', $sortable_fields))
                         <a href="{{ route('learners.index', array_merge(request()->all(), [
@@ -80,6 +81,7 @@
                 <tr class="hover:bg-gray-100 dark:hover:bg-gray-600">
                     <td class="px-6 py-4 border-b border-gray-200">{{ $learner->first_name }}</td>
                     <td class="px-6 py-4 border-b border-gray-200">{{ $learner->last_name }}</td>
+                    <td class="px-6 py-4 border-b border-gray-200">{{ $learner->age }}</td>
                     <td class="px-6 py-4 border-b border-gray-200">
                         {{ \Carbon\Carbon::parse($learner->birth_date)->format('d/m/Y') }}
                     </td>
