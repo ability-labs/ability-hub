@@ -12,7 +12,8 @@
                     @include('appointments.partials.calendar', [
                         'events' => $events,
                         'operators' => $operators,
-                        'learners'  => $learners
+                        'learners'  => $learners,
+                        'showFilters' => true,
                     ])
                 </div>
             </div>

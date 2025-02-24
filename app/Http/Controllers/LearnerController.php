@@ -6,6 +6,8 @@ use App\Actions\Learners\StoreLearnerAction;
 use App\Actions\Learners\UpdateLearnerAction;
 use App\Http\Requests\StoreLearnerRequest;
 use App\Http\Requests\UpdateLearnerRequest;
+use App\Models\Appointment;
+use App\Models\Discipline;
 use App\Models\Learner;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -75,11 +77,21 @@ class LearnerController extends Controller
      */
     public function show(Request $request, Learner $learner)
     {
-        if ($request->user()->cannot('view', $learner)) {
+        $user = $request->user();
+        if ($user->cannot('view', $learner)) {
             abort(403);
         }
 
-        return view('learners.show', ['learner' => $learner]);
+        $user->load(['learners', 'operators']);
+
+        return view('learners.show', [
+            'learner' => $learner->load('appointments'),
+            'events' => $learner->appointments->map(fn (Appointment $appointment) => $appointment->toFullCalendar()),
+
+            'learners' => $user->learners,
+            'operators' => $user->operators->load('disciplines'),
+            'disciplines' => Discipline::all()
+        ]);
     }
 
     /**

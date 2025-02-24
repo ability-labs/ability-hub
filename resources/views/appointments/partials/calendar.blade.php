@@ -1,7 +1,8 @@
 <!-- Componente Alpine per il calendario e i filtri -->
 <div x-data="calendarComponent()">
     <!-- Toolbar per i filtri -->
-    <div class="mb-4 border rounded-md">
+    @if($showFilters)
+        <div class="mb-4 border rounded-md">
         <div class="bg-gray-800 border-collapse rounded-md text-white flex space-x-2
         justify-start items-center px-4 py-2 bg-gray-100 cursor-pointer"
              @click="showFilters = !showFilters">
@@ -83,6 +84,7 @@
             </div>
         </div>
     </div>
+    @endif
     <!-- Calendario -->
     <div id="calendar"></div>
 

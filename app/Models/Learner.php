@@ -43,4 +43,9 @@ class Learner extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function appointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class);
+    }
 }
