@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOperatorRequest;
 use App\Http\Requests\UpdateOperatorRequest;
+use App\Models\Appointment;
 use App\Models\Discipline;
 use App\Models\Operator;
 use Illuminate\Http\Request;
@@ -86,11 +87,21 @@ class OperatorController extends Controller
      */
     public function show(Request $request, Operator $operator)
     {
-        if ($request->user()->cannot('view', $operator)) {
+        $user = $request->user();
+        if ($user->cannot('view', $operator)) {
             abort(403);
         }
 
-        return view('operators.show', compact('operator'));
+        $user->load(['learners', 'operators']);
+
+        return view('operators.show', [
+            'operator' => $operator->load('appointments'),
+            'events' => $operator->appointments->map(fn (Appointment $appointment) => $appointment->toFullCalendar()),
+
+            'learners' => $user->learners,
+            'operators' => $user->operators->load('disciplines'),
+            'disciplines' => Discipline::all()
+        ]);
     }
 
     /**
