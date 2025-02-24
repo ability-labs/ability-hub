@@ -18,7 +18,8 @@ class DisciplineFactory extends Factory
     {
         return [
             'slug' => $this->faker->slug(),
-            'name' => $this->faker->word()
+            'name' => $this->faker->word(),
+            'color' => $this->faker->hexColor(),
         ];
     }
 }

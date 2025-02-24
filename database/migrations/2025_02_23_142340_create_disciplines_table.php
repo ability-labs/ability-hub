@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('slug');
             $table->json('name');
+            $table->string('color')->nullable();
             $table->timestamps();
         });
     }

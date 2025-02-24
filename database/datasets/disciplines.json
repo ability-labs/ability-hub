@@ -4,27 +4,31 @@
         "name": {
             "it": "ABA (Analisi del Comportamento Applicata)",
             "en": "ABA (Applied Behavior Analysis)"
-        }
+        },
+        "color": "#ec0a6d"
     },
     {
         "slug": "speech-therapy",
         "name": {
             "it": "Logopedia",
             "en": "Speech Therapy"
-        }
+        },
+        "color": "#f47216"
     },
     {
         "slug": "psychomotor-therapy",
         "name": {
             "it": "Psico-Motricità",
             "en": "Psychomotor Therapy"
-        }
+        },
+        "color": "#80cc2a"
     },
     {
         "slug": "music-therapy",
         "name": {
             "it": "Musicoterapia",
             "en": "Music Therapy"
-        }
+        },
+        "color": "#f3634e"
     }
 ]
