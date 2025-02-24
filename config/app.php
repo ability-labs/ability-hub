@@ -43,16 +43,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Application URL
+    | Registration Mode
     |--------------------------------------------------------------------------
     |
-    | This URL is used by the console to properly generate URLs when using
-    | the Artisan command line tool. You should set this to the root of
-    | the application so that it's available within Artisan commands.
+    | This option determines how user registration is handled. If set to true,
+    | registration is open and any user can sign up freely. If set to false,
+    | a valid registration code is required to complete the sign-up process.
+    |
+    | Configure this behavior by setting the APP_REGISTRATION_OPEN environment
+    | variable.
     |
     */
-
-    'url' => env('APP_URL', 'http://localhost'),
+    'registration_open' => env('APP_REGISTRATION_OPEN', true),
 
     /*
     |--------------------------------------------------------------------------
