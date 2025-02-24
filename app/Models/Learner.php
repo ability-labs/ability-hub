@@ -14,6 +14,10 @@ class Learner extends Model
     /** @use HasFactory<\Database\Factories\LearnerFactory> */
     use HasFactory, HasUuids;
 
+    protected $appends = [
+        'full_name'
+    ];
+
     protected $casts = [
         'birth_date' => 'datetime'
     ];
@@ -27,6 +31,11 @@ class Learner extends Model
         return ($diff->years >= 3) ?
             $diff->forHumans(['parts' => 1])
             : $diff->forHumans(['parts' => 2]);
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        return $this->first_name . ' ' . $this->last_name;
     }
 
     public function user(): BelongsTo
