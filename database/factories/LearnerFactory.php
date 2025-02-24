@@ -21,7 +21,7 @@ class LearnerFactory extends Factory
             'user_id' => User::factory(),
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
-            'birth_date' => $this->faker->dateTimeThisCentury()
+            'birth_date' => $this->faker->dateTimeThisDecade()
         ];
     }
 }
