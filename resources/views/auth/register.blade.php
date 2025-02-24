@@ -20,7 +20,7 @@
             <!-- Registration Code -->
             <div class="mt-4">
                 <x-input-label for="code" :value="__('Registration Code')" />
-                <x-text-input id="code" class="block mt-1 w-full" type="text" name="code" :value="old('code')" required autocomplete="code" />
+                <x-text-input id="code" class="block mt-1 w-full" type="text" name="code" :value="$code ?? old('code')" required autocomplete="code" />
                 <x-input-error :messages="$errors->get('code')" class="mt-2" />
             </div>
         @endif

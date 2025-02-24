@@ -19,9 +19,10 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
-        return view('auth.register');
+        $request->validate(['code' => 'digits:6']);
+        return view('auth.register', ['code' => $request->get('code')]);
     }
 
     /**
