@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -23,7 +25,7 @@
 <body class="font-sans antialiased dark:bg-black dark:text-white/50">
 <div class="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
 
-    <div class="relative min-h-screen flex flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white">
+    <div class="relative min-h-screen flex flex-col items-center justify-center selection:bg-[#f6339a] selection:text-white">
         <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
             <header class="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
                 <div class="flex lg:justify-center lg:col-start-2">
@@ -35,17 +37,17 @@
                         @auth
                             <a href="{{ url('/dashboard') }}"
                                class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white">
-                                Dashboard
+                                {{__('Dashboard')}}
                             </a>
                         @else
                             <a href="{{ route('login') }}"
                                class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white">
-                                Log in
+                                {{ __('Login') }}
                             </a>
                             @if (Route::has('register'))
                                 <a href="{{ route('register') }}"
                                    class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white">
-                                    Register
+                                    {{__('Register')}}
                                 </a>
                             @endif
                         @endauth
@@ -55,24 +57,16 @@
             </header>
 
             <main class="mt-6">
-                <div class="space-y-6">
-                    <h1 class="text-3xl font-bold text-black dark:text-white">Welcome to Ability Hub</h1>
 
-                    <p class="text-sm/relaxed text-black dark:text-white">
-                        Ability Hub is a comprehensive suite of tools designed for the analysis and monitoring of skill development in the ABA (Applied Behavior Analysis) domain, tailored specifically for individuals with special needs.
-                    </p>
-
-                    <p class="text-sm/relaxed text-black dark:text-white">
-                        Our platform empowers educators, therapists, and intervention specialists to collect and analyze data, develop personalized training programs, and design dynamic learning paths that adapt to each user’s unique requirements.
-                    </p>
-
-                    <p class="text-sm/relaxed text-black dark:text-white">
-                        With real-time progress tracking, both students and their legal guardians can stay informed about academic and developmental milestones. This transparency fosters a collaborative environment where continuous improvement is prioritized.
-                    </p>
-
-                    <p class="text-sm/relaxed text-black dark:text-white">
-                        In addition, Ability Hub offers interactive services such as parent training modules, live streaming sessions, and a variety of engagement tools that enhance the learning experience and support ongoing intervention strategies.
-                    </p>
+                <h1 class="text-3xl font-bold text-black dark:text-white mb-16">
+                    {{ __('Welcome to :app', ['app' => config('app.name')]) }}
+                </h1>
+                <div class="grid grid-cols-2 gap-8">
+                    @foreach(\App\Models\ContentCard::query()->wherePage('welcome')->get() as $content)
+                        <div class="max-w-md mx-auto">
+                            <x-content-card :content="$content" />
+                        </div>
+                    @endforeach
                 </div>
             </main>
 

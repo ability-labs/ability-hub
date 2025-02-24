@@ -1,0 +1,46 @@
+[
+    {
+        "title": {
+            "it": "Una Piattaforma Moderna",
+            "en": "A Modern Platform"
+        },
+        "content": {
+            "it": "Ability Hub è una suite completa di strumenti progettata per l'analisi e il monitoraggio dello sviluppo delle competenze nel campo dell'ABA (Applied Behavior Analysis), su misura per le persone con bisogni speciali.",
+            "en": "Ability Hub is a comprehensive suite of tools designed for the analysis and monitoring of skill development in the ABA (Applied Behavior Analysis) domain, tailored specifically for individuals with special needs."
+        },
+        "page": "welcome"
+    },
+    {
+        "title": {
+            "it": "Programmi personalizzati",
+            "en": "Custom Programs"
+        },
+        "content": {
+            "it": "La nostra piattaforma permette a educatori, terapisti e specialisti dell'intervento di raccogliere e analizzare dati, sviluppare programmi di formazione personalizzati e progettare percorsi di apprendimento dinamici che si adattano alle esigenze uniche di ciascun utente.",
+            "en": "Our platform empowers educators, therapists, and intervention specialists to collect and analyze data, develop personalized training programs, and design dynamic learning paths that adapt to each user’s unique requirements."
+        },
+        "page": "welcome"
+    },
+    {
+        "title": {
+            "it": "Monitoraggio Progressi",
+            "en": "Progress Monitoring"
+        },
+        "content": {
+            "it": "Con il monitoraggio dei progressi in tempo reale, sia gli studenti che i loro tutori legali possono rimanere informati sui traguardi accademici e di sviluppo. Questa trasparenza favorisce un ambiente collaborativo in cui il miglioramento continuo è prioritario.",
+            "en": "With real-time progress tracking, both students and their legal guardians can stay informed about academic and developmental milestones. This transparency fosters a collaborative environment where continuous improvement is prioritized."
+        },
+        "page": "welcome"
+    },
+    {
+        "title": {
+            "it": "Servizi Aggiuntivi",
+            "en": "Additional Services"
+        },
+        "content": {
+            "it": "Inoltre, Ability Hub offre servizi interattivi come moduli di formazione per i genitori, sessioni in diretta streaming e una varietà di strumenti di coinvolgimento che migliorano l'esperienza di apprendimento e supportano le strategie di intervento in corso.",
+            "en": "In addition, Ability Hub offers interactive services such as parent training modules, live streaming sessions, and a variety of engagement tools that enhance the learning experience and support ongoing intervention strategies."
+        },
+        "page": "welcome"
+    }
+]
