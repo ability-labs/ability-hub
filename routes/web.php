@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\LanguageSelectorController;
 use App\Http\Controllers\LearnerController;
 use App\Http\Controllers\OperatorController;
@@ -24,6 +25,9 @@ Route::middleware('auth')->group(function () {
 
     // Operators Section Routes
     Route::resource('operators', OperatorController::class);
+
+    // Appointments Section Routes
+    Route::resource('appointments', AppointmentController::class);
 });
 
 Route::post('/locale', LanguageSelectorController::class)
