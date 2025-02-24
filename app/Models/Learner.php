@@ -15,7 +15,8 @@ class Learner extends Model
     use HasFactory, HasUuids;
 
     protected $appends = [
-        'full_name'
+        'full_name',
+        'age',
     ];
 
     protected $casts = [
