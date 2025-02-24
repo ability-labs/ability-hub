@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Faker\Factory;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Discipline;
@@ -23,6 +24,7 @@ class FakeDataSeeder extends Seeder
 
     public function run()
     {
+        $faker =app(Factory::class)->create();
         // Recupera tutte le discipline presenti nel sistema
         $disciplines = Discipline::all();
         if ($disciplines->isEmpty()) {
@@ -87,7 +89,7 @@ class FakeDataSeeder extends Seeder
         $learnerSchedule = [];
 
         // Iteriamo tutte le settimane per ciascun learner
-        $learners->each(function (Learner $learner) use ($weeks, $disciplines, $slots, $user, $allOperators, &$operatorSchedule, &$learnerSchedule) {
+        $learners->each(function (Learner $learner) use ($faker, $weeks, $disciplines, $slots, $user, $allOperators, &$operatorSchedule, &$learnerSchedule) {
 
             $this->command->info("Creating Fake Appointments for " . $learner->full_name);
             // Inizializza lo scheduling per il learner
@@ -159,17 +161,26 @@ class FakeDataSeeder extends Seeder
 
                         // Crea l'appuntamento
                         $title = $learner->full_name . ' (' . $operatorFound->name . ') - ' . strtoupper($discipline->slug);
+                        $appointment_attributes = [
+                            'starts_at' => $startTime,
+                            'ends_at' => $endTime,
+                            'discipline_id' => $discipline->id,
+                            'title' => $title,
+                            'comments' => 'Seeded appointment for discipline ' . $discipline->slug,
+                        ];
+
+                        if ($startTime->isPast()) {
+                            $appointment_attributes['operator_signed_at'] = $endTime;
+                             // leraners signs randomly
+                            if ($faker->boolean(75))
+                                $appointment_attributes['learner_signed_at'] = $endTime;
+                        }
+
                         Appointment::factory()
                             ->for($operatorFound)   // Imposta operator_id
                             ->for($user, 'user')    // Imposta user_id
                             ->for($learner, 'learner') // Imposta learner_id
-                            ->create([
-                                'starts_at'     => $startTime,
-                                'ends_at'       => $endTime,
-                                'discipline_id' => $discipline->id,
-                                'title'         => $title,
-                                'comments'      => 'Seeded appointment for discipline ' . $discipline->slug,
-                            ]);
+                            ->create($appointment_attributes);
                         // Segna che lo studente ha un appuntamento in questo giorno
                         $learnerSchedule[$learner->id][$dayKey] = true;
                         // Segna lo slot come occupato per questo operatore
