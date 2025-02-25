@@ -8,43 +8,8 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class PairedChoiceTest extends TestCase
+class PairedChoiceTest extends PreferenceAssessmentTestCase
 {
-    use WithFaker;
-
-    const EMPTY_DATASET = [
-        'items' => [],
-        'legend' => [
-            [
-                "key" => "I",
-                "value" => "Interacts",
-                "points" => 1,
-            ],
-            [
-                "key" => "A",
-                "value" => "Avoids",
-                "points" => -1
-            ],
-            [
-                "key" => "NA",
-                "value" => "No Answer",
-                "points" => 0,
-            ],
-        ],
-        'sessions' => [
-
-        ]
-    ];
-    const EXPECTED_TEMPLATE = [
-        'columns' => [
-            'Order',
-            "Item",
-            "Points"
-        ],
-        "rows" => [
-        ]
-    ];
-
     public function test_it_will_return_expected_report_template()
     {
         $expected_result = self::EXPECTED_TEMPLATE;
