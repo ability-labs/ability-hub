@@ -2,10 +2,8 @@
 
 namespace Tests\Feature\Datasheets\PreferenceAssessment;
 
-use App\Services\Datasets\PreferenceAssessment\SingleItem;
+use App\Services\Datasheets\PreferenceAssessment\SingleItem;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 
 class SingleItemTest extends PreferenceAssessmentTestCase
 {

@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Services\Datasets\PreferenceAssessment;
+namespace App\Services\Datasheets\PreferenceAssessment;
 
-use App\Services\Datasets\PreferenceAssessment\PreferenceAssessmentAbstract;
-
-class MultipleStimulusWithReplacement extends PreferenceAssessmentAbstract
+class MultipleStimulusWithoutReplacement extends PreferenceAssessmentAbstract
 {
 
     function report(): array
@@ -17,19 +15,17 @@ class MultipleStimulusWithReplacement extends PreferenceAssessmentAbstract
         }
 
         $items = collect($this->data['items'])->keyBy('key');
-        $scores = collect($this->data['items'])->mapWithKeys(fn($item) => [$item['key'] => 0]);
+        $scores = collect($this->data['items'])->mapWithKeys(fn($item) => [$item['key'] => 0])->toArray();
 
         // Process sessions
         foreach ($this->data['sessions'] as $session) {
-            foreach ($session['answers']['rows'] as [, , $choice]) {
-                if (isset($scores[$choice])) {
-                    $scores[$choice] += 1; // Count each choice as 1 point
-                }
+            foreach ($session['answers']['rows'] as [$sequenceOrder, $proposedSequence, $choice]) {
+                $scores[$choice] += $sequenceOrder;
             }
         }
 
         // Sort results by total points descending
-        $sortedScores = $scores->sortDesc()->map(function ($points, $key) use ($items) {
+        $sortedScores = collect($scores)->sort()->map(function ($points, $key) use ($items) {
             return ['item' => $items[$key]['key'], 'points' => $points];
         })->values();
 

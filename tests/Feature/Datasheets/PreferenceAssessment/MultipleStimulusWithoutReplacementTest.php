@@ -2,10 +2,8 @@
 
 namespace Tests\Feature\Datasheets\PreferenceAssessment;
 
-use App\Services\Datasets\PreferenceAssessment\MultipleStimulus;
-use App\Services\Datasets\PreferenceAssessment\MultipleStimulusWithoutReplacement;
+use App\Services\Datasheets\PreferenceAssessment\MultipleStimulusWithoutReplacement;
 use Carbon\Carbon;
-use Tests\TestCase;
 
 class MultipleStimulusWithoutReplacementTest extends PreferenceAssessmentTestCase
 {

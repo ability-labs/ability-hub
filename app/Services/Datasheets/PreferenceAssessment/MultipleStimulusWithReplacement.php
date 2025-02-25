@@ -1,45 +1,32 @@
 <?php
 
-namespace App\Services\Datasets\PreferenceAssessment;
+namespace App\Services\Datasheets\PreferenceAssessment;
 
-class SingleItem extends PreferenceAssessmentAbstract
+class MultipleStimulusWithReplacement extends PreferenceAssessmentAbstract
 {
-    const LEGEND = [
-        [
-            "key" => "I",
-            "value" => "Interacts",
-            "points" => 1,
-        ],
-        [
-            "key" => "A",
-            "value" => "Avoids",
-            "points" => -1
-        ],
-        [
-            "key" => "NA",
-            "value" => "No Answer",
-            "points" => 0,
-        ],
-    ];
 
-    public function report(): array
+    function report(): array
     {
-        $items = collect($this->data['items'])->keyBy('key');
-        $legend = collect(self::LEGEND)->keyBy('key');
+        if (empty($this->data['items'])) {
+            return [
+                'columns' => ['Order', 'Item', 'Points'],
+                'rows' => []
+            ];
+        }
 
-        // Initialize item scores
+        $items = collect($this->data['items'])->keyBy('key');
         $scores = collect($this->data['items'])->mapWithKeys(fn($item) => [$item['key'] => 0]);
 
         // Process sessions
         foreach ($this->data['sessions'] as $session) {
-            foreach ($session['answers']['rows'] as [$itemKey, $answerKey]) {
-                if (isset($legend[$answerKey]) && isset($scores[$itemKey])) {
-                    $scores[$itemKey] += $legend[$answerKey]['points'];
+            foreach ($session['answers']['rows'] as [, , $choice]) {
+                if (isset($scores[$choice])) {
+                    $scores[$choice] += 1; // Count each choice as 1 point
                 }
             }
         }
 
-        // Sort results by points descending, then by item name ascending
+        // Sort results by total points descending
         $sortedScores = $scores->sortDesc()->map(function ($points, $key) use ($items) {
             return ['item' => $items[$key]['key'], 'points' => $points];
         })->values();

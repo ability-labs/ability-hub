@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Datasets\PreferenceAssessment;
+namespace App\Services\Datasheets\PreferenceAssessment;
 
 class PairedChoice extends PreferenceAssessmentAbstract
 {
