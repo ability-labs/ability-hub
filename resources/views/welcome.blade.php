@@ -70,8 +70,8 @@
                 </div>
             </main>
 
-            <footer class="py-16 text-center text-sm text-black dark:text-white/70">
-                Ability Hub &copy; {{ date('Y') }} – Built with Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
+            <footer class="py-16 text-center text-sm  text-gray-400 dark:text-white/70">
+               <span class="font-bold text-gray-500">&copy; {{ date('Y') }} - Ability Hub</span> <x-app-version />
             </footer>
         </div>
     </div>
