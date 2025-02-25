@@ -33,9 +33,9 @@
         @endif
     </div>
     <div>
-        <span class="font-bold text-gray-700 dark:text-gray-300">{{ __('Notes') }}:</span>
+        <span class="font-bold text-gray-700 dark:text-gray-300">{{ __('Comments') }}:</span>
         <div class="mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-gray-100">
-            {!! nl2br(e($appointment->notes)) !!}
+            {!! nl2br(e($appointment->comments)) !!}
         </div>
     </div>
     <div class="mt-4">
