@@ -11,23 +11,7 @@ class PreferenceAssessmentTestCase extends TestCase
 
     const EMPTY_DATASET = [
         'items' => [],
-        'legend' => [
-            [
-                "key" => "I",
-                "value" => "Interacts",
-                "points" => 1,
-            ],
-            [
-                "key" => "A",
-                "value" => "Avoids",
-                "points" => -1
-            ],
-            [
-                "key" => "NA",
-                "value" => "No Answer",
-                "points" => 0,
-            ],
-        ],
+        'legend' => [],
         'sessions' => [
 
         ]

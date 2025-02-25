@@ -9,12 +9,15 @@ use Tests\TestCase;
 
 class SingleItemTest extends PreferenceAssessmentTestCase
 {
+
+
     public function test_it_will_return_expected_report_template()
     {
         $expected_result = self::EXPECTED_TEMPLATE;
         $dataset_class = new SingleItem([]);
         $this->assertEquals($expected_result, $dataset_class->getReportTemplate());
     }
+
     public function test_it_will_report_single_item_preference_assessment_results_with_empty_dataset()
     {
         $dataset = self::EMPTY_DATASET;
@@ -25,6 +28,7 @@ class SingleItemTest extends PreferenceAssessmentTestCase
 
         $this->assertEquals($expected_result, $report);
     }
+
     public function test_it_will_report_single_item_preference_assessment_results_with_empty_sessions_dataset()
     {
         $dataset = self::EMPTY_DATASET;
@@ -66,6 +70,7 @@ class SingleItemTest extends PreferenceAssessmentTestCase
 
         $this->assertEquals($expected_result, $report);
     }
+
     public function test_it_will_report_single_item_preference_assessment_results_with_empty_items_dataset()
     {
         $test_date = Carbon::parse($this->faker->dateTimeThisDecade());
@@ -182,92 +187,75 @@ class SingleItemTest extends PreferenceAssessmentTestCase
 
         $this->assertEquals($expected_result, $report);
     }
+
     public function test_it_will_report_single_item_preference_assessment_results_with_complete_dataset()
     {
         $test_date = Carbon::parse($this->faker->dateTimeThisDecade());
-        $dataset = [
-            'items' => [
-                [
-                    'key' => 'A',
-                    'name' => 'Item A'
-                ],
-                [
-                    'key' => 'B',
-                    'name' => 'Item B'
-                ],
-                [
-                    'key' => 'C',
-                    'name' => 'Item C'
-                ],
-                [
-                    'key' => 'D',
-                    'name' => 'Item D'
-                ],
+        $dataset = self::EMPTY_DATASET;
+        $dataset['items'] = [
+            [
+                'key' => 'A',
+                'name' => 'Item A'
             ],
-            'legend' => [
-                [
-                    "key" => "I",
-                    "value" => "Interacts",
-                    "points" => 1,
-                ],
-                [
-                    "key" => "A",
-                    "value" => "Avoids",
-                    "points" => -1
-                ],
-                [
-                    "key" => "NA",
-                    "value" => "No Answer",
-                    "points" => 0,
-                ],
+            [
+                'key' => 'B',
+                'name' => 'Item B'
             ],
-            'sessions' => [
-                [
-                    'datetime' => $test_date,
-                    'answers' => [
-                        'columns' => [
-                            "Item",
-                            "Answer"
-                        ],
-                        "rows" => [
-                            ["A", "A"],
-                            ["B", "I"],
-                            ["C", "I"],
-                            ["D", "NA"]
-                        ]
+            [
+                'key' => 'C',
+                'name' => 'Item C'
+            ],
+            [
+                'key' => 'D',
+                'name' => 'Item D'
+            ],
+        ];
+        $dataset['sessions'] = [
+            [
+                'datetime' => $test_date,
+                'answers' => [
+                    'columns' => [
+                        "Item",
+                        "Answer"
+                    ],
+                    "rows" => [
+                        ["A", "A"],
+                        ["B", "I"],
+                        ["C", "I"],
+                        ["D", "NA"]
                     ]
-                ],
-                [
-                    'datetime' => $test_date->addMinutes(3),
-                    'answers' => [
-                        'columns' => [
-                            "Item",
-                            "Answer"
-                        ],
-                        "rows" => [
-                            ["A", "I"],
-                            ["B", "I"],
-                            ["C", "I"],
-                            ["D", "NA"]
-                        ]
+                ]
+            ],
+            [
+                'datetime' => $test_date->addMinutes(3),
+                'answers' => [
+                    'columns' => [
+                        "Item",
+                        "Answer"
+                    ],
+                    "rows" => [
+                        ["A", "I"],
+                        ["B", "I"],
+                        ["C", "I"],
+                        ["D", "NA"]
                     ]
-                ],
-                [
-                    'datetime' => $test_date->addMinutes(6),
-                    'answers' => [
-                        'columns' => [
-                            "Item",
-                            "Answer"
-                        ],
-                        "rows" => [
-                            ["A", "I"],
-                            ["B", "I"],
-                            ["C", "A"],
-                            ["D", "A"]
-                        ]
+                ]
+            ],
+            [
+                'datetime' => $test_date->addMinutes(6),
+                'answers' => [
+                    'columns' => [
+                        "Item",
+                        "Answer"
+                    ],
+                    "rows" => [
+                        ["A", "I"],
+                        ["B", "I"],
+                        ["C", "A"],
+                        ["D", "A"]
                     ]
-                ],
-            ]
+                ]
+            ],
         ];
         $expected_result = [
             'columns' => [

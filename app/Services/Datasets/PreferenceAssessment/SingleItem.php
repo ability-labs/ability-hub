@@ -4,10 +4,28 @@ namespace App\Services\Datasets\PreferenceAssessment;
 
 class SingleItem extends PreferenceAssessmentAbstract
 {
+    const LEGEND = [
+        [
+            "key" => "I",
+            "value" => "Interacts",
+            "points" => 1,
+        ],
+        [
+            "key" => "A",
+            "value" => "Avoids",
+            "points" => -1
+        ],
+        [
+            "key" => "NA",
+            "value" => "No Answer",
+            "points" => 0,
+        ],
+    ];
+
     public function report(): array
     {
         $items = collect($this->data['items'])->keyBy('key');
-        $legend = collect($this->data['legend'])->keyBy('key');
+        $legend = collect(self::LEGEND)->keyBy('key');
 
         // Initialize item scores
         $scores = collect($this->data['items'])->mapWithKeys(fn($item) => [$item['key'] => 0]);
