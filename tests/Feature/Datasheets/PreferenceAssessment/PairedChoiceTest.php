@@ -60,7 +60,7 @@ class PairedChoiceTest extends PreferenceAssessmentTestCase
             ]
         ];
 
-        $dataset_instance = new SingleItem($dataset);
+        $dataset_instance = new PairedChoice($dataset);
         $report = $dataset_instance->report();
 
         $this->assertEquals($expected_result, $report);
@@ -127,7 +127,7 @@ class PairedChoiceTest extends PreferenceAssessmentTestCase
         ];
         $expected_result = self::EXPECTED_TEMPLATE;
 
-        $dataset_instance = new SingleItem($dataset);
+        $dataset_instance = new PairedChoice($dataset);
         $report = $dataset_instance->report();
 
         $this->assertEquals($expected_result, $report);

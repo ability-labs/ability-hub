@@ -12,7 +12,7 @@ class MultipleStimulusTest extends PreferenceAssessmentTestCase
     public function test_it_will_return_expected_report_template()
     {
         $expected_result = self::EXPECTED_TEMPLATE;
-        $dataset_class = new PairedChoice([]);
+        $dataset_class = new MultipleStimulus([]);
         $this->assertEquals($expected_result, $dataset_class->getReportTemplate());
     }
     public function test_it_will_report_multiple_stimulus_preference_assessment_results_with_empty_dataset()
@@ -20,7 +20,7 @@ class MultipleStimulusTest extends PreferenceAssessmentTestCase
         $dataset = self::EMPTY_DATASET;
         $expected_result = self::EXPECTED_TEMPLATE;
 
-        $dataset_instance = new PairedChoice($dataset);
+        $dataset_instance = new MultipleStimulus($dataset);
         $report = $dataset_instance->report();
 
         $this->assertEquals($expected_result, $report);
@@ -61,7 +61,7 @@ class MultipleStimulusTest extends PreferenceAssessmentTestCase
             ]
         ];
 
-        $dataset_instance = new SingleItem($dataset);
+        $dataset_instance = new MultipleStimulus($dataset);
         $report = $dataset_instance->report();
 
         $this->assertEquals($expected_result, $report);
@@ -128,7 +128,7 @@ class MultipleStimulusTest extends PreferenceAssessmentTestCase
         ];
         $expected_result = self::EXPECTED_TEMPLATE;
 
-        $dataset_instance = new SingleItem($dataset);
+        $dataset_instance = new MultipleStimulus($dataset);
         $report = $dataset_instance->report();
 
         $this->assertEquals($expected_result, $report);
