@@ -4,6 +4,9 @@ namespace App\Services\Datasheets\PreferenceAssessment;
 
 class MultipleStimulusWithReplacement extends PreferenceAssessmentAbstract
 {
+    const MINIMUM_ITEMS = 5;
+    const SUGGESTED_ITEMS = 7;
+
     protected function processSessions(): void
     {
         foreach ($this->data['sessions'] as $session) {
@@ -13,5 +16,14 @@ class MultipleStimulusWithReplacement extends PreferenceAssessmentAbstract
                 }
             }
         }
+    }
+    protected function getMinimumItems(): int
+    {
+        return self::MINIMUM_ITEMS;
+    }
+
+    protected function getSuggestedItems(): int
+    {
+        return self::SUGGESTED_ITEMS;
     }
 }

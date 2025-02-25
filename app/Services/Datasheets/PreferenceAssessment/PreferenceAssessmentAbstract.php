@@ -26,12 +26,18 @@ abstract class PreferenceAssessmentAbstract
     }
 
     abstract protected function processSessions(): void;
+    abstract protected function getMinimumItems(): int;
+    abstract protected function getSuggestedItems(): int;
 
     public function report(): array
     {
         if (empty($this->data['items'])) {
             return ['columns' => ['Order', 'Item', 'Points'], 'rows' => []];
         }
+
+        $minimumItems = $this->getMinimumItems();
+        if (count($this->data['items']) < $minimumItems)
+            throw new \InvalidArgumentException("This Assessment requires a minimum of  $minimumItems items");
 
         $this->processSessions();
 

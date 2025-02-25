@@ -21,6 +21,8 @@ class FreeOperantObservation extends PreferenceAssessmentAbstract
             "points" => 2,
         ],
     ];
+    const SUGGESTED_ITEMS = 5;
+    const MINIMUM_ITEMS = 0;
 
     protected function processSessions(): void
     {
@@ -33,5 +35,15 @@ class FreeOperantObservation extends PreferenceAssessmentAbstract
                 }
             }
         }
+    }
+
+    protected function getMinimumItems(): int
+    {
+        return self::MINIMUM_ITEMS;
+    }
+
+    protected function getSuggestedItems(): int
+    {
+        return self::SUGGESTED_ITEMS;
     }
 }

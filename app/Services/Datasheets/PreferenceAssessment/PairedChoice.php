@@ -4,6 +4,9 @@ namespace App\Services\Datasheets\PreferenceAssessment;
 
 class PairedChoice extends PreferenceAssessmentAbstract
 {
+    const MINIMUM_ITEMS = 4;
+    const SUGGESTED_ITEMS = 6;
+
     protected function processSessions(): void
     {
         foreach ($this->data['sessions'] as $session) {
@@ -13,5 +16,15 @@ class PairedChoice extends PreferenceAssessmentAbstract
                 }
             }
         }
+    }
+
+    protected function getMinimumItems(): int
+    {
+        return self::MINIMUM_ITEMS;
+    }
+
+    protected function getSuggestedItems(): int
+    {
+        return self::SUGGESTED_ITEMS;
     }
 }
