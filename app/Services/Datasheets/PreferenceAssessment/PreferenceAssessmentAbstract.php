@@ -78,12 +78,50 @@ abstract class PreferenceAssessmentAbstract
     {
         return [
             'columns' => [
-                'Order',
+                "Order",
                 "Item",
                 "Points"
             ],
-            "rows" => [
+            "rows" => []
+        ];
+    }
+
+    public function getInfo() :array
+    {
+        return [
+            'minimum_items' => $this->getMinimumItems(),
+            'suggested_items' => $this->getSuggestedItems(),
+            'templates' => [
+                'items' => $this->getItemTemplate(),
+                'sessions' => $this->getSessionTemplate(),
             ]
+        ];
+    }
+    public function getDatasetTemplate(): array
+    {
+        return [
+            "items" => [$this->getItemTemplate()],
+            "sessions" => [$this->getSessionTemplate()]
+        ];
+    }
+
+    public function getSessionTemplate(): array
+    {
+        return [
+            'datetime' => '',
+            'answers' => [
+                'columns' => [],
+                "rows" => []
+            ]
+        ];
+    }
+
+    public function getItemTemplate(): array
+    {
+        return [
+            'id' => '',
+            'key' => '',
+            'name' => ''
         ];
     }
 
