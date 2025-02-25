@@ -4,12 +4,6 @@
         "name": {
             "en": "Single Item Preference Assessment",
             "it": "Valutazione su item singolo"
-        },
-        "schema": {
-            "rows": {
-                "item": "string",
-                "answer": "enum"
-            }
         }
     },
     {
