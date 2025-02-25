@@ -32,33 +32,6 @@ class MultipleStimulus extends PreferenceAssessmentAbstract
             return ['item' => $items[$key]['key'], 'points' => $points];
         })->values();
 
-        /*
-
-1 2
-3 7
-5 6
-2 3
-4 5
-6 7
-1 3
-
-3 5
-4 6
-1 5
-2 7
-3 4
-5 7
-1 4
-
-2 5
-1 6
-2 4
-3 6
-1 7
-2 6
-4 7
-         */
-
         // Assign order based on ranking logic
         $order = 1;
         $lastPoints = null;
