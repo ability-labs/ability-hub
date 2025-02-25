@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Feature\Datasheets;
+namespace Tests\Feature\Datasheets\PreferenceAssessment;
 
 use App\Services\Datasets\PreferenceAssessment\SingleItem;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class SingleItemPreferenceAssessmentTest extends TestCase
+class SingleItemTest extends TestCase
 {
     use WithFaker;
 
