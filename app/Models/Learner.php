@@ -48,4 +48,9 @@ class Learner extends Model
     {
         return $this->hasMany(Appointment::class);
     }
+
+    public function datasheets(): HasMany
+    {
+        return $this->hasMany(Datasheet::class);
+    }
 }
