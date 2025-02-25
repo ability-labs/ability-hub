@@ -2,15 +2,8 @@
 
 namespace App\Services\Datasets\PreferenceAssessment;
 
-class SingleItem
+class SingleItem extends PreferenceAssessmentAbstract
 {
-    protected array $data;
-
-    public function __construct(array $data)
-    {
-        $this->data = $data;
-    }
-
     public function report(): array
     {
         $items = collect($this->data['items'])->keyBy('key');
@@ -49,19 +42,6 @@ class SingleItem
         return [
             'columns' => ['Order', 'Item', 'Points'],
             'rows' => $rankedRows,
-        ];
-    }
-
-    public function getReportTemplate(): array
-    {
-        return [
-            'columns' => [
-                'Order',
-                "Item",
-                "Points"
-            ],
-            "rows" => [
-            ]
         ];
     }
 }

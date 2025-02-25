@@ -2,28 +2,8 @@
 
 namespace App\Services\Datasets\PreferenceAssessment;
 
-class PairedChoice
+class PairedChoice extends PreferenceAssessmentAbstract
 {
-
-    public function __construct(
-        protected array $data
-    )
-    {
-    }
-
-    public function getReportTemplate(): array
-    {
-        return [
-            'columns' => [
-                'Order',
-                "Item",
-                "Points"
-            ],
-            "rows" => [
-            ]
-        ];
-    }
-
     public function report(): array
     {
         if (empty($this->data['items'])) {
