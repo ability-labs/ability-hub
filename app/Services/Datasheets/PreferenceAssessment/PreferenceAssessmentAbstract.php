@@ -86,14 +86,23 @@ abstract class PreferenceAssessmentAbstract extends ReportAbstract
 
     public function getInfo() :array
     {
-        return [
+        $info = [
             'minimum_items' => $this->getMinimumItems(),
             'suggested_items' => $this->getSuggestedItems(),
+
+            'has_legend' => $this->hasLegend(),
+            'has_items' => $this->hasItems(),
+            'has_sessions' => $this->hasSessions(),
+
             'templates' => [
-                'items' => $this->getItemTemplate(),
-                'sessions' => $this->getSessionTemplate(),
+                'item' => $this->getItemTemplate(),
+                'session' => $this->getSessionTemplate(),
+                'report' => $this->getReportTemplate()
             ]
         ];
+        if ($this->hasLegend())
+            $info['legend'] = $this->getLegend();
+        return $info;
     }
     public function getDatasetTemplate(): array
     {
@@ -134,6 +143,26 @@ abstract class PreferenceAssessmentAbstract extends ReportAbstract
             "Item",
             "Answer"
         ];
+    }
+
+    public function hasItems(): bool
+    {
+        return true;
+    }
+
+    public function hasSessions(): bool
+    {
+        return true;
+    }
+
+    public function hasLegend(): bool
+    {
+        return false;
+    }
+
+    public function getLegend(): ?array
+    {
+        return null;
     }
 
 }

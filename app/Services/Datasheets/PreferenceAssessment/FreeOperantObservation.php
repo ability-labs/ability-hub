@@ -46,4 +46,15 @@ class FreeOperantObservation extends PreferenceAssessmentAbstract
     {
         return self::SUGGESTED_ITEMS;
     }
+
+
+    public function hasLegend(): bool
+    {
+        return true;
+    }
+
+    public function getLegend(): ?array
+    {
+        return self::LEGEND;
+    }
 }
