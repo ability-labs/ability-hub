@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('datasheet_types', function (Blueprint $table) {
             $table->string('id')->primary();
+            $table->string('category');
             $table->json('name');
             $table->timestamps();
         });

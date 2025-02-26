@@ -1,41 +1,47 @@
 [
     {
-        "id": "preference-assessment/si",
+        "id": "preference-assessment-si",
+        "category": "Preference Assessment",
         "name": {
             "en": "Single Item Preference Assessment",
             "it": "Valutazione su item singolo"
         }
     },
     {
-        "id": "preference-assessment/pc",
+        "id": "preference-assessment-pc",
+        "category": "Preference Assessment",
         "name": {
             "en": "Paired Choice Preference Assessment",
             "it": "Valutazione a scelta tra due"
         }
     },
     {
-        "id": "preference-assessment/ms",
+        "id": "preference-assessment-ms",
+        "category": "Preference Assessment",
         "name": {
             "en": "Multiple Stimulus Preference Assessment",
             "it": "Valutazione a stimoli multipli"
         }
     },
     {
-        "id": "preference-assessment/mswo",
+        "id": "preference-assessment-mswo",
+        "category": "Preference Assessment",
         "name": {
             "en": "Multiple Stimulus without Replacement Preference Assessment",
             "it": "Valutazione a stimoli multipli senza sostituzione"
         }
     },
     {
-        "id": "preference-assessment/msw",
+        "id": "preference-assessment-msw",
+        "category": "Preference Assessment",
         "name": {
             "en": "Multiple Stimulus with Replacement Preference Assessment",
             "it": "Valutazione a stimoli multipli con sostituzione"
         }
     },
     {
-        "id": "preference-assessment/foo",
+        "id": "preference-assessment-foo",
+        "category": "Preference Assessment",
         "name": {
             "en": "Free Operant Observation",
             "it": "Valutazione in operante libero"
