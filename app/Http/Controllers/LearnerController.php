@@ -85,7 +85,7 @@ class LearnerController extends Controller
         $user->load(['learners', 'operators']);
 
         return view('learners.show', [
-            'learner' => $learner->load('appointments'),
+            'learner' => $learner->load('appointments','datasheets'),
             'events' => $learner->appointments->map(fn (Appointment $appointment) => $appointment->toFullCalendar()),
 
             'learners' => $user->learners,
