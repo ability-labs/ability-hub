@@ -17,5 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call(DisciplineSeeder::class);
         $this->call(ReinforcerSeeder::class);
         $this->call(ContentCardSeeder::class);
+        $this->call(DatasheetTypeSeeder::class);
     }
 }
