@@ -20,6 +20,11 @@ class Datasheet extends Model
         'data' => SchemalessAttributes::class,
     ];
 
+    protected $with = [
+        'type'
+    ];
+
+
     public function scopeWithData(): Builder
     {
         return $this->data->modelScope();
@@ -33,5 +38,10 @@ class Datasheet extends Model
     public function learner(): BelongsTo
     {
         return $this->belongsTo(Learner::class);
+    }
+
+    public function type() :BelongsTo
+    {
+        return $this->belongsTo(DatasheetType::class,'type_id','id');
     }
 }

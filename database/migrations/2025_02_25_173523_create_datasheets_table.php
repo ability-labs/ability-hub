@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\DatasheetType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +14,9 @@ return new class extends Migration
     {
         Schema::create('datasheets', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('type');
+            $table->foreignIdFor(DatasheetType::class,'type_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
             $table->foreignUuid('learner_id')
                 ->constrained()
