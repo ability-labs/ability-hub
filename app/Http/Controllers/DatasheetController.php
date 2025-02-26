@@ -16,8 +16,10 @@ class DatasheetController extends Controller
      */
     public function store(StoreDatasheetRequest $request, Learner $learner)
     {
+        /** @var Datasheet $datasheet */
         $datasheet = $learner->datasheets()
             ->create($request->validated());
+        $datasheet->initData();
 
         $message = __('New :resource created!', ['resource' => __('Datasheet')]);
         return $request->ajax() ?
