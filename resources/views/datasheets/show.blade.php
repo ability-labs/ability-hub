@@ -25,7 +25,7 @@
                 'link' => route('learners.show', ['learner' => $datasheet->learner])
             ],
             [
-                'text' => __('Datasheet'),
+                'text' => __('Datasheet') . ' ('. $datasheet->type->category . ')',
             ]
         ]" />
     </div>
