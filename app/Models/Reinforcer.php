@@ -18,4 +18,15 @@ class Reinforcer extends Model
         'category',
         'subcategory',
     ];
+
+    public function forSuggestions(): array
+    {
+        return [
+            'id' => $this->id,
+            'key' => $this->id,
+            'name' => $this->getTranslation('name', config('app.locale')),
+            'category' => $this->getTranslation('category', config('app.locale')),
+            'subcategory' => $this->getTranslation('subcategory', config('app.locale')),
+        ];
+    }
 }
