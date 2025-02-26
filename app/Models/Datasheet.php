@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Services\Datasheets\DatasheetReportFactory;
+use App\Services\Datasheets\ReportAbstract;
 use Database\Factories\DatasheetFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -43,5 +45,20 @@ class Datasheet extends Model
     public function type() :BelongsTo
     {
         return $this->belongsTo(DatasheetType::class,'type_id','id');
+    }
+
+    public function report(): ReportAbstract
+    {
+        return DatasheetReportFactory::fromDatasheet($this);
+    }
+
+    public function getDataTemplate(): array
+    {
+        return $this->report()->getDatasetTemplate();
+    }
+
+    public function initData(): void
+    {
+        $this->update(['data' => $this->getDataTemplate()]);
     }
 }

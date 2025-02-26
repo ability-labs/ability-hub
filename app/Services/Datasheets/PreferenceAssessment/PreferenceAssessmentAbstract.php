@@ -2,7 +2,9 @@
 
 namespace App\Services\Datasheets\PreferenceAssessment;
 
-abstract class PreferenceAssessmentAbstract
+use App\Services\Datasheets\ReportAbstract;
+
+abstract class PreferenceAssessmentAbstract extends ReportAbstract
 {
     protected array $items;
     protected array $scores;
@@ -110,7 +112,7 @@ abstract class PreferenceAssessmentAbstract
         return [
             'datetime' => '',
             'answers' => [
-                'columns' => [],
+                'columns' => $this->getColumnsSchema(),
                 "rows" => []
             ]
         ];
@@ -128,6 +130,14 @@ abstract class PreferenceAssessmentAbstract
     protected function highScoresAreLowerRaked(): bool
     {
         return false;
+    }
+
+    protected function getColumnsSchema()
+    {
+        return [
+            "Item",
+            "Answer"
+        ];
     }
 
 }
