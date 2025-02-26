@@ -16,7 +16,8 @@ class Datasheet extends Model
     use HasFactory,HasUuids;
 
     public $casts = [
-        'extra_attributes' => SchemalessAttributes::class,
+        'finalized_at' => 'datetime',
+        'data' => SchemalessAttributes::class,
     ];
 
     public function scopeWithData(): Builder
