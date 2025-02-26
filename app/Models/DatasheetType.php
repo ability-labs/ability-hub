@@ -9,6 +9,9 @@ class DatasheetType extends Model
 {
     use HasTranslations;
 
+    public $incrementing = false;
+
+    protected $keyType = 'string';
     public $translatable = [
         'name'
     ];
