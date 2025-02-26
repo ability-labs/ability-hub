@@ -33,13 +33,9 @@ abstract class PreferenceAssessmentAbstract extends ReportAbstract
 
     public function report(): array
     {
-        if (empty($this->data['items'])) {
+        if (empty($this->data['items']) || count($this->data['items']) < $this->getMinimumItems()) {
             return ['columns' => ['Order', 'Item', 'Points'], 'rows' => []];
         }
-
-        $minimumItems = $this->getMinimumItems();
-        if (count($this->data['items']) < $minimumItems)
-            throw new \InvalidArgumentException("This Assessment requires a minimum of  $minimumItems items");
 
         $this->processSessions();
 
