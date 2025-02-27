@@ -26,6 +26,9 @@ class Datasheet extends Model
         'type'
     ];
 
+    protected $appends = [
+        'results'
+    ];
 
     public function scopeWithData(): Builder
     {
@@ -60,5 +63,10 @@ class Datasheet extends Model
     public function initData(): void
     {
         $this->update(['data' => $this->getDataTemplate()]);
+    }
+
+    public function getResultsAttribute(): array
+    {
+        return $this->report()->report();
     }
 }
