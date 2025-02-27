@@ -14,23 +14,22 @@
         </h2>
     </x-slot>
 
-    <div class="max-w-6xl mx-auto  pt-4 flex items-center">
-        <x-breadcrumbs :paths="[
-            [
-                'text' => __('Learners'),
-                'link' => route('learners.index')
-            ],
-            [
-                'text' => $datasheet->learner->full_name,
-                'link' => route('learners.show', ['learner' => $datasheet->learner])
-            ],
-            [
-                'text' => __('Datasheet') . ' ('. $datasheet->type->category . ')',
-            ]
-        ]" />
-    </div>
+    <x-breadcrumbs :paths="[
+        [
+            'text' => __('Learners'),
+            'link' => route('learners.index')
+        ],
+        [
+            'text' => $datasheet->learner->full_name,
+            'link' => route('learners.show', ['learner' => $datasheet->learner])
+        ],
+        [
+            'text' => __('Datasheet') . ' ('. $datasheet->type->category . ')',
+        ]
+    ]" />
 
-    <div class="py-4">
+
+    <div>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">

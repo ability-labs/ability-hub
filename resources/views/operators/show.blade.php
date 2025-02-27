@@ -9,19 +9,17 @@
         </h2>
     </x-slot>
 
-    <div class="max-w-6xl mx-auto  pt-4 flex items-center">
-        <x-breadcrumbs :paths="[
-            [
-                'text' => __('Operators'),
-                'link' => route('operators.index')
-            ],
-            [
-                'text' => $operator->name,
-            ]
-        ]" />
-    </div>
+    <x-breadcrumbs :paths="[
+        [
+            'text' => __('Operators'),
+            'link' => route('operators.index')
+        ],
+        [
+            'text' => $operator->name,
+        ]
+    ]" />
 
-    <div class="py-4">
+    <div class="">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">

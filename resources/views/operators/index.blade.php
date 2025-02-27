@@ -9,13 +9,11 @@
         </h2>
     </x-slot>
 
-    <div class="max-w-6xl mx-auto  pt-4 flex items-center">
-        <x-breadcrumbs :paths="[
-                [
-                    'text' => __('Operators'),
-                ]
-            ]" />
-    </div>
+    <x-breadcrumbs :paths="[
+            [
+                'text' => __('Operators'),
+            ]
+        ]" />
 
     <div class="py-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
