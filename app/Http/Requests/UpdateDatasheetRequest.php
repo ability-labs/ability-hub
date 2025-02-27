@@ -23,6 +23,7 @@ class UpdateDatasheetRequest extends FormRequest
     {
         return [
             'finalized_at' => [ 'date' ],
+            'data' => ['array'],
         ];
     }
 }
