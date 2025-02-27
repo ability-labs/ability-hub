@@ -107,8 +107,8 @@ abstract class PreferenceAssessmentAbstract extends ReportAbstract
     public function getDatasetTemplate(): array
     {
         return [
-            "items" => [$this->getItemTemplate()],
-            "sessions" => [$this->getSessionTemplate()]
+            "items" => [],
+            "sessions" => []
         ];
     }
 
