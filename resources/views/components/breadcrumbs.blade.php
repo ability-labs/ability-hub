@@ -1,4 +1,4 @@
-<div class="mb-4 max-w-6xl mx-auto  pt-4 flex items-center">
+<div class="hidden sm:block mb-4 max-w-6xl mx-auto  pt-4 flex items-center">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-1 rtl:space-x-reverse">
             @foreach($paths as $index => $path)
