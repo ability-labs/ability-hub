@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\PersonGender;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -21,7 +22,8 @@ class LearnerFactory extends Factory
             'user_id' => User::factory(),
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
-            'birth_date' => $this->faker->dateTimeThisDecade()
+            'birth_date' => $this->faker->dateTimeThisDecade(),
+            'gender' => $this->faker->randomElement(PersonGender::cases())->value
         ];
     }
 }

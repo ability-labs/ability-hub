@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Learners\StoreLearnerAction;
 use App\Actions\Learners\UpdateLearnerAction;
+use App\Enums\PersonGender;
 use App\Http\Requests\StoreLearnerRequest;
 use App\Http\Requests\UpdateLearnerRequest;
 use App\Models\Appointment;
@@ -11,14 +12,11 @@ use App\Models\Discipline;
 use App\Models\Learner;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class LearnerController extends Controller
 {
-    const VALIDATION_RULES = [
-        'first_name' => 'string:128',
-        'last_name' => 'string:128',
-        'birth_date' => 'date',
-    ];
+
     const SORTABLE_FIELDS = [
         'created_at',
         'birth_date'
@@ -64,7 +62,7 @@ class LearnerController extends Controller
      */
     public function store(StoreLearnerRequest $request, StoreLearnerAction $storeLearnerAction)
     {
-        $attributes = $request->validate(self::VALIDATION_RULES);
+        $attributes = $request->validated();
 
         $attributes['user_id'] = $request->user()->id;
         $storeLearnerAction->execute($attributes);
@@ -115,7 +113,7 @@ class LearnerController extends Controller
             abort(403);
         }
 
-        $attributes = $request->validate(self::VALIDATION_RULES);
+        $attributes = $request->validated();
         $updateLearnerAction->execute($learner, $attributes);
 
         return redirect()->route('learners.index')->with('success');

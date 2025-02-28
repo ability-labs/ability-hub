@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PersonGender;
 use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -20,7 +21,8 @@ class Learner extends Model
     ];
 
     protected $casts = [
-        'birth_date' => 'datetime'
+        'birth_date' => 'datetime',
+        'gender' => PersonGender::class,
     ];
 
     public function getAgeAttribute(): string
@@ -52,5 +54,10 @@ class Learner extends Model
     public function datasheets(): HasMany
     {
         return $this->hasMany(Datasheet::class);
+    }
+
+    public function preferences(): HasMany
+    {
+        return $this->hasMany(PreferenceAssessment::class);
     }
 }

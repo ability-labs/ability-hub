@@ -1,30 +1,46 @@
+@php
+    $backgroundClass = match ($learner->gender) {
+        \App\Enums\PersonGender::FEMALE => 'bg-pink-100',
+        \App\Enums\PersonGender::MALE => 'bg-sky-100',
+        default => 'bg-gray-100'
+    };
+    $foregroundClass = match ($learner->gender) {
+        \App\Enums\PersonGender::FEMALE => 'text-pink-600',
+        \App\Enums\PersonGender::MALE => 'text-sky-600',
+        default => 'bg-gray-100'
+    };
+@endphp
+
 <div class="space-y-4">
-    <div class="flex">
-        <div class="w-1/4">
-            <div>
-                <span class="font-bold text-gray-700 dark:text-gray-300">{{__('Firstname') }}:</span>
-                <span class="text-gray-900 dark:text-gray-100">{{ $learner->first_name }}</span>
-            </div>
-            <div>
-                <span class="font-bold text-gray-700 dark:text-gray-300">{{ __('Lastname') }}:</span>
-                <span class="text-gray-900 dark:text-gray-100">{{ $learner->last_name }}</span>
-            </div>
-            <div>
-                <span class="font-bold text-gray-700 dark:text-gray-300">{{ __('Birth Date') }}:</span>
-                <span class="text-gray-900 dark:text-gray-100">{{ $learner->birth_date->isoFormat('D MMMM YYYY') }}</span>
-            </div>
-            <div>
-                <span class="font-bold text-gray-700 dark:text-gray-300">{{__('Age')}}:</span>
-                <span class="text-gray-900 dark:text-gray-100">{{ $learner->age }}</span>
-            </div>
+    <div class="flex flex-col space-y-8 lg:flex-row">
+        <div class="lg:w-1/4">
+            <div class="{{ $backgroundClass }} flex items-start space-x-4 p-4 mr-8 rounded-lg">
+                <div class="flex flex-col space-y-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-20 {{ $foregroundClass  }}">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                    </svg>
+                    <a class="border border-indigo-500 px-2 py-1 rounded-md" href="{{ route('learners.edit', ['learner' => $learner]) }}">
+                        {{ __('Edit') }}
+                    </a>
+                </div>
 
-
-
-            <div class="mt-4">
-                <a href="{{ route('learners.edit', $learner) }}" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">{{__('Edit')}}</a>
+                <div class="flex flex-col">
+                    <div class="flex flex-col">
+                        <span class="font-bold text-gray-700 dark:text-gray-300">{{__('Name') }}:</span>
+                        <span class="text-gray-900 dark:text-gray-100">{{ $learner->full_name }}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-gray-700 dark:text-gray-300">{{ __('Birth Date') }}:</span>
+                        <span class="text-gray-900 dark:text-gray-100">{{ $learner->birth_date->isoFormat('D MMMM YYYY') }}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-gray-700 dark:text-gray-300">{{__('Age')}}:</span>
+                        <span class="text-gray-900 dark:text-gray-100">{{ $learner->age }}</span>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="w-3/4">
+        <div class="lg:w-3/4">
             <div>
                 @include('datasheets.partials.list', ['datasheets' => $learner->datasheets, 'operators' => $operators])
             </div>

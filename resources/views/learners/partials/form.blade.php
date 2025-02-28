@@ -40,6 +40,21 @@
         @enderror
     </div>
 
+    <div class="mb-4">
+        <label for="gender" class="block text-gray-700 dark:text-gray-300">{{__('Gender') }}</label>
+        <select name="gender" id="gender"
+               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            @foreach(\App\Enums\PersonGender::cases() as $case)
+                <option {{ old('gender', $isEdit ? $attributes->gender : '') === $case->value ? 'selected' : '' }} value="{{ $case }}">
+                    {{ $case }}
+                </option>
+            @endforeach
+        </select>
+        @error('gender')
+        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+        @enderror
+    </div>
+
     <div class="flex justify-between">
         <a href="{{ route('learners.index') }}" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
             {{ __('Back') }}
