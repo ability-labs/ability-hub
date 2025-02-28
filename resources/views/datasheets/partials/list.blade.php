@@ -107,7 +107,7 @@
                 <button type="button" @click="showDeleteModal = false" class="px-4 py-2 bg-gray-300 rounded mr-2">
                     {{ __('Cancel') }}
                 </button>
-                <form :action="route('datasheets.destroy', {datasheet: deletingDatasheetId })" method="POST">
+                <form :action="route('datasheets.destroy', {datasheet: deletingDatasheetId ?? '' })" method="POST">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
