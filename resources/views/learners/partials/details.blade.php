@@ -40,20 +40,40 @@
                 </div>
             </div>
         </div>
-        <div class="lg:w-3/4">
-            <div>
-                @include('datasheets.partials.list', ['datasheets' => $learner->datasheets, 'operators' => $operators])
-            </div>
-            <div class="mt-8">
-                <h2 class="text-xl mb-4 font-bold">{{ __('Appointments Calendar') }}</h2>
-                @include('appointments.partials.calendar', [
-                        'events' => $events,
-                        'operators' => $operators,
-                        'learners'  => $learners,
-                        'disciplines' => $disciplines,
-                        'showFilters' => false,
+        <div x-data="{ activeTab: 'appointments' }" class="lg:w-3/4">
+                <!-- Navigation Tabs -->
+                <div class="mb-4 border-b">
+                    <nav class="-mb-px flex space-x-4">
+
+                        <button type="button"
+                                @click="activeTab = 'appointments'"
+                                :class="activeTab === 'appointments' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                                class="whitespace-nowrap border-b-2 font-medium text-sm">
+                            {{ __('Appointments Calendar') }}
+                        </button>
+                        <button type="button"
+                                @click="activeTab = 'datasheets'"
+                                :class="activeTab === 'datasheets' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                                class="whitespace-nowrap border-b-2 font-medium text-sm">
+                            {{ __('Datasheets') }}
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Tab Content -->
+                <div x-show="activeTab === 'appointments'" class="mt-4">
+                    <h2 class="text-xl mb-4 font-bold">{{ __('Appointments Calendar') }}</h2>
+                    @include('appointments.partials.calendar', [
+                      'events' => $events,
+                      'operators' => $operators,
+                      'learners'  => $learners,
+                      'disciplines' => $disciplines,
+                      'showFilters' => false,
                     ])
+                </div>
+                <div x-show="activeTab === 'datasheets'" class="mt-4">
+                    @include('datasheets.partials.list', ['datasheets' => $learner->datasheets, 'operators' => $operators])
+                </div>
             </div>
-        </div>
     </div>
 </div>
