@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DatasheetUpdatedEvent;
 use App\Http\Requests\StoreDatasheetRequest;
 use App\Http\Requests\UpdateDatasheetRequest;
 use App\Models\Datasheet;
@@ -43,7 +44,11 @@ class DatasheetController extends Controller
      */
     public function update(UpdateDatasheetRequest $request, Datasheet $datasheet)
     {
-        $datasheet->update($request->validated());
+        $updated_attributes = $request->validated();
+        $datasheet->update($updated_attributes);
+
+        if (array_key_exists('finalized_at', $updated_attributes) && !empty($updated_attributes['finalized_at']))
+            DatasheetUpdatedEvent::dispatch($datasheet);
 
         $message = __("The :resource was updated!", ['resource' => __('Datasheet')]);
         return $request->ajax() ?
