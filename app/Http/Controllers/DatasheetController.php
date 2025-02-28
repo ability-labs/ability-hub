@@ -48,7 +48,7 @@ class DatasheetController extends Controller
         $message = __("The :resource was updated!", ['resource' => __('Datasheet')]);
         return $request->ajax() ?
             response()
-                ->json(['success' => $message, 'data' => $datasheet])
+                ->json(['success' => $message, 'data' => $datasheet->refresh()])
             : redirect()
                 ->back()
                 ->with(['success' => $message]);
