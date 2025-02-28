@@ -10,9 +10,9 @@ class MultipleStimulus extends PreferenceAssessmentAbstract
     protected function processSessions(): void
     {
         foreach ($this->data['sessions'] as $session) {
-            foreach ($session['answers']['rows'] as [$order, $itemKey, $score]) {
+            foreach ($session['answers']['rows'] as $index => [$order, $itemKey]) {
                 if (isset($this->scores[$itemKey])) {
-                    $this->scores[$itemKey] += $score;
+                    $this->scores[$itemKey] += count($session['answers']['rows']) - $index;
                 }
             }
         }
