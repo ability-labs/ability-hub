@@ -7,9 +7,8 @@
 
             <span>
                 {{ __('Datasheet') . ': '
-                . $datasheet->type->name . ' '
-                . $datasheet->learner->full_name
-                . ' (' . $datasheet->learner->age  . ')'}}
+                . $datasheet->type->name
+                }}
             </span>
         </h2>
     </x-slot>
@@ -24,7 +23,8 @@
             'link' => route('learners.show', ['learner' => $datasheet->learner])
         ],
         [
-            'text' => __('Datasheet') . ' ('. $datasheet->type->category . ')',
+            'text' => __('Datasheet') . ': '
+                . $datasheet->type->name
         ]
     ]" />
 
