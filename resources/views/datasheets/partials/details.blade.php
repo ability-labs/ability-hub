@@ -2,7 +2,7 @@
 <div class="w-full">
     <h4 class="font-bold text-lg mb-2 flex justify-between items-center space-x-4">
         <span>{{ $datasheet->type->name }}</span>
-        <span class="text-sm font-normal text-gray-400">{{ $datasheet->created_at->diffForHumans() }}</span>
+        <span class="text-sm font-normal text-gray-400">{{ __('Posted') .' '. $datasheet->created_at->diffForHumans() }}</span>
     </h4>
     <ul class="divide-y divide-gray-200 dark:divide-gray-600">
         <li>
@@ -20,7 +20,28 @@
                 </div>
                 @endisset
                 <span class="text-sm text-gray-500 dark:text-gray-400">
-                    {{ $datasheet->finalized_at ? __("Finalized") . ' ' . $datasheet->finalized_at->diffForHumans() : __('Pending') }}
+                    @if($datasheet->finalized_at)
+                        <div class="flex items-center space-x-2">
+                            <span>{{ __("Finalized") . ' ' . $datasheet->finalized_at->diffForHumans() }}</span>
+                            <form method="POST" action="{{ route('datasheets.update', ['datasheet' => $datasheet ]) }}">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="finalized_at" value="">
+                                <button type="submit">{{ __('Cancel') }}</button>
+                            </form>
+                        </div>
+
+                    @else
+                        <div class="flex items-center space-x-2">
+                            <span>{{  __('Pending') }}</span>
+                            <form method="POST" action="{{ route('datasheets.update', ['datasheet' => $datasheet ]) }}">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="finalized_at" value="{{ now() }}">
+                                <button type="submit">{{ __('Finalize') }}</button>
+                            </form>
+                        </div>
+                    @endif
                   </span>
             </div>
         </li>
