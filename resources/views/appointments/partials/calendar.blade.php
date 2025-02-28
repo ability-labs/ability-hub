@@ -306,6 +306,7 @@
                             selectMirror: true,
                             unselectAuto: false,
                             editable: false,
+                            longPressDelay: 25,
                             headerToolbar: {
                                 left: 'timeGridWeek,timeGridDay',
                                 center: 'title',
