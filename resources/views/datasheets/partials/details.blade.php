@@ -20,30 +20,13 @@
                 </div>
                 @endisset
                 <span class="text-sm text-gray-500 dark:text-gray-400">
-                    @if($datasheet->finalized_at)
-                        <div class="flex items-center space-x-2">
-                            <span>{{ __("Finalized") . ' ' . $datasheet->finalized_at->diffForHumans() }}</span>
-                            <form method="POST" action="{{ route('datasheets.update', ['datasheet' => $datasheet ]) }}">
-                                @csrf
-                                @method('PUT')
-                                <input type="hidden" name="finalized_at" value="">
-                                <button type="submit">{{ __('Cancel') }}</button>
-                            </form>
-                        </div>
 
-                    @else
-                        <div class="flex items-center space-x-2">
-                            <span>{{  __('Pending') }}</span>
-                            <form method="POST" action="{{ route('datasheets.update', ['datasheet' => $datasheet ]) }}">
-                                @csrf
-                                @method('PUT')
-                                <input type="hidden" name="finalized_at" value="{{ now() }}">
-                                <button type="submit">{{ __('Finalize') }}</button>
-                            </form>
-                        </div>
-                    @endif
                   </span>
             </div>
         </li>
     </ul>
+
+    <div>
+            @include('datasheets.partials.reports.results', ['datasheet' => $datasheet])
+    </div>
 </div>
