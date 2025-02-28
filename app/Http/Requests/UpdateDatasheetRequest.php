@@ -22,7 +22,7 @@ class UpdateDatasheetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'finalized_at' => [ 'date' ],
+            'finalized_at' => [ 'nullable','date' ],
             'data' => ['array'],
         ];
     }
