@@ -27,4 +27,12 @@ class MultipleStimulus extends PreferenceAssessmentAbstract
     {
         return self::SUGGESTED_ITEMS;
     }
+
+    protected function getColumnsSchema()
+    {
+        return [
+            "Order",
+            "Item"
+        ];
+    }
 }

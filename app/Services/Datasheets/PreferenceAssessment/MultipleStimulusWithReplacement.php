@@ -26,4 +26,33 @@ class MultipleStimulusWithReplacement extends PreferenceAssessmentAbstract
     {
         return self::SUGGESTED_ITEMS;
     }
+
+    protected function getColumnsSchema()
+    {
+        return [
+            "Sequence Order",
+            "Proposed Items",
+            "Choice",
+        ];
+    }
+
+    public function hasSequences(): bool
+    {
+        return true;
+    }
+
+    public function getSequenceSize(): ?int
+    {
+        return 3;
+    }
+
+    public function getSequenceType(): ?string
+    {
+        return "fixed";
+    }
+
+    public function getSequenceStrategy(): ?string
+    {
+        return "keep-chosen";
+    }
 }

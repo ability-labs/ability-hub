@@ -27,4 +27,28 @@ class PairedChoice extends PreferenceAssessmentAbstract
     {
         return self::SUGGESTED_ITEMS;
     }
+
+    protected function getColumnsSchema()
+    {
+        return [
+            "Proposed Items",
+            "Choice",
+        ];
+    }
+
+
+    public function hasSequences(): bool
+    {
+        return true;
+    }
+
+    public function getSequenceSize(): ?int
+    {
+        return 2;
+    }
+
+    public function getSequenceType(): ?string
+    {
+        return "fixed";
+    }
 }

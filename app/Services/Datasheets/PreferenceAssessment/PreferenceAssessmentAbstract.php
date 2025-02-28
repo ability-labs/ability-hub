@@ -6,8 +6,8 @@ use App\Services\Datasheets\ReportAbstract;
 
 abstract class PreferenceAssessmentAbstract extends ReportAbstract
 {
-    protected array $items;
-    protected array $scores;
+    public array $items;
+    public array $scores;
 
     public function __construct(
         protected array $data
@@ -91,6 +91,7 @@ abstract class PreferenceAssessmentAbstract extends ReportAbstract
             'suggested_items' => $this->getSuggestedItems(),
 
             'has_legend' => $this->hasLegend(),
+            'has_sequences' => $this->hasSequences(),
             'has_items' => $this->hasItems(),
             'has_sessions' => $this->hasSessions(),
 
@@ -102,6 +103,11 @@ abstract class PreferenceAssessmentAbstract extends ReportAbstract
         ];
         if ($this->hasLegend())
             $info['legend'] = $this->getLegend();
+        if ($this->hasSequences()) {
+            $info['sequence_size'] = $this->getSequenceSize();
+            $info['sequence_type'] = $this->getSequenceType();
+            $info['sequence_strategy'] = $this->getSequenceStrategy();
+        }
         return $info;
     }
     public function getDatasetTemplate(): array
@@ -165,4 +171,24 @@ abstract class PreferenceAssessmentAbstract extends ReportAbstract
         return null;
     }
 
+
+    public function hasSequences(): bool
+    {
+        return false;
+    }
+
+    public function getSequenceSize(): ?int
+    {
+        return null;
+    }
+
+    public function getSequenceType(): ?string
+    {
+        return null;
+    }
+
+    public function getSequenceStrategy(): ?string
+    {
+        return null;
+    }
 }
