@@ -5,6 +5,14 @@
         "name": {
             "en": "Single Item Preference Assessment",
             "it": "Valutazione su item singolo"
+        },
+        "description": {
+            "en": "A method to evaluate preference by presenting items one at a time and recording the individual's reaction.",
+            "it": "Un metodo per valutare la preferenza presentando gli oggetti uno alla volta e registrando la reazione dell'individuo."
+        },
+        "instruction": {
+            "en": "Present one item at a time to the individual and observe their reaction. Note whether they approach, engage, or reject the item. Repeat with different items to create a ranking of preferences.",
+            "it": "Presenta un oggetto alla volta all'individuo e osserva la sua reazione. Nota se si avvicina, interagisce o rifiuta l'oggetto. Ripeti con diversi oggetti per creare una classifica delle preferenze."
         }
     },
     {
@@ -13,6 +21,14 @@
         "name": {
             "en": "Paired Choice Preference Assessment",
             "it": "Valutazione a scelta tra due"
+        },
+        "description": {
+            "en": "A method that presents two items at a time, requiring the individual to choose between them.",
+            "it": "Un metodo che presenta due oggetti alla volta, richiedendo all'individuo di scegliere tra di essi."
+        },
+        "instruction": {
+            "en": "Present two items at a time and ask the individual to choose one. Record their choice and repeat with different pairs until all combinations have been presented. Rank items based on selection frequency.",
+            "it": "Presenta due oggetti alla volta e chiedi all'individuo di sceglierne uno. Registra la scelta e ripeti con diverse coppie fino a presentare tutte le combinazioni. Classifica gli oggetti in base alla frequenza di selezione."
         }
     },
     {
@@ -21,6 +37,14 @@
         "name": {
             "en": "Multiple Stimulus Preference Assessment",
             "it": "Valutazione a stimoli multipli"
+        },
+        "description": {
+            "en": "A method where multiple items are presented at once, and the individual selects their preferred item.",
+            "it": "Un metodo in cui vengono presentati più oggetti contemporaneamente e l'individuo seleziona il suo preferito."
+        },
+        "instruction": {
+            "en": "Place all items in front of the individual and allow them to select one. Record the selection, allow interaction, then remove the item. Reintroduce the remaining items and repeat until all have been selected.",
+            "it": "Disponi tutti gli oggetti davanti all'individuo e permettigli di selezionarne uno. Registra la scelta, permetti l'interazione, quindi rimuovi l'oggetto. Reintroduci gli oggetti rimanenti e ripeti fino a quando tutti sono stati selezionati."
         }
     },
     {
@@ -29,6 +53,14 @@
         "name": {
             "en": "Multiple Stimulus without Replacement Preference Assessment",
             "it": "Valutazione a stimoli multipli senza sostituzione"
+        },
+        "description": {
+            "en": "A method where multiple items are presented at once, and chosen items are removed after selection.",
+            "it": "Un metodo in cui vengono presentati più oggetti contemporaneamente e gli oggetti scelti vengono rimossi dopo la selezione."
+        },
+        "instruction": {
+            "en": "Present an array of items and instruct the individual to pick one. Record their choice, remove the selected item, and repeat the process until all items are ranked based on preference.",
+            "it": "Presenta un insieme di oggetti e chiedi all'individuo di sceglierne uno. Registra la scelta, rimuovi l'oggetto selezionato e ripeti il processo fino a quando tutti gli oggetti sono stati classificati in base alla preferenza."
         }
     },
     {
@@ -37,6 +69,14 @@
         "name": {
             "en": "Multiple Stimulus with Replacement Preference Assessment",
             "it": "Valutazione a stimoli multipli con sostituzione"
+        },
+        "description": {
+            "en": "A method where multiple items are presented at once, and the chosen item is returned to the selection pool after each choice.",
+            "it": "Un metodo in cui vengono presentati più oggetti contemporaneamente e l'oggetto scelto viene restituito al pool di selezione dopo ogni scelta."
+        },
+        "instruction": {
+            "en": "Present multiple items to the individual. Allow them to choose one, record the choice, and then return the item to the selection group. Repeat multiple trials to determine preference ranking.",
+            "it": "Presenta più oggetti all'individuo. Permetti di sceglierne uno, registra la scelta, quindi restituisci l'oggetto al gruppo di selezione. Ripeti più prove per determinare la classifica delle preferenze."
         }
     },
     {
@@ -45,6 +85,30 @@
         "name": {
             "en": "Free Operant Observation",
             "it": "Valutazione in operante libero"
+        },
+        "description": {
+            "en": "A method where the individual is allowed free access to all items, and preferences are determined based on time spent interacting with each item.",
+            "it": "Un metodo in cui l'individuo ha libero accesso a tutti gli oggetti e le preferenze vengono determinate in base al tempo trascorso interagendo con ciascun oggetto."
+        },
+        "instruction": {
+            "en": "Place all items in a free-access environment and allow the individual to interact naturally. Record the duration of interaction with each item to establish a preference ranking.",
+            "it": "Disponi tutti gli oggetti in un ambiente ad accesso libero e permetti all'individuo di interagire naturalmente. Registra la durata dell'interazione con ciascun oggetto per stabilire una classifica di preferenza."
+        }
+    },
+    {
+        "id": "preference-assessment-mss",
+        "category": "Preference Assessment",
+        "name": {
+            "en": "Simple Multiple Stimulus Preference Assessment",
+            "it": "Valutazione a stimoli multipli semplice"
+        },
+        "description": {
+            "en": "A method where multiple items are presented, and the individual selects one at a time in sequential rounds.",
+            "it": "Un metodo in cui vengono presentati più oggetti e l'individuo seleziona un oggetto alla volta in turni sequenziali."
+        },
+        "instruction": {
+            "en": "Present all available items to the individual. Let them choose one and interact with it for a short period. Remove the chosen item and repeat the process until all items have been selected, creating a preference ranking.",
+            "it": "Presenta tutti gli oggetti disponibili all'individuo. Permetti di sceglierne uno e interagire per un breve periodo. Rimuovi l'oggetto scelto e ripeti il processo fino a quando tutti gli oggetti sono stati selezionati, creando una classifica di preferenza."
         }
     }
 ]

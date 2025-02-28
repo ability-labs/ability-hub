@@ -13,6 +13,8 @@ class DatasheetType extends Model
 
     protected $keyType = 'string';
     public $translatable = [
-        'name'
+        'name',
+        'description',
+        'instruction'
     ];
 }
