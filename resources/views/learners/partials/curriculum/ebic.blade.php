@@ -62,13 +62,13 @@
                 <td id="{{$cell['type'] === 'filled' ? $cell['content']['id'] : 'empty-'.$cell['xCoordinate'].'-'.$cell['yCoordinate']}}"
                     data-original-color="{{ $color }}"
                     data-type="{{ $cell['type'] }}"
-                    class="text-xs text-center border"
+                    class="text-xs text-center border {{$cell['type'] === 'filled' ?  'cursor-pointer' : '' }}"
                     style="background-color: {{ $color }}"
                     colspan="{{ $cell['colspan'] }}" rowspan="{{ $cell['rowspan'] }}">
                     @if($cell['type'] === 'filled')
-                        <p title="{{$cell['content']['name'][config('app.locale')]}}">
+                        <span title="{{$cell['content']['name'][config('app.locale')]}}">
                             {{$cell['content']['name'][config('app.locale')]}}
-                        </p>
+                        </span>
                     @endif
                 </td>
             @endforeach

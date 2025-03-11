@@ -11,9 +11,9 @@
     };
 @endphp
 
-<div class="space-y-4">
+<div x-data="{ activeTab: 'appointments', showDetails: true }" class="space-y-4">
     <div class="flex flex-col space-y-8 lg:flex-row lg:space-y-0 h-min-screen">
-        <div class="lg:w-1/4">
+        <div x-show="showDetails" class="lg:w-1/4">
             <div class="{{ $backgroundClass }} flex items-start space-x-4 p-4 mr-8 rounded-lg">
                 <div class="flex flex-col space-y-4">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -44,24 +44,30 @@
                 </div>
             </div>
         </div>
-        <div x-data="{ activeTab: 'appointments' }" class="lg:w-3/4">
+        <div :class="showDetails ? 'lg:w-3/4' : 'lg:w-full'">
             <!-- Navigation Tabs -->
             <div class="mb-4 border-b">
                 <nav class="-mb-px flex space-x-4">
                     <button type="button"
-                            @click="activeTab = 'appointments'"
+                            @click="activeTab = 'appointments'; showDetails = true"
                             :class="activeTab === 'appointments' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
                             class="whitespace-nowrap border-b-2 font-medium text-sm">
                         {{ __('Appointments Calendar') }}
                     </button>
                     <button type="button"
-                            @click="activeTab = 'preferences'"
+                            @click="activeTab = 'preferences'; showDetails = true"
                             :class="activeTab === 'preferences' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
                             class="whitespace-nowrap border-b-2 font-medium text-sm">
                         {{ __('Preference Assessment') }}
                     </button>
                     <button type="button"
-                            @click="activeTab = 'datasheets'"
+                            @click="activeTab = 'curriculum'; showDetails = false"
+                            :class="activeTab === 'curriculum' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                            class="whitespace-nowrap border-b-2 font-medium text-sm">
+                        {{ __('Curriculum') }}
+                    </button>
+                    <button type="button"
+                            @click="activeTab = 'datasheets'; showDetails = true"
                             :class="activeTab === 'datasheets' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
                             class="whitespace-nowrap border-b-2 font-medium text-sm">
                         {{ __('Datasheets') }}
@@ -82,6 +88,11 @@
             </div>
             <div x-show="activeTab === 'preferences'">
                 @include('learners.partials.preference-assessment.categories-report', ['learner' => $learner])
+            </div>
+            <div x-show="activeTab === 'curriculum'">
+                <div class="text-center">
+                    @include('learners.partials.curriculum.ebic', ['learner' => $learner])
+                </div>
             </div>
             <div x-show="activeTab === 'datasheets'" class="mt-4">
                 @include('datasheets.partials.list', ['datasheets' => $learner->datasheets, 'operators' => $operators])
