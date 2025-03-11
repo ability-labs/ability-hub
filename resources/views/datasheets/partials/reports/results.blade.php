@@ -33,14 +33,14 @@
     <div class="min-h-[220px]">
         <!-- Info Section -->
         <div x-show="currentStep === 0" class="my-8 mx-auto max-w-2xl">
-            <h1 class="text-3xl mb-4 text-pink-500 flex items-center space-x-2">
+            <h1 class="text-2xl mb-4 text-pink-500 flex items-center space-x-2">
                 <span class="bg-pink-100 text-pink-500 px-2 py-1 rounded-md font-bold text-xs uppercase">
                     {{ $datasheet->type->category }}
                 </span>
                 <span>{{ $datasheet->type->name }}</span>
             </h1>
 
-            <p class="text-lg">
+            <p class="text">
                 {{ $datasheet->type->description }}
                 <button type="button" @click="() => displayInfo = !displayInfo" class="text-gray-600 underline ml-2" x-text="displayInfo ? hideInfoLabel : displayInfoLabel"></button>
             </p>
