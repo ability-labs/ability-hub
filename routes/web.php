@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\DatasheetController;
 use App\Http\Controllers\LanguageSelectorController;
 use App\Http\Controllers\LearnerController;
 use App\Http\Controllers\OperatorController;
@@ -21,6 +22,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Appointments Section Routes
     Route::resource('appointments', AppointmentController::class);
+
+    // Appointments Section Routes
+    Route::resource('learners.datasheets', DatasheetController::class)
+        ->except(['index','create','edit'])
+        ->shallow();
 });
 
 Route::middleware('auth')->group(function () {

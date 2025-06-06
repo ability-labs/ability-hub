@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\PersonGender;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreLearnerRequest extends FormRequest
 {
@@ -22,7 +24,10 @@ class StoreLearnerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'first_name' => ['required','string:128'],
+            'last_name' => ['required','string:128'],
+            'birth_date' => ['required','date'],
+            'gender' => ['required',new Enum(PersonGender::class)],
         ];
     }
 }

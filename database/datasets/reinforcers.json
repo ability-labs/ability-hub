@@ -1,0 +1,873 @@
+{
+    "categories": [
+        {
+            "key": "sensory",
+            "name": {
+                "en": "Sensory Reinforcements",
+                "it": "Rinforzi Sensoriali"
+            },
+            "subcategories": [
+                {
+                    "key": "sensory/tactile",
+                    "name": {
+                        "en": "Tactile Reinforcements",
+                        "it": "Rinforzi Tattili"
+                    },
+                    "items": [
+                        {
+                            "key": "sensory/tactile/anti-stress-balls",
+                            "name": {
+                                "en": "Anti-Stress Balls",
+                                "it": "Palle anti stress"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/hand-face-cream",
+                            "name": {
+                                "en": "Hand/Face Cream",
+                                "it": "Crema per le mani/viso"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/shaving-foam",
+                            "name": {
+                                "en": "Shaving Foam",
+                                "it": "Schiuma da barba"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/play-dough",
+                            "name": {
+                                "en": "Play-dough",
+                                "it": "Di-do"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/magic-sand-salt-snow",
+                            "name": {
+                                "en": "Magic Sand/Salt/Snow",
+                                "it": "Sabbia magica/sale/neve"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/artificial",
+                            "name": {
+                                "en": "Artificial",
+                                "it": "artificiale"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/gel-balls",
+                            "name": {
+                                "en": "Gel Balls",
+                                "it": "Palline gel"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/water",
+                            "name": {
+                                "en": "Water",
+                                "it": "Acqua"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/rubber-elastic-toys",
+                            "name": {
+                                "en": "Rubber/Elastic Toys",
+                                "it": "Giocattoli gommosi/elastici"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/rubber-elastic-balls",
+                            "name": {
+                                "en": "Rubber/Elastic Balls",
+                                "it": "Palle gommose/elastiche"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/slime",
+                            "name": {
+                                "en": "Slime",
+                                "it": "Slime"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/hand-finger-paint",
+                            "name": {
+                                "en": "Hand/Finger Paint",
+                                "it": "Pittura mani/dito"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/pom-pom",
+                            "name": {
+                                "en": "Pom Pom",
+                                "it": "Pom pom"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/glitter",
+                            "name": {
+                                "en": "Glitter",
+                                "it": "Glitter"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/feathers",
+                            "name": {
+                                "en": "Feathers",
+                                "it": "Piume"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/soap-bubbles",
+                            "name": {
+                                "en": "Soap Bubbles",
+                                "it": "Bolle di sapone"
+                            }
+                        },
+                        {
+                            "key": "sensory/tactile/tickling",
+                            "name": {
+                                "en": "Tickling",
+                                "it": "Solletico"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "key": "sensory/hearing",
+                    "name": {
+                        "en": "Hearing Reinforcements",
+                        "it": "Rinforzi Uditivi"
+                    },
+                    "items": [
+                        {
+                            "key": "sensory/hearing/whistles-bells",
+                            "name": {
+                                "en": "Whistles/Bells",
+                                "it": "Fischietti/campane"
+                            }
+                        },
+                        {
+                            "key": "sensory/hearing/drums",
+                            "name": {
+                                "en": "Drums",
+                                "it": "Tamburi"
+                            }
+                        },
+                        {
+                            "key": "sensory/hearing/piano",
+                            "name": {
+                                "en": "Piano",
+                                "it": "Pianoforte"
+                            }
+                        },
+                        {
+                            "key": "sensory/hearing/talking-singing-toys",
+                            "name": {
+                                "en": "Talking/Singing Toys",
+                                "it": "Giocattoli che parlano/cantano/"
+                            }
+                        },
+                        {
+                            "key": "sensory/hearing/repeating-sounds",
+                            "name": {
+                                "en": "Repeating Sounds",
+                                "it": "ripetono"
+                            }
+                        },
+                        {
+                            "key": "sensory/hearing/singing-songs",
+                            "name": {
+                                "en": "Singing Songs",
+                                "it": "Cantare canzoni"
+                            }
+                        },
+                        {
+                            "key": "sensory/hearing/microphone",
+                            "name": {
+                                "en": "Microphone",
+                                "it": "Microfono"
+                            }
+                        },
+                        {
+                            "key": "sensory/hearing/adult-voice-whisper-shout",
+                            "name": {
+                                "en": "Adult Voice, Whisper, Shout,",
+                                "it": "Voce dell'adulto, sussurro, urlo,"
+                            }
+                        },
+                        {
+                            "key": "sensory/hearing/high-low-pitch",
+                            "name": {
+                                "en": "High/Low Pitch",
+                                "it": "tono alto/basso"
+                            }
+                        },
+                        {
+                            "key": "sensory/hearing/music-box",
+                            "name": {
+                                "en": "Music Box",
+                                "it": "Carillon"
+                            }
+                        },
+                        {
+                            "key": "sensory/hearing/nursery-rhymes",
+                            "name": {
+                                "en": "Nursery Rhymes",
+                                "it": "Filastrocche"
+                            }
+                        },
+                        {
+                            "key": "sensory/hearing/reading-books",
+                            "name": {
+                                "en": "Reading Books",
+                                "it": "Lettura di libri"
+                            }
+                        },
+                        {
+                            "key": "sensory/hearing/clapping-hands",
+                            "name": {
+                                "en": "Clapping Hands",
+                                "it": "Battere le mani"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "key": "sensory/visual",
+                    "name": {
+                        "en": "Visual Reinforcements",
+                        "it": "Rinforzi Visivi"
+                    },
+                    "items": [
+                        {
+                            "key": "sensory/visual/tv",
+                            "name": {
+                                "en": "TV",
+                                "it": "TV"
+                            }
+                        },
+                        {
+                            "key": "sensory/visual/smartphone-tablet",
+                            "name": {
+                                "en": "Smartphone/Tablet",
+                                "it": "Smartphone/Tablet"
+                            }
+                        },
+                        {
+                            "key": "sensory/visual/video-games",
+                            "name": {
+                                "en": "Video Games",
+                                "it": "Video giochi"
+                            }
+                        },
+                        {
+                            "key": "sensory/visual/spinning-tops",
+                            "name": {
+                                "en": "Spinning Tops",
+                                "it": "Trottole"
+                            }
+                        },
+                        {
+                            "key": "sensory/visual/light-up-toys",
+                            "name": {
+                                "en": "Light-Up Toys",
+                                "it": "Giocattoli che si illuminano"
+                            }
+                        },
+                        {
+                            "key": "sensory/visual/kaleidoscope",
+                            "name": {
+                                "en": "Kaleidoscope",
+                                "it": "Caledeiscopo"
+                            }
+                        },
+                        {
+                            "key": "sensory/visual/picture-books",
+                            "name": {
+                                "en": "Picture Books",
+                                "it": "Libri con immagini"
+                            }
+                        },
+                        {
+                            "key": "sensory/visual/toys-with-wheels",
+                            "name": {
+                                "en": "Toys with Wheels",
+                                "it": "Giocattoli con ruote"
+                            }
+                        },
+                        {
+                            "key": "sensory/visual/car-marble-tracks",
+                            "name": {
+                                "en": "Car/Marble Tracks",
+                                "it": "Piste macchine/biglie"
+                            }
+                        },
+                        {
+                            "key": "sensory/visual/train-with-tracks",
+                            "name": {
+                                "en": "Train with Tracks",
+                                "it": "Treno con rotaie"
+                            }
+                        },
+                        {
+                            "key": "sensory/visual/balloons",
+                            "name": {
+                                "en": "Balloons",
+                                "it": "Palloncini"
+                            }
+                        },
+                        {
+                            "key": "sensory/visual/crayons-marker-spaint",
+                            "name": {
+                                "en": "Crayons/Markers/Paint",
+                                "it": "Pastelli/pennarellli/pittura"
+                            }
+                        },
+                        {
+                            "key": "sensory/visual/magic-slate",
+                            "name": {
+                                "en": "Magic Slate",
+                                "it": "Lavagna magica"
+                            }
+                        },
+                        {
+                            "key": "sensory/visual/stamps",
+                            "name": {
+                                "en": "Stamps",
+                                "it": "Timbri"
+                            }
+                        },
+                        {
+                            "key": "sensory/visual/glow-in-the-dark-objects",
+                            "name": {
+                                "en": "Glow-in-the-Dark Objects",
+                                "it": "Oggetti che si illuminano al"
+                            }
+                        },
+                        {
+                            "key": "sensory/visual/stickers",
+                            "name": {
+                                "en": "Stickers",
+                                "it": "Figurine/stickers"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "key": "sensory/kinetic",
+                    "name": {
+                        "en": "Kinetic Reinforcements",
+                        "it": "Rinforzi Cinetici"
+                    },
+                    "items": [
+                        {
+                            "key": "sensory/kinetic/trampoline",
+                            "name": {
+                                "en": "Trampoline",
+                                "it": "Tappeto elastico"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/fit-ball",
+                            "name": {
+                                "en": "Fit Ball",
+                                "it": "Fit-ball"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/rolling-on-the-floor",
+                            "name": {
+                                "en": "Rolling on the Floor",
+                                "it": "Rotolarsi sul pavimento"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/swinging-in-a-blanket",
+                            "name": {
+                                "en": "Swinging in a Blanket",
+                                "it": "Dondolare dentro la coperta/"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/being-wrapped",
+                            "name": {
+                                "en": "Being Wrapped",
+                                "it": "essere avvolto"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/spinning-twirling",
+                            "name": {
+                                "en": "Spinning/Twirling",
+                                "it": "Girare/roteare"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/walking-on-someones-feet",
+                            "name": {
+                                "en": "Walking on Someone's Feet",
+                                "it": "Camminare sui piedi dell'altro"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/sitting-and-spinning",
+                            "name": {
+                                "en": "Sitting and Spinning",
+                                "it": "Sedersi e girare"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/crawling",
+                            "name": {
+                                "en": "Crawling",
+                                "it": "Gattonare/strisciare"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/running",
+                            "name": {
+                                "en": "Running",
+                                "it": "Correre"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/jumping",
+                            "name": {
+                                "en": "Jumping",
+                                "it": "Saltare"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/bicycle-tricycle-scooter",
+                            "name": {
+                                "en": "Bicycle/Tricycle/Scooter/",
+                                "it": "Bicicletta/triciclo/monopattino/"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/roller-skates",
+                            "name": {
+                                "en": "Roller Skates",
+                                "it": "pattini"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/piggyback-ride",
+                            "name": {
+                                "en": "Piggyback Ride",
+                                "it": "Portare a cavalluccio sulla"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/on-the-back-shoulders-in-the-dark",
+                            "name": {
+                                "en": "On the Back/Shoulders in the Dark",
+                                "it": "buio schiena/spalle"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/rocking-horse",
+                            "name": {
+                                "en": "Rocking Horse",
+                                "it": "Cavallo a dondolo"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/dancing",
+                            "name": {
+                                "en": "Dancing",
+                                "it": "Ballare"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/climbing",
+                            "name": {
+                                "en": "Climbing",
+                                "it": "Arrampicarsi"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/crawling-through-a-tunnel",
+                            "name": {
+                                "en": "Crawling Through a Tunnel",
+                                "it": "Gattonare/strisciare dentro un Tunnel"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/sliding",
+                            "name": {
+                                "en": "Sliding",
+                                "it": "Scivolare"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/hitting-objects-with-a-stick",
+                            "name": {
+                                "en": "Hitting Objects with a Stick",
+                                "it": "Colpire oggetti con un bastone"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/bowling",
+                            "name": {
+                                "en": "Bowling",
+                                "it": "Bowling"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/soccer",
+                            "name": {
+                                "en": "Soccer",
+                                "it": "Calcio"
+                            }
+                        },
+                        {
+                            "key": "sensory/kinetic/basketball",
+                            "name": {
+                                "en": "Basketball",
+                                "it": "Basket"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "edible",
+            "name": {
+                "en": "Edible Reinforcements",
+                "it": "Rinforzi Edibili"
+            },
+            "subcategories": [
+                {
+                    "key": "sweets",
+                    "name": {
+                        "en": "Sweets",
+                        "it": "Dolci"
+                    },
+                    "items": [
+                        {
+                            "key": "edible/sweets/chocolate",
+                            "name": {
+                                "en": "Chocolate",
+                                "it": "Cioccolato"
+                            }
+                        },
+                        {
+                            "key": "edible/sweets/candy",
+                            "name": {
+                                "en": "Candy",
+                                "it": "Caramelle"
+                            }
+                        },
+                        {
+                            "key": "edible/sweets/cookies",
+                            "name": {
+                                "en": "Cookies",
+                                "it": "Biscotti"
+                            }
+                        },
+                        {
+                            "key": "edible/sweets/ice-cream",
+                            "name": {
+                                "en": "Ice Cream",
+                                "it": "Gelato"
+                            }
+                        },
+                        {
+                            "key": "edible/sweets/cake",
+                            "name": {
+                                "en": "Cake",
+                                "it": "Torta"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "key": "snacks",
+                    "name": {
+                        "en": "Snacks",
+                        "it": "Snack"
+                    },
+                    "items": [
+                        {
+                            "key": "edible/snacks/popcorn",
+                            "name": {
+                                "en": "Popcorn",
+                                "it": "Popcorn"
+                            }
+                        },
+                        {
+                            "key": "edible/snacks/chips",
+                            "name": {
+                                "en": "Chips",
+                                "it": "Patatine"
+                            }
+                        },
+                        {
+                            "key": "edible/snacks/nuts",
+                            "name": {
+                                "en": "Nuts",
+                                "it": "Frutta secca"
+                            }
+                        },
+                        {
+                            "key": "edible/snacks/crackers",
+                            "name": {
+                                "en": "Crackers",
+                                "it": "Crackers"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "tangible",
+            "name": {
+                "en": "Tangible Reinforcements",
+                "it": "Rinforzi Tangibili"
+            },
+            "subcategories": [
+                {
+                    "key": "tangible/money",
+                    "name": {
+                        "en": "Money",
+                        "it": "Denaro"
+                    },
+                    "items": [
+                        {
+                            "key": "tangible/money/coins",
+                            "name": {
+                                "en": "Coins",
+                                "it": "Monete"
+                            }
+                        },
+                        {
+                            "key": "tangible/money/bills",
+                            "name": {
+                                "en": "Bills",
+                                "it": "Banconote"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "key": "collectibles",
+                    "name": {
+                        "en": "Collectibles",
+                        "it": "Oggetti da Collezione"
+                    },
+                    "items": [
+                        {
+                            "key": "tangible/collectibles/stickers",
+                            "name": {
+                                "en": "Stickers",
+                                "it": "Adesivi"
+                            }
+                        },
+                        {
+                            "key": "tangible/collectibles/trading-cards",
+                            "name": {
+                                "en": "Trading Cards",
+                                "it": "Carte da gioco"
+                            }
+                        },
+                        {
+                            "key": "tangible/collectibles/toys",
+                            "name": {
+                                "en": "Toys",
+                                "it": "Giocattoli"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "activity",
+            "name": {
+                "en": "Activity Reinforcements",
+                "it": "Rinforzi di Attività"
+            },
+            "subcategories": [
+                {
+                    "key": "outdoor",
+                    "name": {
+                        "en": "Outdoor Activities",
+                        "it": "Attività all'Aperto"
+                    },
+                    "items": [
+                        {
+                            "key": "activity/outdoor/fishing",
+                            "name": {
+                                "en": "Fishing",
+                                "it": "Pesca"
+                            }
+                        },
+                        {
+                            "key": "activity/outdoor/biking",
+                            "name": {
+                                "en": "Biking",
+                                "it": "Andare in bici"
+                            }
+                        },
+                        {
+                            "key": "activity/outdoor/swimming",
+                            "name": {
+                                "en": "Swimming",
+                                "it": "Nuoto"
+                            }
+                        },
+                        {
+                            "key": "activity/outdoor/walking",
+                            "name": {
+                                "en": "Walking",
+                                "it": "Camminare"
+                            }
+                        },
+                        {
+                            "key": "activity/outdoor/hiking",
+                            "name": {
+                                "en": "Hiking",
+                                "it": "Escursionismo"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "key": "indoor",
+                    "name": {
+                        "en": "Indoor Activities",
+                        "it": "Attività al Chiuso"
+                    },
+                    "items": [
+                        {
+                            "key": "activity/indoor/board-games",
+                            "name": {
+                                "en": "Board Games",
+                                "it": "Giochi da tavolo"
+                            }
+                        },
+                        {
+                            "key": "activity/indoor/puzzles",
+                            "name": {
+                                "en": "Puzzles",
+                                "it": "Puzzle"
+                            }
+                        },
+                        {
+                            "key": "activity/indoor/crafting",
+                            "name": {
+                                "en": "Crafting",
+                                "it": "Attività creative"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "sociality",
+            "name": {
+                "en": "Social Reinforcements",
+                "it": "Rinforzi Sociali"
+            },
+            "subcategories": [
+                {
+                    "key": "verbal-praise",
+                    "name": {
+                        "en": "Verbal Praise",
+                        "it": "Lodi Verbali"
+                    },
+                    "items": [
+                        {
+                            "key": "sociality/verbal-praise/compliments",
+                            "name": {
+                                "en": "Compliments",
+                                "it": "Complimenti"
+                            }
+                        },
+                        {
+                            "key": "sociality/verbal-praise/cheering",
+                            "name": {
+                                "en": "Cheering",
+                                "it": "Tifare"
+                            }
+                        },
+                        {
+                            "key": "sociality/verbal-praise/encouragement",
+                            "name": {
+                                "en": "Encouragement",
+                                "it": "Incoraggiamento"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "key": "physical-affection",
+                    "name": {
+                        "en": "Physical Affection",
+                        "it": "Affetto Fisico"
+                    },
+                    "items": [
+                        {
+                            "key": "sociality/physical-affection/hugs",
+                            "name": {
+                                "en": "Hugs",
+                                "it": "Abbracci"
+                            }
+                        },
+                        {
+                            "key": "sociality/physical-affection/high-fives",
+                            "name": {
+                                "en": "High-Fives",
+                                "it": "Cinque"
+                            }
+                        },
+                        {
+                            "key": "sociality/physical-affection/pats-on-the-back",
+                            "name": {
+                                "en": "Pats on the Back",
+                                "it": "Pacche sulla spalla"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "key": "quality-time",
+                    "name": {
+                        "en": "Quality Time",
+                        "it": "Tempo di Qualità"
+                    },
+                    "items": [
+                        {
+                            "key": "sociality/quality-time/talking",
+                            "name": {
+                                "en": "Talking",
+                                "it": "Parlare"
+                            }
+                        },
+                        {
+                            "key": "sociality/quality-time/playing",
+                            "name": {
+                                "en": "Playing Together",
+                                "it": "Giocare insieme"
+                            }
+                        },
+                        {
+                            "key": "sociality/quality-time/shared-activities",
+                            "name": {
+                                "en": "Shared Activities",
+                                "it": "Attività condivise"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

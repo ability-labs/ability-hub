@@ -1,33 +1,6 @@
 @inject('content', 'App\Repositories\EBICDataRepository')
-
-<style>
-    .rotate {
-
-        transform: rotate(-90deg);
-
-
-        /* Legacy vendor prefixes that you probably don't need... */
-
-        /* Safari */
-        -webkit-transform: rotate(-90deg);
-
-        /* Firefox */
-        -moz-transform: rotate(-90deg);
-
-        /* IE */
-        -ms-transform: rotate(-90deg);
-
-        /* Opera */
-        -o-transform: rotate(-90deg);
-
-        /* Internet Explorer */
-        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
-
-    }
-</style>
-
-
-<table class="table-auto">
+<div class="overflow-auto">
+    <table class="table-auto">
     <thead>
     <tr>
         @foreach($content->data['categories'] as $category)
@@ -62,13 +35,13 @@
                 <td id="{{$cell['type'] === 'filled' ? $cell['content']['id'] : 'empty-'.$cell['xCoordinate'].'-'.$cell['yCoordinate']}}"
                     data-original-color="{{ $color }}"
                     data-type="{{ $cell['type'] }}"
-                    class="text-xs text-center border"
+                    class="text-xs text-center border {{$cell['type'] === 'filled' ?  'cursor-pointer' : '' }}"
                     style="background-color: {{ $color }}"
                     colspan="{{ $cell['colspan'] }}" rowspan="{{ $cell['rowspan'] }}">
                     @if($cell['type'] === 'filled')
-                        <p title="{{$cell['content']['name'][config('app.locale')]}}">
+                        <span title="{{$cell['content']['name'][config('app.locale')]}}">
                             {{$cell['content']['name'][config('app.locale')]}}
-                        </p>
+                        </span>
                     @endif
                 </td>
             @endforeach
@@ -83,7 +56,7 @@
     </tr>
     </thead>
 </table>
-
+</div>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var cells = document.querySelectorAll("td");
