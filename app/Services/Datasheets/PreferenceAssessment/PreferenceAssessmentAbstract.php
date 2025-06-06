@@ -2,7 +2,9 @@
 
 namespace App\Services\Datasheets\PreferenceAssessment;
 
+use App\Models\Reinforcer;
 use App\Services\Datasheets\ReportAbstract;
+use Illuminate\Support\Collection;
 
 abstract class PreferenceAssessmentAbstract extends ReportAbstract
 {
@@ -190,5 +192,63 @@ abstract class PreferenceAssessmentAbstract extends ReportAbstract
     public function getSequenceStrategy(): ?string
     {
         return null;
+    }
+
+    public function mockData(): array
+    {
+        $data = [];
+        if ($this->hasItems()) {
+            $data['items'] = $this->pickRandomItems();
+        }
+
+        if ($this->hasSessions()) {
+            for ($i = 1; $i <= rand(2,4); $i++) {
+                $data['sessions'][] = $this->mockSessionData($data['items'], $i);
+            }
+        }
+
+        return $data;
+    }
+
+    protected function mockSessionData(array $items, int $i): array
+    {
+        $columns_schema = $this->getColumnsSchema();
+        $random_items = $items;
+        shuffle($random_items);
+        return [
+            'datetime' => now(),
+            'answers' => [
+                'columns' => $columns_schema,
+                'rows' => collect($items)->map(function ($item, $index) use ($random_items, $columns_schema) {
+                    return Collection::times(count($columns_schema), function (int $number) use ($random_items, $index, $item, $columns_schema) {
+                        $column_name = $columns_schema[$number-1];
+                        switch ($column_name) {
+                            case "Order":
+                                return $index + 1;
+                            case "Item":
+                                return (string) $random_items[count($random_items) - ($index+1)]['key'];
+                            default:
+                                return '';
+                        }
+                    })->values()->toArray();
+                })
+            ]
+        ];
+    }
+
+    private function pickRandomItems(): array
+    {
+        $items = [];
+        for ($i = 1; $i <= $this->getSuggestedItems(); $i++) {
+            $random_reinforcer = Reinforcer::query()->inRandomOrder()->first();
+            $items[] = [
+                "id" => $random_reinforcer->id,
+                "key" => $i,
+                "name" => $random_reinforcer->name,
+                "category" => $random_reinforcer->category,
+                "subcategory" => $random_reinforcer->subcategory,
+            ];
+        }
+        return $items;
     }
 }

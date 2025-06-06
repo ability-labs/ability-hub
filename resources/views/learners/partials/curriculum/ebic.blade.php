@@ -1,33 +1,6 @@
 @inject('content', 'App\Repositories\EBICDataRepository')
-
-<style>
-    .rotate {
-
-        transform: rotate(-90deg);
-
-
-        /* Legacy vendor prefixes that you probably don't need... */
-
-        /* Safari */
-        -webkit-transform: rotate(-90deg);
-
-        /* Firefox */
-        -moz-transform: rotate(-90deg);
-
-        /* IE */
-        -ms-transform: rotate(-90deg);
-
-        /* Opera */
-        -o-transform: rotate(-90deg);
-
-        /* Internet Explorer */
-        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
-
-    }
-</style>
-
-
-<table class="table-auto">
+<div class="overflow-auto">
+    <table class="table-auto">
     <thead>
     <tr>
         @foreach($content->data['categories'] as $category)
@@ -83,7 +56,7 @@
     </tr>
     </thead>
 </table>
-
+</div>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var cells = document.querySelectorAll("td");

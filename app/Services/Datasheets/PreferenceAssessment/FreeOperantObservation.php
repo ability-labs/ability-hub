@@ -2,6 +2,9 @@
 
 namespace App\Services\Datasheets\PreferenceAssessment;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+
 class FreeOperantObservation extends PreferenceAssessmentAbstract
 {
     const LEGEND = [
@@ -56,5 +59,31 @@ class FreeOperantObservation extends PreferenceAssessmentAbstract
     public function getLegend(): ?array
     {
         return self::LEGEND;
+    }
+
+    protected function mockSessionData(mixed $items, int $i): array
+    {
+        $columns_schema = $this->getColumnsSchema();
+        $random_items = $items;
+        shuffle($random_items);
+        return [
+            'datetime' => now(),
+            'answers' => [
+                'columns' => $columns_schema,
+                'rows' => collect($items)->map(function ($item, $itemIndex) use ($random_items, $columns_schema) {
+                    return Collection::times(count($columns_schema), function (int $number) use ($random_items, $itemIndex, $item, $columns_schema) {
+                        $column_name = $columns_schema[$number-1];
+                        switch ($column_name) {
+                            case "Answer":
+                                return Arr::random($this->getLegend())['key'];
+                            case "Item":
+                                return (string) $item['key'];
+                            default:
+                                return '';
+                        }
+                    })->values()->toArray();
+                })
+            ]
+        ];
     }
 }

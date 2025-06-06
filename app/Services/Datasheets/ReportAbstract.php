@@ -12,4 +12,6 @@ abstract class ReportAbstract
     abstract public function hasSessions(): bool;
     abstract public function hasLegend(): bool;
     abstract public function getLegend(): ?array;
+    abstract public function mockData(): array;
+    abstract protected function mockSessionData(array $items, int $sessionIndex): array;
 }
