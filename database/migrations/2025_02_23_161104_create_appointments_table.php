@@ -24,7 +24,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->foreignUuid('discipline_id')
                 ->constrained()
-                ->nullOnDelete();
+                ->cascadeOnDelete();
 
             $table->string('title');
             $table->longText('comments')->nullable();
