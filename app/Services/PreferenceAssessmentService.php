@@ -12,10 +12,10 @@ class PreferenceAssessmentService
 {
     public function reportPreferences(Learner $learner): array
     {
-        // Recupera tutti i PreferenceAssessment con il reinforcer associato, ordinati per modified_at
+        // Recupera tutti i PreferenceAssessment con il reinforcer associato, ordinati per updated_at
         $assessments = $learner->preferences()
             ->with('reinforcer')
-            ->orderBy('modified_at')
+            ->orderBy('updated_at')
             ->get();
 
         // Ottieni tutte le categorie di rinforzi (come labels)
@@ -23,7 +23,7 @@ class PreferenceAssessmentService
 
         // Raggruppa i PreferenceAssessment per mese (formato "Y-m")
         $groups = $assessments->groupBy(function ($assessment) {
-            return Carbon::parse($assessment->modified_at)->format('Y-m');
+            return Carbon::parse($assessment->updated_at)->format('Y-m');
         })->sortKeys();
 
         // Se ci sono più di 5 mesi, prendi solo gli ultimi 5 (i più recenti)
@@ -56,10 +56,10 @@ class PreferenceAssessmentService
 
     public function reportCategoryPreferences(Learner $learner): array
     {
-        // Recupera tutti i PreferenceAssessment con il reinforcer associato, ordinati per modified_at
+        // Recupera tutti i PreferenceAssessment con il reinforcer associato, ordinati per updated_at
         $assessments = $learner->preferences()
             ->with('reinforcer')
-            ->orderBy('modified_at')
+            ->orderBy('updated_at')
             ->get();
 
         // Report generale (già implementato)
@@ -100,7 +100,7 @@ class PreferenceAssessmentService
 
             // Raggruppa gli assessments di questa categoria per mese
             $groups = $catAssessments->groupBy(function ($assessment) {
-                return Carbon::parse($assessment->modified_at)->format('Y-m');
+                return Carbon::parse($assessment->updated_at)->format('Y-m');
             })->sortKeys();
 
             // Se ci sono più di 5 mesi, prendi solo gli ultimi 5
