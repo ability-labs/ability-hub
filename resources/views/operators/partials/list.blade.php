@@ -60,7 +60,12 @@
             <tbody>
             @forelse($operators as $operator)
                 <tr class="hover:bg-gray-100 dark:hover:bg-gray-600">
-                    <td class="px-6 py-4 border-b border-gray-200">{{ $operator->name }}</td>
+                    <td class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex items-center justify-start space-x-2">
+                            <span class="size-8 rounded-full" style="background-color: {{ $operator->color ?? '#ccc' }}"></span>
+                            <span>{{ $operator->name }}</span>
+                        </div>
+                    </td>
                     <td class="px-6 py-4 border-b border-gray-200">{{ $operator->vat_id }}</td>
                     <td class="px-6 py-4 border-b border-gray-200">
                         @if($operator->disciplines->isNotEmpty())

@@ -17,6 +17,7 @@ class OperatorController extends Controller
         'vat_id'      => 'nullable|string|max:50',
         'disciplines' => 'nullable|array',
         'disciplines.*' => 'uuid|exists:disciplines,id',
+        'color'       => 'nullable|hex_color',
     ];
 
     const SORTABLE_FIELDS = [
@@ -72,6 +73,7 @@ class OperatorController extends Controller
             'name'    => $attributes['name'],
             'vat_id'  => $attributes['vat_id'] ?? null,
             'user_id' => $attributes['user_id'],
+            'color'  => $attributes['color'],
         ]);
 
         if (!empty($attributes['disciplines'])) {
@@ -131,6 +133,7 @@ class OperatorController extends Controller
         $operator->update([
             'name'   => $attributes['name'],
             'vat_id' => $attributes['vat_id'] ?? null,
+            'color'  => $attributes['color'],
         ]);
 
         if (isset($attributes['disciplines'])) {

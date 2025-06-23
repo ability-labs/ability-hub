@@ -22,6 +22,17 @@
     </div>
 
     <div class="mb-4">
+        <label for="name" class="block text-gray-700 dark:text-gray-300">{{ __('Color') }}</label>
+        <x-color-picker name="color" :value="old('color', $isEdit ? $attributes->color : '#000000')" />
+
+        @error('color')
+        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+        @enderror
+    </div>
+
+
+
+    <div class="mb-4">
         <label for="vat_id" class="block text-gray-700 dark:text-gray-300">{{ __('VAT Number') }}</label>
         <input type="text" name="vat_id" id="vat_id"
                value="{{ old('vat_id', $isEdit ? $attributes->vat_id : '') }}"
