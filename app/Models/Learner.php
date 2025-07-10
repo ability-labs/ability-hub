@@ -41,6 +41,11 @@ class Learner extends Model
         return $this->first_name . ' ' . $this->last_name;
     }
 
+    public function getNameAttribute(): string
+    {
+        return $this->full_name;
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -59,5 +64,15 @@ class Learner extends Model
     public function preferences(): HasMany
     {
         return $this->hasMany(PreferenceAssessment::class);
+    }
+
+    public function operator(): BelongsTo
+    {
+        return $this->belongsTo(Operator::class);
+    }
+
+    public function slots()
+    {
+        return $this->belongsToMany(Slot::class, 'availability_learner');
     }
 }

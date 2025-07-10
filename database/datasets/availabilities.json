@@ -1,0 +1,328 @@
+[
+    {
+        "discipline": "aba",
+        "slots": [
+            {
+                "week_day": 1,
+                "day_span": "Morning",
+                "start_time_hour": 9,
+                "start_time_minute": 0,
+                "end_time_hour": 10,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 1,
+                "day_span": "Morning",
+                "start_time_hour": 10,
+                "start_time_minute": 30,
+                "end_time_hour": 12,
+                "end_time_minute": 0,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 1,
+                "day_span": "Morning",
+                "start_time_hour": 12,
+                "start_time_minute": 0,
+                "end_time_hour": 13,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+
+            {
+                "week_day": 1,
+                "day_span": "Afternoon",
+                "start_time_hour": 14,
+                "start_time_minute": 0,
+                "end_time_hour": 15,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 1,
+                "day_span": "Afternoon",
+                "start_time_hour": 15,
+                "start_time_minute": 30,
+                "end_time_hour": 17,
+                "end_time_minute": 0,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 1,
+                "day_span": "Afternoon",
+                "start_time_hour": 17,
+                "start_time_minute": 0,
+                "end_time_hour": 18,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 1,
+                "day_span": "Afternoon",
+                "start_time_hour": 18,
+                "start_time_minute": 30,
+                "end_time_hour": 20,
+                "end_time_minute": 0,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 2,
+                "day_span": "Morning",
+                "start_time_hour": 9,
+                "start_time_minute": 0,
+                "end_time_hour": 10,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 2,
+                "day_span": "Morning",
+                "start_time_hour": 10,
+                "start_time_minute": 30,
+                "end_time_hour": 12,
+                "end_time_minute": 0,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 2,
+                "day_span": "Morning",
+                "start_time_hour": 12,
+                "start_time_minute": 0,
+                "end_time_hour": 13,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+
+            {
+                "week_day": 2,
+                "day_span": "Afternoon",
+                "start_time_hour": 14,
+                "start_time_minute": 0,
+                "end_time_hour": 15,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 2,
+                "day_span": "Afternoon",
+                "start_time_hour": 15,
+                "start_time_minute": 30,
+                "end_time_hour": 17,
+                "end_time_minute": 0,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 2,
+                "day_span": "Afternoon",
+                "start_time_hour": 17,
+                "start_time_minute": 0,
+                "end_time_hour": 18,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 2,
+                "day_span": "Afternoon",
+                "start_time_hour": 18,
+                "start_time_minute": 30,
+                "end_time_hour": 20,
+                "end_time_minute": 0,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 3,
+                "day_span": "Morning",
+                "start_time_hour": 9,
+                "start_time_minute": 0,
+                "end_time_hour": 10,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 3,
+                "day_span": "Morning",
+                "start_time_hour": 10,
+                "start_time_minute": 30,
+                "end_time_hour": 12,
+                "end_time_minute": 0,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 3,
+                "day_span": "Morning",
+                "start_time_hour": 12,
+                "start_time_minute": 0,
+                "end_time_hour": 13,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+
+            {
+                "week_day": 3,
+                "day_span": "Afternoon",
+                "start_time_hour": 14,
+                "start_time_minute": 0,
+                "end_time_hour": 15,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 3,
+                "day_span": "Afternoon",
+                "start_time_hour": 15,
+                "start_time_minute": 30,
+                "end_time_hour": 17,
+                "end_time_minute": 0,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 3,
+                "day_span": "Afternoon",
+                "start_time_hour": 17,
+                "start_time_minute": 0,
+                "end_time_hour": 18,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 3,
+                "day_span": "Afternoon",
+                "start_time_hour": 18,
+                "start_time_minute": 30,
+                "end_time_hour": 20,
+                "end_time_minute": 0,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 4,
+                "day_span": "Morning",
+                "start_time_hour": 9,
+                "start_time_minute": 0,
+                "end_time_hour": 10,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 4,
+                "day_span": "Morning",
+                "start_time_hour": 10,
+                "start_time_minute": 30,
+                "end_time_hour": 12,
+                "end_time_minute": 0,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 4,
+                "day_span": "Morning",
+                "start_time_hour": 12,
+                "start_time_minute": 0,
+                "end_time_hour": 13,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+
+            {
+                "week_day": 4,
+                "day_span": "Afternoon",
+                "start_time_hour": 14,
+                "start_time_minute": 0,
+                "end_time_hour": 15,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 4,
+                "day_span": "Afternoon",
+                "start_time_hour": 15,
+                "start_time_minute": 30,
+                "end_time_hour": 17,
+                "end_time_minute": 0,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 4,
+                "day_span": "Afternoon",
+                "start_time_hour": 17,
+                "start_time_minute": 0,
+                "end_time_hour": 18,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 4,
+                "day_span": "Afternoon",
+                "start_time_hour": 18,
+                "start_time_minute": 30,
+                "end_time_hour": 20,
+                "end_time_minute": 0,
+                "duration_minutes": 90
+            },
+
+            {
+                "week_day": 5,
+                "day_span": "Morning",
+                "start_time_hour": 9,
+                "start_time_minute": 0,
+                "end_time_hour": 10,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 5,
+                "day_span": "Morning",
+                "start_time_hour": 10,
+                "start_time_minute": 30,
+                "end_time_hour": 12,
+                "end_time_minute": 0,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 5,
+                "day_span": "Morning",
+                "start_time_hour": 12,
+                "start_time_minute": 0,
+                "end_time_hour": 13,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+
+            {
+                "week_day": 5,
+                "day_span": "Afternoon",
+                "start_time_hour": 14,
+                "start_time_minute": 0,
+                "end_time_hour": 15,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 5,
+                "day_span": "Afternoon",
+                "start_time_hour": 15,
+                "start_time_minute": 30,
+                "end_time_hour": 17,
+                "end_time_minute": 0,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 5,
+                "day_span": "Afternoon",
+                "start_time_hour": 17,
+                "start_time_minute": 0,
+                "end_time_hour": 18,
+                "end_time_minute": 30,
+                "duration_minutes": 90
+            },
+            {
+                "week_day": 5,
+                "day_span": "Afternoon",
+                "start_time_hour": 18,
+                "start_time_minute": 30,
+                "end_time_hour": 20,
+                "end_time_minute": 0,
+                "duration_minutes": 90
+            }
+        ]
+    }
+]

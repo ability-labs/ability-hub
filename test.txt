@@ -1,0 +1,154 @@
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceIntegrationTest::it_handles_real_world_scenario_with_seeded_slots(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceIntegrationTest::it_handles_high_contention_scenario(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceIntegrationTest::it_handles_complex_multi_week_scenario(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceIntegrationTest::it_handles_mixed_slot_durations_optimally(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceIntegrationTest::it_handles_edge_case_with_overlapping_time_windows(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceIntegrationTest::it_provides_comprehensive_logging_and_metrics(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceTest::it_can_schedule_fully_declared_learner_with_basic_slots_configuration(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceTest::it_schedules_using_fallback_on_operator_slots_when_no_common_slots_exist(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceTest::it_handles_learner_with_no_declared_availability(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceTest::it_handles_partial_weekly_minutes_scheduling(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceTest::it_respects_existing_appointments_when_scheduling(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceTest::it_prevents_conflicting_appointments_for_learner(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceTest::it_prevents_conflicting_appointments_for_operator(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceTest::it_handles_zero_weekly_minutes_learner(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceTest::it_handles_learner_without_operator(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceTest::it_handles_no_available_slots_scenario(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceTest::it_adjusts_non_monday_start_date(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceTest::it_provides_accurate_scheduling_summary(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\Appointments\WeeklyPlannerServiceTest::it_schedules_multiple_learners_without_conflicts(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   FAIL  Tests\Feature\Appointments\WeeklyPlannerServiceIntegrationTest
+  ⨯ it handles real world scenario with seeded slots                     0.32s  
+  ⨯ it handles high contention scenario                                  0.06s  
+  ✓ it handles complex multi week scenario                               0.11s  
+  ✓ it handles mixed slot durations optimally                            0.08s  
+  ✓ it handles edge case with overlapping time windows                   0.06s  
+  ✓ it provides comprehensive logging and metrics                        0.08s  
+
+   FAIL  Tests\Feature\Appointments\WeeklyPlannerServiceTest
+  ✓ it can schedule fully declared learner with basic slots configurati… 0.07s  
+  ✓ it schedules using fallback on operator slots when no common slots…  0.11s  
+  ✓ it handles learner with no declared availability                     0.06s  
+  ✓ it handles partial weekly minutes scheduling                         0.06s  
+  ⨯ it respects existing appointments when scheduling                    0.05s  
+  ⨯ it prevents conflicting appointments for learner                     0.05s  
+  ✓ it prevents conflicting appointments for operator                    0.06s  
+  ✓ it handles zero weekly minutes learner                               0.05s  
+  ✓ it handles learner without operator                                  0.04s  
+  ✓ it handles no available slots scenario                               0.05s  
+  ✓ it adjusts non monday start date                                     0.06s  
+  ✓ it provides accurate scheduling summary                              0.07s  
+  ⨯ it schedules multiple learners without conflicts                     0.09s  
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Appointments\WeeklyPlannerServiceIn…  QueryException   
+  SQLSTATE[HY000]: General error: 1 table learners has no column named name (Connection: sqlite, SQL: insert into "learners" ("user_id", "first_name", "last_name", "birth_date", "gender", "operator_id", "weekly_minutes", "name", "id", "updated_at", "created_at") values (9f5b2ef2-4a37-4940-ac65-150b53e2c7d2, Max, Bianco, 2022-02-24 01:32:53, female, 9f5b2ef2-48b3-4a58-96dc-0b2cf3d9b8fb, 180, Learner 1, 9f5b2ef2-4aca-485b-adde-26bf113a9b21, 2025-07-10 11:29:44, 2025-07-10 11:29:44))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:825
+    821▕                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    822▕                 );
+    823▕             }
+    824▕ 
+  ➜ 825▕             throw new QueryException(
+    826▕                 $this->getName(), $query, $this->prepareBindings($bindings), $e
+    827▕             );
+    828▕         }
+    829▕     }
+
+      [2m+16 vendor frames [22m
+  17  tests/Feature/Appointments/WeeklyPlannerServiceIntegrationTest.php:53
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Appointments\WeeklyPlannerServiceIn…  QueryException   
+  SQLSTATE[HY000]: General error: 1 table learners has no column named name (Connection: sqlite, SQL: insert into "learners" ("user_id", "first_name", "last_name", "birth_date", "gender", "operator_id", "weekly_minutes", "name", "id", "updated_at", "created_at") values (9f5b2ef2-6403-49bc-ad17-af17fa456704, Cosimo, Esposito, 2024-05-24 20:54:25, female, 9f5b2ef2-61ca-46f9-9b8f-51387e286eb4, 120, Contending Learner 1, 9f5b2ef2-647e-4a7c-9cfb-a3ce94c15070, 2025-07-10 11:29:44, 2025-07-10 11:29:44))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:825
+    821▕                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    822▕                 );
+    823▕             }
+    824▕ 
+  ➜ 825▕             throw new QueryException(
+    826▕                 $this->getName(), $query, $this->prepareBindings($bindings), $e
+    827▕             );
+    828▕         }
+    829▕     }
+
+      [2m+16 vendor frames [22m
+  17  tests/Feature/Appointments/WeeklyPlannerServiceIntegrationTest.php:136
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Appointments\WeeklyPlannerServiceTe…  QueryException   
+  SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: appointments.discipline_id (Connection: sqlite, SQL: insert into "appointments" ("learner_id", "operator_id", "title", "starts_at", "ends_at", "comments", "duration_minutes", "user_id", "id", "updated_at", "created_at") values (9f5b2ef3-7181-4506-9049-69e66db2e9f9, 9f5b2ef3-7049-4151-9aeb-10a288101471, Placeat nisi aut dolore in culpa ut esse., 2025-06-23 09:00:00, 2025-06-23 10:00:00, Id quaerat sed et voluptatem et eius. Molestiae temporibus numquam distinctio repudiandae., 60, 9f5b2ef3-6ce2-4df9-98c0-ed497edb4db4, 9f5b2ef3-7329-4f06-8b1b-0fd3dceee068, 2025-07-10 11:29:45, 2025-07-10 11:29:45))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:825
+    821▕                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    822▕                 );
+    823▕             }
+    824▕ 
+  ➜ 825▕             throw new QueryException(
+    826▕                 $this->getName(), $query, $this->prepareBindings($bindings), $e
+    827▕             );
+    828▕         }
+    829▕     }
+
+      [2m+16 vendor frames [22m
+  17  tests/Feature/Appointments/WeeklyPlannerServiceTest.php:185
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Appointments\WeeklyPlannerServiceTe…  QueryException   
+  SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: appointments.user_id (Connection: sqlite, SQL: insert into "appointments" ("learner_id", "operator_id", "title", "starts_at", "ends_at", "comments", "duration_minutes", "id", "updated_at", "created_at") values (9f5b2ef3-8425-4bfa-a915-5be79c2b56a8, 9f5b2ef3-85c0-4829-ab29-b5cdb6075d1a, Quis dolore repellat a at facilis., 2025-06-23 09:30:00, 2025-06-23 10:30:00, Deserunt id eaque reiciendis voluptas. Quaerat perferendis eaque et sit molestias. Voluptatem placeat atque rem blanditiis ut blanditiis aspernatur. Adipisci sed odit minima illum nisi., 60, 9f5b2ef3-8636-48b0-b3bc-97052b76fa85, 2025-07-10 11:29:45, 2025-07-10 11:29:45))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:825
+    821▕                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    822▕                 );
+    823▕             }
+    824▕ 
+  ➜ 825▕             throw new QueryException(
+    826▕                 $this->getName(), $query, $this->prepareBindings($bindings), $e
+    827▕             );
+    828▕         }
+    829▕     }
+
+      [2m+16 vendor frames [22m
+  17  tests/Feature/Appointments/WeeklyPlannerServiceTest.php:225
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Appointments\WeeklyPlannerServiceTest > it schedule…   
+  Failed asserting that 2 matches expected 4.
+
+  at tests/Feature/Appointments/WeeklyPlannerServiceTest.php:412
+    408▕         $this->plannerService->scheduleForLearner($learner2, $weekStart);
+    409▕ 
+    410▕         // Assert
+    411▕         $totalAppointments = Appointment::where('operator_id', $operator->id)->count();
+  ➜ 412▕         $this->assertEquals(4, $totalAppointments);
+    413▕ 
+    414▕         // Each learner should have 2 appointments
+    415▕         $this->assertEquals(2, $learner1->appointments()->count());
+    416▕         $this->assertEquals(2, $learner2->appointments()->count());
+
+  1   tests/Feature/Appointments/WeeklyPlannerServiceTest.php:412
+
+
+  Tests:    5 failed, 14 passed (55 assertions)
+  Duration: 1.62s
+
