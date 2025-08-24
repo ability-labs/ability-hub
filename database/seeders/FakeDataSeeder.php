@@ -80,114 +80,115 @@ class FakeDataSeeder extends Seeder
         $operatorSchedule = [];
         foreach ($allOperators as $operator) {
             $operatorSchedule[$operator->id] = [];
+            Learner::factory()->for($operator)->for($user)->count(3)->create();
         }
-
-        // Creiamo 20 Studenti per l'utente
-        $learners = Learner::factory()->for($user)->count(50)->create();
+//
+//        // Creiamo 20 Studenti per l'utente
+//        $learners = Learner::factory()->for($user)->count(50)->create();
 
         // Inizializziamo un array per lo scheduling dei learner (per evitare due appuntamenti nello stesso giorno)
         $learnerSchedule = [];
 
-        // Iteriamo tutte le settimane per ciascun learner
-        $learners->each(function (Learner $learner) use ($faker, $weeks, $disciplines, $slots, $user, $allOperators, &$operatorSchedule, &$learnerSchedule) {
-
-            $this->command->info("Creating Fake Appointments for " . $learner->full_name);
-            // Inizializza lo scheduling per il learner
-            $learnerSchedule[$learner->id] = [];
-            // Per ogni settimana del mese
-            foreach ($weeks as  $week) {
-                $weekStart =  $week['start'];
-                $weekEnd   = $week['end'];
-                $days = [];
-                // Creiamo un array di date per la settimana (dal lunedì al sabato)
-                for ($d = $weekStart->copy(); $d->lte($weekEnd); $d = $d->addDay()) {
-                    $days[] = $d->copy();
-                }
-                // Per ogni disciplina
-                foreach ($disciplines as $discipline) {
-                    // Recupera gli operatori per la disciplina tra quelli dell'utente
-                    $availableOperators = $allOperators->filter(function($op) use ($discipline) {
-                        return $op->disciplines->contains($discipline->id);
-                    });
-                    if ($availableOperators->isEmpty()) {
-                        $this->command->warn("No operators found for discipline {$discipline->slug}. Skipping appointments for this discipline.");
-                        continue;
-                    }
-                    $appointmentsNeeded = 3; // 3 appuntamenti per disciplina durante la settimana
-                    // Seleziona 3 giorni distinti dalla settimana in cui programmare gli appuntamenti
-                    $shuffledDays = $days;
-                    shuffle($shuffledDays);
-                    $selectedDays = array_slice($shuffledDays, 0, $appointmentsNeeded);
-
-                    // Per ogni appuntamento da creare, scegliamo uno slot casuale tra quelli disponibili
-                    foreach ($selectedDays as $day) {
-                        $dayKey = $day->toDateString();
-                        // Controlla che lo studente non abbia già un appuntamento in questo giorno
-                        if (isset($learnerSchedule[$learner->id][$dayKey])) {
-                           // Learner already has an appointment on   Skipping.
-                            continue;
-                        }
-                        // Cerca un operatore disponibile per questa disciplina e per uno slot casuale del giorno
-                        $operatorFound = null;
-                        $chosenSlotIndex = null;
-                        $chosenSlot = null;
-                        foreach ($availableOperators as $operator) {
-                            $opId = $operator->id;
-                            if (!isset($operatorSchedule[$opId][$dayKey])) {
-                                $operatorSchedule[$opId][$dayKey] = [];
-                            }
-                            // Crea una copia dello slot array e lo mescola per scegliere in modo casuale
-                            $shuffledSlots = $slots;
-                            shuffle($shuffledSlots);
-                            foreach ($shuffledSlots as $slot) {
-                                // Trova l'indice originale dello slot
-                                $slotIndex = array_search($slot, $slots);
-                                if (!in_array($slotIndex, $operatorSchedule[$opId][$dayKey])) {
-                                    $operatorFound = $operator;
-                                    $chosenSlotIndex = $slotIndex;
-                                    $chosenSlot = $slot;
-                                    break;
-                                }
-                            }
-                            if ($operatorFound) break;
-                        }
-                        if (!$operatorFound) {
-                            $this->command->warn("No available operator for discipline {$discipline->slug} on {$dayKey} for learner {$learner->full_name}. Appointment skipped.");
-                            continue;
-                        }
-                        // Imposta orari combinando la data corrente con l'orario dello slot scelto
-                        $startTime = Carbon::parse($day->format('Y-m-d') . ' ' . $chosenSlot[0]);
-                        $endTime   = Carbon::parse($day->format('Y-m-d') . ' ' . $chosenSlot[1]);
-
-                        // Crea l'appuntamento
-                        $title = $learner->full_name . ' (' . $operatorFound->name . ') - ' . strtoupper($discipline->slug);
-                        $appointment_attributes = [
-                            'starts_at' => $startTime,
-                            'ends_at' => $endTime,
-                            'discipline_id' => $discipline->id,
-                            'title' => $title,
-                            'comments' => 'Seeded appointment for discipline ' . $discipline->slug,
-                        ];
-
-                        if ($startTime->isPast()) {
-                            $appointment_attributes['operator_signed_at'] = $endTime;
-                             // leraners signs randomly
-                            if ($faker->boolean(75))
-                                $appointment_attributes['learner_signed_at'] = $endTime;
-                        }
-
-                        Appointment::factory()
-                            ->for($operatorFound)   // Imposta operator_id
-                            ->for($user, 'user')    // Imposta user_id
-                            ->for($learner, 'learner') // Imposta learner_id
-                            ->create($appointment_attributes);
-                        // Segna che lo studente ha un appuntamento in questo giorno
-                        $learnerSchedule[$learner->id][$dayKey] = true;
-                        // Segna lo slot come occupato per questo operatore
-                        $operatorSchedule[$operatorFound->id][$dayKey][] = $chosenSlotIndex;
-                    }
-                }
-            }
-        });
+//        // Iteriamo tutte le settimane per ciascun learner
+//        $learners->each(function (Learner $learner) use ($faker, $weeks, $disciplines, $slots, $user, $allOperators, &$operatorSchedule, &$learnerSchedule) {
+//
+//            $this->command->info("Creating Fake Appointments for " . $learner->full_name);
+//            // Inizializza lo scheduling per il learner
+//            $learnerSchedule[$learner->id] = [];
+//            // Per ogni settimana del mese
+//            foreach ($weeks as  $week) {
+//                $weekStart =  $week['start'];
+//                $weekEnd   = $week['end'];
+//                $days = [];
+//                // Creiamo un array di date per la settimana (dal lunedì al sabato)
+//                for ($d = $weekStart->copy(); $d->lte($weekEnd); $d = $d->addDay()) {
+//                    $days[] = $d->copy();
+//                }
+//                // Per ogni disciplina
+//                foreach ($disciplines as $discipline) {
+//                    // Recupera gli operatori per la disciplina tra quelli dell'utente
+//                    $availableOperators = $allOperators->filter(function($op) use ($discipline) {
+//                        return $op->disciplines->contains($discipline->id);
+//                    });
+//                    if ($availableOperators->isEmpty()) {
+//                        $this->command->warn("No operators found for discipline {$discipline->slug}. Skipping appointments for this discipline.");
+//                        continue;
+//                    }
+//                    $appointmentsNeeded = 3; // 3 appuntamenti per disciplina durante la settimana
+//                    // Seleziona 3 giorni distinti dalla settimana in cui programmare gli appuntamenti
+//                    $shuffledDays = $days;
+//                    shuffle($shuffledDays);
+//                    $selectedDays = array_slice($shuffledDays, 0, $appointmentsNeeded);
+//
+//                    // Per ogni appuntamento da creare, scegliamo uno slot casuale tra quelli disponibili
+//                    foreach ($selectedDays as $day) {
+//                        $dayKey = $day->toDateString();
+//                        // Controlla che lo studente non abbia già un appuntamento in questo giorno
+//                        if (isset($learnerSchedule[$learner->id][$dayKey])) {
+//                           // Learner already has an appointment on   Skipping.
+//                            continue;
+//                        }
+//                        // Cerca un operatore disponibile per questa disciplina e per uno slot casuale del giorno
+//                        $operatorFound = null;
+//                        $chosenSlotIndex = null;
+//                        $chosenSlot = null;
+//                        foreach ($availableOperators as $operator) {
+//                            $opId = $operator->id;
+//                            if (!isset($operatorSchedule[$opId][$dayKey])) {
+//                                $operatorSchedule[$opId][$dayKey] = [];
+//                            }
+//                            // Crea una copia dello slot array e lo mescola per scegliere in modo casuale
+//                            $shuffledSlots = $slots;
+//                            shuffle($shuffledSlots);
+//                            foreach ($shuffledSlots as $slot) {
+//                                // Trova l'indice originale dello slot
+//                                $slotIndex = array_search($slot, $slots);
+//                                if (!in_array($slotIndex, $operatorSchedule[$opId][$dayKey])) {
+//                                    $operatorFound = $operator;
+//                                    $chosenSlotIndex = $slotIndex;
+//                                    $chosenSlot = $slot;
+//                                    break;
+//                                }
+//                            }
+//                            if ($operatorFound) break;
+//                        }
+//                        if (!$operatorFound) {
+//                            $this->command->warn("No available operator for discipline {$discipline->slug} on {$dayKey} for learner {$learner->full_name}. Appointment skipped.");
+//                            continue;
+//                        }
+//                        // Imposta orari combinando la data corrente con l'orario dello slot scelto
+//                        $startTime = Carbon::parse($day->format('Y-m-d') . ' ' . $chosenSlot[0]);
+//                        $endTime   = Carbon::parse($day->format('Y-m-d') . ' ' . $chosenSlot[1]);
+//
+//                        // Crea l'appuntamento
+//                        $title = $learner->full_name . ' (' . $operatorFound->name . ') - ' . strtoupper($discipline->slug);
+//                        $appointment_attributes = [
+//                            'starts_at' => $startTime,
+//                            'ends_at' => $endTime,
+//                            'discipline_id' => $discipline->id,
+//                            'title' => $title,
+//                            'comments' => 'Seeded appointment for discipline ' . $discipline->slug,
+//                        ];
+//
+//                        if ($startTime->isPast()) {
+//                            $appointment_attributes['operator_signed_at'] = $endTime;
+//                             // leraners signs randomly
+//                            if ($faker->boolean(75))
+//                                $appointment_attributes['learner_signed_at'] = $endTime;
+//                        }
+//
+//                        Appointment::factory()
+//                            ->for($operatorFound)   // Imposta operator_id
+//                            ->for($user, 'user')    // Imposta user_id
+//                            ->for($learner, 'learner') // Imposta learner_id
+//                            ->create($appointment_attributes);
+//                        // Segna che lo studente ha un appuntamento in questo giorno
+//                        $learnerSchedule[$learner->id][$dayKey] = true;
+//                        // Segna lo slot come occupato per questo operatore
+//                        $operatorSchedule[$operatorFound->id][$dayKey][] = $chosenSlotIndex;
+//                    }
+//                }
+//            }
+//        });
     }
 }
