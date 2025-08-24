@@ -6,6 +6,7 @@ use App\Http\Controllers\LanguageSelectorController;
 use App\Http\Controllers\LearnerController;
 use App\Http\Controllers\OperatorController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WeeklyPlanController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')
@@ -27,6 +28,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('learners.datasheets', DatasheetController::class)
         ->except(['index','create','edit'])
         ->shallow();
+
+    Route::post('/appointments/plan', [WeeklyPlanController::class, 'store'])
+        ->name('appointments.plan');
 });
 
 Route::middleware('auth')->group(function () {
