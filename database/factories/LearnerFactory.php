@@ -23,7 +23,11 @@ class LearnerFactory extends Factory
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
             'birth_date' => $this->faker->dateTimeThisDecade(),
-            'gender' => $this->faker->randomElement(PersonGender::cases())->value
+            'gender' => $this->faker->randomElement(PersonGender::cases())->value,
+            'weekly_minutes' => $this->faker->randomElement([
+                270, // 3 lezioni da 1.30
+                360, // 4 lezioni da 1.30
+            ]),
         ];
     }
 }
