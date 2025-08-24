@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Appointments;
 
+use App\Exceptions\WeeklyPlanException;
 use App\Models\Appointment;
 use App\Models\Discipline;
 use App\Models\Learner;
@@ -244,7 +245,9 @@ class WeeklyPlannerServiceTest extends TestCase
         ]);
 
         // Act: Try to schedule the learner (should not create an appointment if it conflicts)
+        $this->expectException(WeeklyPlanException::class);
         $this->plannerService->scheduleForLearner($learner, $weekStart);
+        $this->expectExceptionCode(WeeklyPlanException::ALL_SLOTS_CONFLICT);
 
         // Assert: Verify that no *new* appointment was created for the 9:00 slot due to the conflict
         $newAppointments = $learner->appointments()
@@ -282,7 +285,9 @@ class WeeklyPlannerServiceTest extends TestCase
         $this->plannerService->scheduleForLearner($learner1, $weekStart);
 
         // Act: Try to schedule the second learner (should fail as the slot is now occupied by learner1)
+        $this->expectException(WeeklyPlanException::class);
         $this->plannerService->scheduleForLearner($learner2, $weekStart);
+        $this->expectExceptionCode(WeeklyPlanException::NO_AVAILABLE_SLOTS);
 
         // Assert: Verify that the operator only has one appointment at that specific time (no conflicts)
         $operatorAppointments = Appointment::where('operator_id', $operator->id)
@@ -302,7 +307,9 @@ class WeeklyPlannerServiceTest extends TestCase
         $weekStart = Carbon::parse('2025-06-23');
 
         // Act: Try to schedule the learner
+        $this->expectException(WeeklyPlanException::class);
         $this->plannerService->scheduleForLearner($learner, $weekStart);
+        $this->expectExceptionCode(WeeklyPlanException::NO_WEEKLY_MINUTES);
 
         // Assert: No appointments should be created for a learner with a 0-minute target
         $this->assertEquals(0, $learner->appointments()->count());
@@ -316,7 +323,9 @@ class WeeklyPlannerServiceTest extends TestCase
         $weekStart = Carbon::parse('2025-06-23');
 
         // Act: Try to schedule the learner
+        $this->expectException(WeeklyPlanException::class);
         $this->plannerService->scheduleForLearner($learner, $weekStart);
+        $this->expectExceptionCode(WeeklyPlanException::NO_OPERATOR);
 
         // Assert: No appointments should be created if the learner has no assigned operator
         $this->assertEquals(0, $learner->appointments()->count());
@@ -332,7 +341,9 @@ class WeeklyPlannerServiceTest extends TestCase
         $weekStart = Carbon::parse('2025-06-23');
 
         // Act: Try to schedule the learner with no slots attached to either learner or operator
+        $this->expectException(WeeklyPlanException::class);
         $this->plannerService->scheduleForLearner($learner, $weekStart);
+        $this->expectExceptionCode(WeeklyPlanException::NO_AVAILABLE_SLOTS);
 
         // Assert: No appointments should be created if there are no available slots
         $this->assertEquals(0, $learner->appointments()->count());

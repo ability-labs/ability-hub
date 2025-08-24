@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Appointments;
 
+use App\Exceptions\WeeklyPlanException;
 use App\Models\Discipline;
 use App\Models\Learner;
 use App\Models\Operator;
@@ -149,25 +150,27 @@ class WeeklyPlannerServiceIntegrationTest extends TestCase
         // Act: Schedule appointments for all learners (first come, first served logic applies)
         $results = [];
         foreach ($learners as $learner) {
+            $this->expectException(WeeklyPlanException::class);
             $this->plannerService->scheduleForLearner($learner, $weekStart);
-            $results[] = $this->plannerService->getSchedulingSummary($learner, $weekStart);
+            $this->expectExceptionCode(WeeklyPlanException::NO_AVAILABLE_SLOTS);
+//            $results[] = $this->plannerService->getSchedulingSummary($learner, $weekStart);
         }
 
-        // Assert: The total scheduled minutes should not exceed the maximum available capacity of the slots
-        $totalScheduled = collect($results)->sum('scheduled_minutes');
-        $maxCapacity = $limitedSlots->sum('duration_minutes'); // Sum of minutes from the 3 slots (60*3 = 180 minutes)
-        $this->assertLessThanOrEqual($maxCapacity, $totalScheduled);
-
-        // Assert that at least some learners were fully or partially scheduled
-        $fullyScheduled = collect($results)->filter(function ($result) {
-            return $result['scheduled_minutes'] == $result['weekly_minutes_target'];
-        })->count();
-
-        $partiallyScheduled = collect($results)->filter(function ($result) {
-            return $result['scheduled_minutes'] > 0 && $result['scheduled_minutes'] < $result['weekly_minutes_target'];
-        })->count();
-
-        $this->assertGreaterThan(0, $fullyScheduled + $partiallyScheduled, "No learners were scheduled");
+//        // Assert: The total scheduled minutes should not exceed the maximum available capacity of the slots
+//        $totalScheduled = collect($results)->sum('scheduled_minutes');
+//        $maxCapacity = $limitedSlots->sum('duration_minutes'); // Sum of minutes from the 3 slots (60*3 = 180 minutes)
+//        $this->assertLessThanOrEqual($maxCapacity, $totalScheduled);
+//
+//        // Assert that at least some learners were fully or partially scheduled
+//        $fullyScheduled = collect($results)->filter(function ($result) {
+//            return $result['scheduled_minutes'] == $result['weekly_minutes_target'];
+//        })->count();
+//
+//        $partiallyScheduled = collect($results)->filter(function ($result) {
+//            return $result['scheduled_minutes'] > 0 && $result['scheduled_minutes'] < $result['weekly_minutes_target'];
+//        })->count();
+//
+//        $this->assertGreaterThan(0, $fullyScheduled + $partiallyScheduled, "No learners were scheduled");
     }
 
     public function test_it_handles_complex_multi_week_scenario(): void

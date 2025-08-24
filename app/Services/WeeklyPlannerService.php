@@ -2,16 +2,19 @@
 
 namespace App\Services;
 
+use App\Exceptions\WeeklyPlanException;
 use App\Models\Appointment;
 use App\Models\Learner;
 use App\Models\Slot;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class WeeklyPlannerService
 {
+
     public function __construct(protected User $user)
     {
     }
@@ -22,60 +25,58 @@ class WeeklyPlannerService
      * @param Learner $learner
      * @param Carbon $weekStartDate A Carbon instance representing the Monday of the week to schedule.
      */
-    public function scheduleForLearner(Learner $learner, Carbon $weekStartDate): void
+    public function scheduleForLearner(Learner $learner, Carbon $weekStartDate): array
     {
         // 1) Copia pulita e forzo lunedì
         $weekStart = $weekStartDate->copy()->startOfWeek();
 
         // 2) Input validation senza mutate
-        if (!$this->validateInputs($learner, $weekStart)) {
-            return;
-        }
+        $this->validateInputs($learner, $weekStart);
 
         $operator = $learner->operator;
         if (!$operator) {
-            Log::warning("No operator assigned to learner {$learner->id}");
-            return;
+            throw WeeklyPlanException::noOperator($learner->id);
         }
 
         $minutesToSchedule = $this->getRemainingMinutesForWeek($learner, $weekStart);
         if ($minutesToSchedule <= 0) {
-            Log::info("Weekly minutes already fulfilled for learner {$learner->id}");
-            return;
+            throw WeeklyPlanException::alreadyFulfilled($learner->id);
         }
 
         // Get available slots with conflict checking
         $availableSlots = $this->getAvailableSlots($learner, $operator, $weekStart);
 
         if ($availableSlots->isEmpty()) {
-            Log::warning("No available slots found for learner {$learner->id} and operator {$operator->id}");
-            return;
+            throw WeeklyPlanException::noAvailableSlots($learner->id);
         }
 
-        $this->createAppointmentsFromSlots($learner, $availableSlots, $weekStart, $minutesToSchedule);
+        return DB::transaction(function () use ($learner, $availableSlots, $weekStart, $minutesToSchedule) {
+            $appointments = $this->createAppointmentsFromSlots($learner, $availableSlots, $weekStart, $minutesToSchedule);
+
+            if (empty($appointments)) {
+                throw WeeklyPlanException::allSlotsConflict($learner->id);
+            }
+
+            return $appointments;
+        });
     }
 
     /**
      * Validate inputs for scheduling
      */
-    private function validateInputs(Learner $learner, Carbon $weekStartDate): bool
+    private function validateInputs(Learner $learner, Carbon $weekStartDate): void
     {
         if (!$learner || !$learner->exists) {
-            Log::error("Invalid learner provided");
-            return false;
+            throw new WeeklyPlanException('Invalid Learner provided', WeeklyPlanException::INVALID_LEARNER);
         }
 
         if (!$weekStartDate->isMonday()) {
-            Log::warning("Week start date is not a Monday, adjusting to start of week");
-            //$weekStartDate->startOfWeek();
+            throw new WeeklyPlanException('Week start date is not a Monday, adjusting to start of week', WeeklyPlanException::INVALID_DATE);
         }
 
         if ($learner->weekly_minutes <= 0) {
-            Log::info("Learner {$learner->id} has no weekly minutes to schedule");
-            return false;
+            throw new WeeklyPlanException( "Learner {$learner->id} has no weekly minutes to schedule", WeeklyPlanException::NO_WEEKLY_MINUTES);
         }
-
-        return true;
     }
 
     /**
@@ -162,8 +163,9 @@ class WeeklyPlannerService
     /**
      * Create appointments from a collection of slots until the required minutes are met.
      */
-    private function createAppointmentsFromSlots(Learner $learner, Collection $slots, Carbon $weekStartDate, int $minutesToSchedule): void
+    private function createAppointmentsFromSlots(Learner $learner, Collection $slots, Carbon $weekStartDate, int $minutesToSchedule): array
     {
+        $appointments = [];
         foreach ($slots as $slot) {
             if ($minutesToSchedule <= 0) {
                 break;
@@ -179,7 +181,7 @@ class WeeklyPlannerService
                 continue;
             }
 
-            Appointment::create([
+            $appointments[] = Appointment::create([
                 'user_id'          => $this->user->id,
                 'learner_id'       => $learner->id,
                 'operator_id'      => $learner->operator_id,
@@ -195,6 +197,8 @@ class WeeklyPlannerService
 
             $minutesToSchedule -= $useMinutes;
         }
+
+        return $appointments;
     }
 
 
