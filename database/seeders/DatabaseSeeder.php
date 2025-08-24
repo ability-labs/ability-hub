@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ReinforcerSeeder::class);
         $this->call(ContentCardSeeder::class);
         $this->call(DatasheetTypeSeeder::class);
+        $this->call(SlotsSeeder::class);
     }
 }
