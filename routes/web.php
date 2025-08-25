@@ -4,6 +4,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\DatasheetController;
 use App\Http\Controllers\LanguageSelectorController;
 use App\Http\Controllers\LearnerController;
+use App\Http\Controllers\OperatorAvailabilityController;
 use App\Http\Controllers\OperatorController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WeeklyPlanController;
@@ -31,6 +32,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/appointments/plan', [WeeklyPlanController::class, 'store'])
         ->name('appointments.plan');
+
+    Route::post('/operators/{operator}/availability/toggle', [OperatorAvailabilityController::class, 'toggle'])
+        ->name('operators.availability.toggle');
 });
 
 Route::middleware('auth')->group(function () {

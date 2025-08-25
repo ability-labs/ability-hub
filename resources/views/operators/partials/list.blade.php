@@ -33,7 +33,7 @@
             <thead>
             <tr>
                 <th class="px-6 py-3 border-b border-gray-200">{{ __('Name') }}</th>
-                <th class="px-6 py-3 border-b border-gray-200">{{ __('VAT Number') }}</th>
+                <th class="px-6 py-3 border-b border-gray-200">{{ __('Slots') }}</th>
                 <th class="px-6 py-3 border-b border-gray-200">{{ __('Disciplines') }}</th>
                 <th class="px-6 py-3 border-b border-gray-200">
                     @if(in_array('created_at', $sortable_fields))
@@ -66,7 +66,7 @@
                             <span>{{ $operator->name }}</span>
                         </div>
                     </td>
-                    <td class="px-6 py-4 border-b border-gray-200">{{ $operator->vat_id }}</td>
+                    <td class="px-6 py-4 border-b border-gray-200">{{ $operator->slots->count() }}</td>
                     <td class="px-6 py-4 border-b border-gray-200">
                         @if($operator->disciplines->isNotEmpty())
                             @foreach($operator->disciplines as $discipline)
