@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('availability_learner', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('learner_id')
+            $table->foreignUuid('learner_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->foreignId('slot_id')
+            $table->foreignUuid('slot_id')
                 ->constrained()
                 ->cascadeOnDelete();
             $table->timestamps();
