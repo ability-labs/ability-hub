@@ -53,7 +53,7 @@
 
         // Aggiungiamo l'evento che invia il form automaticamente al cambio della select
         select.addEventListener("change", function() {
-            form.submit();
+           form.submit();
         });
     });
 </script>
