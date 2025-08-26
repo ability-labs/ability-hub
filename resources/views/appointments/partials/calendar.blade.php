@@ -420,7 +420,7 @@
                                 title: data.appointment.title,
                                 start: this.formatDateString(data.appointment.start),
                                 end: this.formatDateString(data.appointment.end),
-                                color: data.appointment.color,
+                                color: data.appointment.extendedProps.operator.color,
                                 extendedProps: data.appointment.extendedProps
                             };
                             this.calendar.addEvent(eventData);

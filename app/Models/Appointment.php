@@ -54,7 +54,7 @@ class Appointment extends Model
             'title'   => $this->learner->full_name . ' (' . $this->operator->name . ')',
             'start'   => $this->starts_at,
             'end'     => $this->ends_at,
-            'color'   => $this->discipline->color,
+            'color'   => $this->operator->color,
             'extendedProps' => [
                 'learner' => $this->learner,
                 'operator'=> $this->operator,
