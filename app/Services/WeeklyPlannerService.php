@@ -90,9 +90,15 @@ class WeeklyPlannerService
         // Determine prioritized slots based on learner availability
         $prioritizedSlots = $this->getPrioritizedSlots($learnerSlots, $operatorSlots);
 
-        // Filter out slots that would create conflicts
-        return $this->filterConflictingSlots($prioritizedSlots, $learner, $operator, $weekStartDate);
+        // Order slots by week_day -> time to favour distribution
+        $ordered = $prioritizedSlots->sortBy(function ($s) {
+            return ($s->week_day * 10000) + ($s->start_time_hour * 100) + ($s->start_time_minute);
+        })->values();
+
+        // Filter out slots that would create conflicts (time overlaps)
+        return $this->filterConflictingSlots($ordered, $learner, $operator, $weekStartDate);
     }
+
 
     /**
      * Get slots prioritized by learner preferences
@@ -162,43 +168,81 @@ class WeeklyPlannerService
 
     /**
      * Create appointments from a collection of slots until the required minutes are met.
+     * Enforces: max 1 appointment per learner per day (week).
      */
     private function createAppointmentsFromSlots(Learner $learner, Collection $slots, Carbon $weekStartDate, int $minutesToSchedule): array
     {
         $appointments = [];
+
+        // Pre-calc giorni già occupati dal learner nella settimana (1=Mon..7=Sun)
+        $weekEnd = $weekStartDate->copy()->endOfWeek();
+        $daysTaken = $this->getLearnerScheduledDaysInWeek($learner, $weekStartDate, $weekEnd);
+
         foreach ($slots as $slot) {
             if ($minutesToSchedule <= 0) {
                 break;
             }
 
-            $appointmentStart = $this->calculateAppointmentStartTime($slot, $weekStartDate);
-            // usa solo i minuti residui
-            $useMinutes = min($slot->duration_minutes, $minutesToSchedule);
-            $appointmentEnd = $appointmentStart->copy()->addMinutes($useMinutes);
+            $slotDay = (int) $slot->week_day; // 1 = Monday
 
-            // doppio controllo conflitti...
-            if ($this->hasConflictingAppointment($learner, $learner->operator, $appointmentStart, $appointmentEnd)) {
+            // Skip slot if the learner already has an appointment that day
+            if (in_array($slotDay, $daysTaken, true)) {
                 continue;
             }
 
-            $appointments[] = Appointment::create([
+            $appointmentStart = $this->calculateAppointmentStartTime($slot, $weekStartDate);
+            $useMinutes = min($slot->duration_minutes, $minutesToSchedule);
+            $appointmentEnd = $appointmentStart->copy()->addMinutes($useMinutes);
+
+            // Check for conflicts with DB (learner/operator) - safety
+            if ($this->hasConflictingAppointment($learner, $learner->operator, $appointmentStart, $appointmentEnd)) {
+                // even if slot day not taken, time conflict means skip
+                continue;
+            }
+
+            // Create appointment (inside transaction in caller)
+            $created = Appointment::create([
                 'user_id'          => $this->user->id,
                 'learner_id'       => $learner->id,
                 'operator_id'      => $learner->operator_id,
                 'discipline_id'    => $slot->discipline_id,
                 'title'            => trim($learner->first_name . ' ' . $learner->last_name)
-                    . ' / '
-                    . trim($learner->operator->first_name . ' ' . $learner->operator->last_name),
+                    . ' / ' .
+                    trim($learner->operator->first_name . ' ' . $learner->operator->last_name),
                 'starts_at'        => $appointmentStart,
                 'ends_at'          => $appointmentEnd,
                 'duration_minutes' => $useMinutes,
-                'comments'         => '',    // obbligatorio
+                'comments'         => '',
             ]);
 
+            // Track created appointment and mark day as taken
+            $appointments[] = $created;
+            $daysTaken[] = $slotDay;
+
+            // Decrement remaining minutes
             $minutesToSchedule -= $useMinutes;
         }
 
         return $appointments;
+    }
+
+    /**
+     * Helper: returns array of week_day integers already scheduled for the learner in the week.
+     * (1 = Monday ... 7 = Sunday)
+     */
+    private function getLearnerScheduledDaysInWeek(Learner $learner, Carbon $weekStart, Carbon $weekEnd): array
+    {
+        $existing = $learner->appointments()
+            ->whereBetween('starts_at', [$weekStart, $weekEnd])
+            ->get(['starts_at']);
+
+        $days = [];
+        foreach ($existing as $appt) {
+            // use dayOfWeekIso to get 1..7 (Monday..Sunday)
+            $days[] = (int) $appt->starts_at->dayOfWeekIso;
+        }
+
+        return array_values(array_unique($days));
     }
 
 

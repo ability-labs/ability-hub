@@ -484,4 +484,52 @@ class WeeklyPlannerServiceTest extends TestCase
         }
         return false;
     }
+
+    public function test_it_enforces_one_appointment_per_day_for_learner(): void
+    {
+        // Create a discipline and multiple slots (many on Mon and Tue, one on Wed)
+        $discipline = Discipline::factory()->create();
+        $slots = Slot::factory()->for($discipline)->count(7)->sequence(
+            ['duration_minutes' => 60, 'week_day' => 1, 'start_time_hour' => 9,  'start_time_minute' => 0], // Mon 09:00
+            ['duration_minutes' => 60, 'week_day' => 1, 'start_time_hour' => 10, 'start_time_minute' => 0], // Mon 10:00
+            ['duration_minutes' => 60, 'week_day' => 1, 'start_time_hour' => 11, 'start_time_minute' => 0], // Mon 11:00
+            ['duration_minutes' => 60, 'week_day' => 2, 'start_time_hour' => 9,  'start_time_minute' => 0], // Tue 09:00
+            ['duration_minutes' => 60, 'week_day' => 2, 'start_time_hour' => 10, 'start_time_minute' => 0], // Tue 10:00
+            ['duration_minutes' => 60, 'week_day' => 2, 'start_time_hour' => 11, 'start_time_minute' => 0], // Tue 11:00
+            ['duration_minutes' => 60, 'week_day' => 3, 'start_time_hour' => 9,  'start_time_minute' => 0], // Wed 09:00
+        )->create();
+
+        // Create operator and learner. Learner needs 180 minutes (3 sessions)
+        $operator = Operator::factory()->create();
+        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 180]);
+
+        // Attach all slots to both learner and operator
+        foreach ($slots as $slot) {
+            $learner->slots()->attach($slot->id);
+            $operator->slots()->attach($slot->id);
+        }
+
+        // Schedule for the week
+        $weekStart = Carbon::parse('2025-06-23'); // Monday
+        $this->plannerService->scheduleForLearner($learner, $weekStart);
+
+        // Fetch created appointments
+        $appointments = $learner->appointments()->orderBy('starts_at')->get();
+
+        // We expect 3 appointments (3 x 60 = 180)
+        $this->assertCount(3, $appointments);
+        $this->assertEquals(180, $appointments->sum('duration_minutes'));
+
+        // Ensure appointments fall on distinct days (max 1 appointment per day)
+        $days = $appointments->map(fn($a) => $a->starts_at->dayOfWeekIso)->toArray();
+        $uniqueDays = array_unique($days);
+
+        $this->assertCount(3, $uniqueDays, 'Appointments should be on 3 distinct days (max 1 per day).');
+
+        // Extra: assert no day has >1 appointment
+        $grouped = $appointments->groupBy(fn($a) => $a->starts_at->dayOfWeekIso);
+        foreach ($grouped as $day => $apptsOnDay) {
+            $this->assertLessThanOrEqual(1, $apptsOnDay->count(), "More than one appointment scheduled on day {$day}");
+        }
+    }
 }
