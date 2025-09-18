@@ -11,7 +11,7 @@
         @method('PUT')
     @endif
 
-    <div x-data="{ tab: 'availability' }">
+    <div x-data="{ tab: 'main' }">
         <div class="flex mb-4 space-x-4 border-b pb-2">
             <button type="button" @click="tab = 'main'" :class="{ 'font-bold border-b-2 border-blue-500': tab === 'main' }">Principale</button>
             <button type="button" @click="tab = 'availability'" :class="{ 'font-bold border-b-2 border-blue-500': tab === 'availability' }">Disponibilità</button>
