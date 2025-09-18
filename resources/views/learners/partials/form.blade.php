@@ -16,6 +16,7 @@
 @endphp
 
 <form action="{{ $actionUrl }}" method="POST"
+      autocomplete="off"
       x-data="{ tab: 'main', date: '{{ old('birth_date', $isEdit ? $attributes->birth_date->format('Y-m-d') : '') }}' }">
     @csrf
     @if($isEdit)
