@@ -84,12 +84,12 @@
         {{--  Weekly minutes (input in hours, converted in the backend)  --}}
         <div class="mb-4">
             <label for="weekly_hours" class="block text-gray-700 dark:text-gray-300">
-                {{ __('Weekly workload (hours)') }}
+                {{ __('Weekly Hours') }}
             </label>
             <input type="number" min="0" step="1" name="weekly_hours" id="weekly_hours"
                    value="{{ $weeklyHours }}"
                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                   placeholder="{{ __('Enter weekly hours (will be stored in minutes)') }}">
+                   placeholder="{{ __('Enter weekly hours') }}">
             @error('weekly_hours')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
@@ -100,7 +100,7 @@
             <label for="operator_id" class="block text-gray-700 dark:text-gray-300">{{ __('Assigned operator') }}</label>
             <select name="operator_id" id="operator_id"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                <option value="">{{ __('Select an operator') }}</option>
+                <option value="">{{ __('Select an Operator') }}</option>
                 @foreach(($operators ?? collect()) as $op)
                     <label>
                         <option value="{{ $op->id }}"
