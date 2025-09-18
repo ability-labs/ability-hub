@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\PersonGender;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 
 class UpdateLearnerRequest extends FormRequest
@@ -23,11 +24,19 @@ class UpdateLearnerRequest extends FormRequest
      */
     public function rules(): array
     {
+        $userId = $this->user()->id;
+
         return [
             'first_name' => 'string:128',
             'last_name' => 'string:128',
             'birth_date' => 'date',
             'gender' => new Enum(PersonGender::class),
+            'weekly_hours' => ['nullable','integer','min:0'],
+            'operator_id' => [
+                'nullable',
+                'uuid',
+                Rule::exists('operators', 'id')->where(fn($q) => $q->where('user_id', $userId)),
+            ],
         ];
     }
 }

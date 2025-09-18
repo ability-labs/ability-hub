@@ -52,9 +52,16 @@ class LearnerController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        return view('learners.create');
+
+        $operators = $request->user()
+            ->operators()
+            ->select('id','name')
+            ->orderBy('name')
+            ->get();
+
+        return view('learners.create', compact('operators'));
     }
 
     /**
@@ -63,6 +70,13 @@ class LearnerController extends Controller
     public function store(StoreLearnerRequest $request, StoreLearnerAction $storeLearnerAction)
     {
         $attributes = $request->validated();
+
+        // Converts hours in minutes
+        $attributes['weekly_minutes'] = isset($attributes['weekly_hours'])
+            ? ((int) $attributes['weekly_hours']) * 60
+            : null;
+
+        unset($attributes['weekly_hours']);
 
         $attributes['user_id'] = $request->user()->id;
         $storeLearnerAction->execute($attributes);
@@ -101,7 +115,13 @@ class LearnerController extends Controller
             abort(403);
         }
 
-        return view('learners.edit', ['learner' => $learner]);
+        $operators = $request->user()
+            ->operators()
+            ->select('id','name')
+            ->orderBy('name')
+            ->get();
+
+        return view('learners.edit', ['learner' => $learner, 'operators' => $operators]);
     }
 
     /**
@@ -114,6 +134,17 @@ class LearnerController extends Controller
         }
 
         $attributes = $request->validated();
+
+        $attributes['weekly_minutes'] = isset($attributes['weekly_hours'])
+            ? ((int) $attributes['weekly_hours']) * 60
+            : $learner->weekly_minutes; // if not sent, we keep current value
+
+        unset($attributes['weekly_hours']);
+
+        if (array_key_exists('operator_id', $attributes) && empty($attributes['operator_id'])) {
+            $attributes['operator_id'] = null;
+        }
+
         $updateLearnerAction->execute($learner, $attributes);
 
         return redirect()->route('learners.index')->with('success');
