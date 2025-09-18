@@ -31,7 +31,7 @@ class StoreLearnerRequest extends FormRequest
             'last_name' => ['required','string:128'],
             'birth_date' => ['required','date'],
             'gender' => ['required',new Enum(PersonGender::class)],
-            'weekly_hours' => ['nullable','integer','min:0'],
+            'weekly_hours' => ['nullable', 'regex:/^\d+(?:[.,]5)?$/'],
             'operator_id' => [
                 'nullable',
                 'uuid',

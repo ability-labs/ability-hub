@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\DatasheetController;
 use App\Http\Controllers\LanguageSelectorController;
+use App\Http\Controllers\LearnerAvailabilityController;
 use App\Http\Controllers\LearnerController;
 use App\Http\Controllers\OperatorAvailabilityController;
 use App\Http\Controllers\OperatorController;
@@ -35,6 +36,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/operators/{operator}/availability/toggle', [OperatorAvailabilityController::class, 'toggle'])
         ->name('operators.availability.toggle');
+
+    Route::post('/learners/{learner}/availability/toggle', [LearnerAvailabilityController::class, 'toggle'])
+        ->name('learners.availability.toggle');
 });
 
 Route::middleware('auth')->group(function () {

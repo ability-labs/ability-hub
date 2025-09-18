@@ -13,8 +13,12 @@
 
     <div x-data="{ tab: 'main' }">
         <div class="flex mb-4 space-x-4 border-b pb-2">
-            <button type="button" @click="tab = 'main'" :class="{ 'font-bold border-b-2 border-blue-500': tab === 'main' }">Principale</button>
-            <button type="button" @click="tab = 'availability'" :class="{ 'font-bold border-b-2 border-blue-500': tab === 'availability' }">Disponibilità</button>
+            <button type="button" @click="tab = 'main'" :class="{ 'font-bold border-b-2 border-blue-500': tab === 'main' }">
+                {{__('Main')}}
+            </button>
+            <button type="button" @click="tab = 'availability'" :class="{ 'font-bold border-b-2 border-blue-500': tab === 'availability' }">
+                {{__('Availability')}}
+            </button>
         </div>
 
         <div x-show="tab === 'main'">
@@ -74,13 +78,11 @@
 
         <div x-show="tab === 'availability'" class="mt-6">
             @if($isEdit)
-
-{{--                    <x-scatter-plot-week :operator="$operator" :discipline="$operator->disciplines->first()" />--}}
-
-                @foreach($operator->disciplines as $discipline)
-                    <h2 class="text-center text-xl font-bold">{{ __('Discipline') . ': ' . $discipline->name }}</h2>
-                    <x-scatter-plot-week :operator="$operator" :discipline="$discipline" />
-                @endforeach
+                <x-scatter-plot-week
+                    :subject="$operator"
+                    :disciplines="$operator->disciplines"
+                    :toggle-url="route('operators.availability.toggle', $operator)"
+                />
             @endif
         </div>
     </div>
