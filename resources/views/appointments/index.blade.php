@@ -91,7 +91,7 @@
         <script>
             function appointmentsIndex(config = {}) {
                 return {
-                    showModal: true,
+                    showModal: false,
                     starts_at: '',
                     learners: [],
                     learnersById: config.learnersById || {}, // { id: "Nome" }
