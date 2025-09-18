@@ -115,6 +115,8 @@ class LearnerController extends Controller
             abort(403);
         }
 
+        $learner->load(['operator.disciplines', 'slots']);
+
         $operators = $request->user()
             ->operators()
             ->select('id','name')

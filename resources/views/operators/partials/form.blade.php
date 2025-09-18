@@ -74,13 +74,11 @@
 
         <div x-show="tab === 'availability'" class="mt-6">
             @if($isEdit)
-
-{{--                    <x-scatter-plot-week :operator="$operator" :discipline="$operator->disciplines->first()" />--}}
-
-                @foreach($operator->disciplines as $discipline)
-                    <h2 class="text-center text-xl font-bold">{{ __('Discipline') . ': ' . $discipline->name }}</h2>
-                    <x-scatter-plot-week :operator="$operator" :discipline="$discipline" />
-                @endforeach
+                <x-scatter-plot-week
+                    :subject="$operator"
+                    :disciplines="$operator->disciplines"
+                    :toggle-url="route('operators.availability.toggle', $operator)"
+                />
             @endif
         </div>
     </div>
