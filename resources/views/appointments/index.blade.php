@@ -35,8 +35,8 @@
                         <label for="learners">
                             {{ __('Choose Learners') }}
                             <button type="button"
-                                class="text-xs uppercase border rounded-md px-2 ml-2 bg-gray-100"
-                                @click="selectAll()">
+                                    class="text-xs uppercase border rounded-md px-2 ml-2 bg-gray-100"
+                                    @click="selectAll()">
                                 {{ __('Select All') }}
                             </button>
                         </label>
@@ -47,13 +47,13 @@
                         </select>
                     </div>
 
-                    <!-- error inline learners (campo) -->
+                    <!-- inline error learners (field) -->
                     <div class="mt-1 text-sm text-red-600 space-y-0.5" x-show="errors.learners">
                         <template x-for="(m,i) in (errors.learners || [])" :key="'learners'+i">
                             <div x-text="m"></div>
                         </template>
                     </div>
-                    <!-- error inline per learner specifico es: learners.123 -->
+                    <!-- inline error for specific learner e.g.: learners.123 -->
                     <div class="mt-1 text-sm text-red-600 space-y-0.5">
                         <template x-for="(msgs, key) in errors" :key="key">
                             <template x-if="key.startsWith('learners.')">
@@ -67,7 +67,18 @@
                         </template>
                     </div>
 
-                    <button  type="button" @click="planAppointments()" class="px-4 py-2 bg-blue-600 text-white rounded">Generate</button>
+                    <button  type="button"
+                             @click="planAppointments()"
+                             :disabled="isGenerating"
+                             class="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed">
+                        <template x-if="!isGenerating">
+                            <span>{{ __('Plan') }}</span>
+                        </template>
+                        <template x-if="isGenerating">
+                            <span>{{ __('Planning in progress') }}...</span>
+                        </template>
+                    </button>
+
                 </form>
             </div>
         </div>
@@ -94,9 +105,10 @@
                     showModal: false,
                     starts_at: '',
                     learners: [],
-                    learnersById: config.learnersById || {}, // { id: "Nome" }
-                    errors: {},                               // oggetto compatibile con ValidationException
+                    learnersById: config.learnersById || {}, // { id: "Name" }
+                    errors: {},                               // object compatible with ValidationException
                     alert: { type: null, messages: [] },      // 'error' | 'warning' | 'success'
+                    isGenerating: false,                      // loading state
 
                     init() {
                         const nextWeekMonday = this.getNextWeekMonday();
@@ -110,7 +122,7 @@
                     },
                     closeModal() {
                         this.showModal = false;
-                        // non azzeriamo gli alert qui, così se vuoi puoi leggerli anche dopo
+                        // do not reset alerts here, so you can still read them later if needed
                     },
 
                     selectAll() {
@@ -122,18 +134,18 @@
                     },
 
                     alertTitle() {
-                        if (this.alert.type === 'error') return 'Si sono verificati degli errori';
-                        if (this.alert.type === 'warning') return 'Pianificazione parziale';
-                        if (this.alert.type === 'success') return 'Operazione completata';
+                        if (this.alert.type === 'error') return 'Errors occurred';
+                        if (this.alert.type === 'warning') return 'Partial planning';
+                        if (this.alert.type === 'success') return 'Operation completed';
                         return '';
                     },
                     prettyLearnerKey(key) {
-                        // key es: 'learners.123' → 'Mario Rossi' se possibile, altrimenti 'Learner 123'
+                        // key e.g.: 'learners.123' → 'Mario Rossi' if possible, otherwise 'Learner 123'
                         const id = key.split('.')[1];
                         return this.learnersById[id] ?? `Learner ${id}`;
                     },
                     flattenErrors(errs) {
-                        // Converte { field: [msg], 'learners.123':[msg] } → array di stringhe
+                        // Converts { field: [msg], 'learners.123':[msg] } → array of strings
                         const out = [];
                         for (const [k, arr] of Object.entries(errs || {})) {
                             if (!Array.isArray(arr)) continue;
@@ -152,6 +164,7 @@
                     async planAppointments() {
                         this.errors = {};
                         this.alert  = { type: null, messages: [] };
+                        this.isGenerating = true;
 
                         const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                         const payload = {
@@ -178,42 +191,48 @@
                                     this.errors = data.errors || {};
                                     this.alert.type = 'error';
                                     this.alert.messages = this.flattenErrors(this.errors);
-                                    // mantieni la modale aperta per mostrare gli errori
+                                    // keep the modal open to show the errors
                                     return;
                                 }
                                 this.alert.type = 'error';
-                                this.alert.messages = ['Errore imprevisto. Riprova più tardi.'];
+                                this.alert.messages = ['Unexpected error. Please try again later.'];
                                 return;
                             }
 
-                            // 200 OK: può contenere 'errors' per successi parziali
+                            // 200 OK: may contain 'errors' for partial successes
                             if (data.errors && Object.keys(data.errors).length) {
                                 this.errors = data.errors;
                                 this.alert.type = 'warning';
                                 this.alert.messages = [
-                                    'Alcuni learner non sono stati pianificati.',
+                                    'Some learners could not be scheduled.',
                                     ...this.flattenErrors(this.errors)
                                 ];
-                                // lascio aperta la modale per mostrare i warning
+                                // keep the modal open to show the warnings
                                 return;
                             }
 
-                            // Successo pieno
+                            // Full success
                             this.alert.type = 'success';
-                            this.alert.messages = ['Pianificazione completata con successo.'];
-                            // se preferisci chiudere subito:
-                            // this.closeModal();
+                            this.alert.messages = ['Planning completed successfully.'];
+                            // close the modal and reload the page
+                            this.closeModal();
+                            // small delay to give the DOM time to close the modal
+                            setTimeout(() => { window.location.reload(); }, 200);
                         } catch (err) {
                             console.error(err);
                             this.alert.type = 'error';
-                            this.alert.messages = ['Errore di rete. Verifica la connessione.'];
+                            this.alert.messages = ['Network error. Please check your connection.'];
+                        } finally {
+                            // Re-enable the button if the page has not been reloaded.
+                            // If the page is reloading, this will have no visible effect.
+                            this.isGenerating = false;
                         }
                     },
 
-                    // Helpers date
+                    // Date helpers
                     getNextWeekMonday() {
                         const d = new Date();
-                        const day = d.getDay(); // 0=Dom,1=Lun,...6=Sab
+                        const day = d.getDay(); // 0=Sun,1=Mon,...6=Sat
                         const diffFromMonday = (day + 6) % 7;
                         const mondayThisWeek = new Date(d);
                         mondayThisWeek.setHours(12,0,0,0);
