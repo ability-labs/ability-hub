@@ -71,14 +71,16 @@ class LearnerController extends Controller
     {
         $attributes = $request->validated();
 
-        // Converts hours in minutes
-        $attributes['weekly_minutes'] = isset($attributes['weekly_hours'])
-            ? ((int) $attributes['weekly_hours']) * 60
-            : null;
-
+        if (isset($attributes['weekly_hours']) && $attributes['weekly_hours'] !== '') {
+            $hours = (float) str_replace(',', '.', $attributes['weekly_hours']);
+            $attributes['weekly_minutes'] = (int) round($hours * 60); // 4.5 -> 270
+        } else {
+            $attributes['weekly_minutes'] = null;
+        }
         unset($attributes['weekly_hours']);
 
         $attributes['user_id'] = $request->user()->id;
+
         $storeLearnerAction->execute($attributes);
 
         return redirect()->route('learners.index')->with('success');
@@ -137,11 +139,15 @@ class LearnerController extends Controller
 
         $attributes = $request->validated();
 
-        $attributes['weekly_minutes'] = isset($attributes['weekly_hours'])
-            ? ((int) $attributes['weekly_hours']) * 60
-            : $learner->weekly_minutes; // if not sent, we keep current value
-
-        unset($attributes['weekly_hours']);
+        if (array_key_exists('weekly_hours', $attributes)) {
+            if ($attributes['weekly_hours'] === '' || $attributes['weekly_hours'] === null) {
+                $attributes['weekly_minutes'] = $learner->weekly_minutes;
+            } else {
+                $hours = (float) str_replace(',', '.', $attributes['weekly_hours']);
+                $attributes['weekly_minutes'] = (int) round($hours * 60);
+            }
+            unset($attributes['weekly_hours']);
+        }
 
         if (array_key_exists('operator_id', $attributes) && empty($attributes['operator_id'])) {
             $attributes['operator_id'] = null;

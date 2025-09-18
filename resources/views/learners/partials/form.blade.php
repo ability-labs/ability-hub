@@ -1,10 +1,18 @@
 @php
     $isEdit = isset($attributes);
     $actionUrl = $isEdit ? route('learners.update', ['learner' => $attributes->id]) : route('learners.store');
-    $weeklyHours = old(
-        'weekly_hours',
-        $isEdit ? intdiv($attributes->weekly_minutes ?? 0, 60) : ''
-    );
+
+    if ($isEdit) {
+        $min = (int) ($attributes->weekly_minutes ?? 0);
+        $h = intdiv($min, 60);
+        $weeklyHoursFromMinutes = $h + (($min % 60) === 30 ? 0.5 : 0);
+        // mostra la virgola (es. 4,5)
+        $weeklyHoursDefault = str_replace('.', ',', (string)$weeklyHoursFromMinutes);
+    } else {
+        $weeklyHoursDefault = '';
+    }
+
+    $weeklyHours = old('weekly_hours', $weeklyHoursDefault);
 @endphp
 
 <form action="{{ $actionUrl }}" method="POST"
@@ -81,15 +89,21 @@
             @enderror
         </div>
 
-        {{--  Weekly minutes (input in hours, converted in the backend)  --}}
+        {{-- Weekly Hours (accpets integers or .5 / ,5) --}}
         <div class="mb-4">
             <label for="weekly_hours" class="block text-gray-700 dark:text-gray-300">
                 {{ __('Weekly Hours') }}
             </label>
-            <input type="number" min="0" step="1" name="weekly_hours" id="weekly_hours"
-                   value="{{ $weeklyHours }}"
-                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                   placeholder="{{ __('Enter weekly hours') }}">
+            <input
+                type="number"
+                min="0"
+                step="0.5"
+                name="weekly_hours"
+                id="weekly_hours"
+                value="{{ $weeklyHours }}"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                placeholder="{{ __('Enter weekly hours (e.g. 4.5 or 4,5)') }}"
+            >
             @error('weekly_hours')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
