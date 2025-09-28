@@ -19,7 +19,9 @@ class LearnerController extends Controller
 
     const SORTABLE_FIELDS = [
         'created_at',
-        'birth_date'
+        'birth_date',
+        'firstname',
+        'lastname',
     ];
 
     /**
@@ -46,7 +48,12 @@ class LearnerController extends Controller
 
         $learners = $query->paginate(25);
 
-        return view('learners.index', ['learners' => $learners, 'sortable_fields' => self::SORTABLE_FIELDS]);
+        return view('learners.index', [
+            'learners' => $learners,
+            'sortable_fields' => self::SORTABLE_FIELDS,
+            'sort' => $sort,
+            'sort_order' => $sort_order,
+        ]);
     }
 
     /**
