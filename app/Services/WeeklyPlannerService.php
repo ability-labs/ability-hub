@@ -107,15 +107,16 @@ class WeeklyPlannerService
     {
         if ($learnerSlots->isEmpty()) {
             // Case: Learner has no declared availability - use operator's slots
-            return $operatorSlots;
+            return $operatorSlots->values();
         }
 
-        // Case: Learner has declared availability
-        $commonSlots = $operatorSlots->intersectByKeys($learnerSlots);
-        $operatorOnlySlots = $operatorSlots->diffKeys($learnerSlots);
+        // Learner slots must always come first.
+        $prioritized = $learnerSlots->values();
 
-        // Priority: common slots first, then operator's fallback slots
-        return $commonSlots->concat($operatorOnlySlots);
+        // After exhausting learner preferences we can fallback to operator-only slots.
+        $operatorFallback = $operatorSlots->diffKeys($learnerSlots)->values();
+
+        return $prioritized->concat($operatorFallback);
     }
 
     /**
