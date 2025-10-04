@@ -86,23 +86,20 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
-                        <p class="text-sm text-gray-600 dark:text-gray-400 max-w-2xl">
-                            {{ __('Plan and review appointments across the week. Tap an empty slot to add a meeting or select an existing one to manage details.') }}
+                        <p class="hidden md:block text-sm text-gray-600 dark:text-gray-400 max-w-2xl">
+                            {{ __('Tap an empty slot to add a meeting or select an existing one to manage details.') }}
                         </p>
                         <button type="button"
                                 @click="openModal()"
-                                class="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 w-full sm:w-auto">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
-                                <path d="M12 4.5a.75.75 0 0 1 .75.75V11h5.75a.75.75 0 0 1 0 1.5H12.75v5.75a.75.75 0 0 1-1.5 0V12.5H5.5a.75.75 0 0 1 0-1.5h5.75V5.25A.75.75 0 0 1 12 4.5Z" />
-                            </svg>
-                            <span>{{ __('Generate Weekly Plan') }}</span>
+                                class="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 py-2 font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 w-full sm:w-auto">
+                            <span>{{ __('Plan Week') }}</span>
                         </button>
                     </div>
                     @include('appointments.partials.calendar', [
                         'events' => $events,
                         'operators' => $operators,
                         'learners'  => $learners,
-                        'showFilters' => true,
+                        'showFilters' => false,
                     ])
                 </div>
             </div>
