@@ -87,13 +87,9 @@ class WeeklyPlannerService
         $learnerSlots = $learner->slots()->get()->keyBy('id');
         $operatorSlots = $operator->slots()->get()->keyBy('id');
 
-        // Determine prioritized slots based on learner availability
-        $prioritizedSlots = $this->getPrioritizedSlots($learnerSlots, $operatorSlots);
-
-        // Order slots by week_day -> time to favour distribution
-        $ordered = $prioritizedSlots->sortBy(function ($s) {
-            return ($s->week_day * 10000) + ($s->start_time_hour * 100) + ($s->start_time_minute);
-        })->values();
+        // Determine prioritized slots based on learner availability while
+        // preserving the priority order between learner-declared and fallback slots.
+        $ordered = $this->getPrioritizedSlots($learnerSlots, $operatorSlots);
 
         // Filter out slots that would create conflicts (time overlaps)
         return $this->filterConflictingSlots($ordered, $learner, $operator, $weekStartDate);
@@ -107,15 +103,26 @@ class WeeklyPlannerService
     {
         if ($learnerSlots->isEmpty()) {
             // Case: Learner has no declared availability - use operator's slots
-            return $operatorSlots;
+            return $this->sortSlotsByWeekdayTime($operatorSlots)->values();
         }
 
-        // Case: Learner has declared availability
-        $commonSlots = $operatorSlots->intersectByKeys($learnerSlots);
-        $operatorOnlySlots = $operatorSlots->diffKeys($learnerSlots);
+        // Learner slots must always come first. Sort them chronologically while
+        // maintaining their priority over the operator-only availability.
+        $prioritized = $this->sortSlotsByWeekdayTime($learnerSlots)->values();
 
-        // Priority: common slots first, then operator's fallback slots
-        return $commonSlots->concat($operatorOnlySlots);
+        // After exhausting learner preferences we can fallback to operator-only slots.
+        $operatorFallback = $this->sortSlotsByWeekdayTime(
+            $operatorSlots->diffKeys($learnerSlots)
+        )->values();
+
+        return $prioritized->concat($operatorFallback);
+    }
+
+    private function sortSlotsByWeekdayTime(Collection $slots): Collection
+    {
+        return $slots->sortBy(function ($slot) {
+            return ($slot->week_day * 10000) + ($slot->start_time_hour * 100) + $slot->start_time_minute;
+        });
     }
 
     /**
