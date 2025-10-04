@@ -3,192 +3,304 @@
 namespace Database\Seeders;
 
 use Faker\Factory;
+use Faker\Generator;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Collection;
 use App\Models\User;
 use App\Models\Discipline;
 use App\Models\Operator;
 use App\Models\Learner;
-use App\Models\Appointment;
-use Carbon\Carbon;
-use Carbon\CarbonImmutable;
-use Carbon\CarbonInterval;
 
 class FakeDataSeeder extends Seeder
 {
-    private function getCurrentMonthWeekDates($position): array
-    {
-        $start = CarbonImmutable::parse("$position Monday of this month");
-        $end = $start->addDays(4);
-        return [$start, $end];
-    }
-
     public function run()
     {
-        $faker =app(Factory::class)->create();
-        // Recupera tutte le discipline presenti nel sistema
+        $faker = app(Factory::class)->create();
+
         $disciplines = Discipline::all();
         if ($disciplines->isEmpty()) {
-            $this->command->info("No disciplines found. Please seed the disciplines first.");
+            $this->command->info('No disciplines found. Please seed the disciplines first.');
             return;
         }
 
-        // Creazione di un utente con credenziali fisse
-        $user_email = 'seeded@example.com';
-        $user_password = "password";
+        $abaDiscipline = $disciplines->firstWhere('slug', 'aba');
+        if (!$abaDiscipline instanceof Discipline) {
+            $this->command->warn('ABA discipline not found. Run DisciplineSeeder before FakeDataSeeder.');
+            return;
+        }
+
+        $abaSlots = $abaDiscipline->slots()->get();
+        if ($abaSlots->isEmpty()) {
+            $this->command->warn('No slots found for ABA discipline. Run SlotsSeeder before FakeDataSeeder.');
+            return;
+        }
+
+        $slotMatrix = $this->groupSlotsByDaySpan($abaSlots);
+
+        $userEmail = 'seeded@example.com';
+        $userPassword = 'password';
         $user = User::factory()->create([
             'name'     => 'Seeded User',
-            'email'    => $user_email,
-            'password' => bcrypt($user_password),
+            'email'    => $userEmail,
+            'password' => bcrypt($userPassword),
         ]);
-        $this->command->info("User created: email: $user_email, password: $user_password");
+        $this->command->info("User created: email: $userEmail, password: $userPassword");
 
-        // Definizione degli slot orari: ciascuno di 1h30
-        // (09:00-10:30, 10:30-12:00, 12:00-13:30, 14:30-16:00, 16:00-17:30, 17:30-19:00, 19:00-20:30)
-        $slots = [
-            ['09:00:00', '10:30:00'],
-            ['10:30:00', '12:00:00'],
-            ['12:00:00', '13:30:00'],
-            ['14:30:00', '16:00:00'],
-            ['16:00:00', '17:30:00'],
-            ['17:30:00', '19:00:00'],
-            ['19:00:00', '20:30:00'],
-        ];
+        [$partTimeOperators, $fullTimeOperators] = $this->createOperatorsWithAvailability(
+            $user,
+            $abaDiscipline,
+            $slotMatrix,
+            $disciplines,
+            $faker
+        );
 
-        // Raccolta delle date di inizio e fine delle 4 settimane del mese corrente
-        $weeks = collect([
-            $this->getCurrentMonthWeekDates('first'),
-            $this->getCurrentMonthWeekDates('second'),
-            $this->getCurrentMonthWeekDates('third'),
-            $this->getCurrentMonthWeekDates('fourth'),
-        ])->map(fn (array $date) => ['start' => $date[0], 'end' => $date[1]]);
+        $operators = Operator::with('slots')
+            ->whereIn('id', $partTimeOperators->pluck('id')->merge($fullTimeOperators->pluck('id')))
+            ->get();
 
-        // Creiamo 2 operatori per ogni disciplina e assegniamo la disciplina a ciascun operatore
-        $disciplines->each(function (Discipline $discipline) use ($user) {
-            $operators = Operator::factory()
-                ->for($user)
-                ->count(5)
-                ->create();
-            $operators->each(function (Operator $operator) use ($discipline) {
-                $operator->disciplines()->attach($discipline->id);
-            });
+        $learners = Learner::factory()
+            ->for($user)
+            ->count(18)
+            ->create();
+
+        $learners->each(function (Learner $learner) use ($faker, $abaSlots, $operators) {
+            $this->assignLearnerAvailability($learner, $abaSlots, $operators, $faker);
         });
 
-        // Recupera tutti gli operatori dell'utente
-        $allOperators = Operator::where('user_id', $user->id)->get();
+        $this->command->info(sprintf(
+            'Seeded %d learners with multi-operator assignments, %d part-time operators and %d full-time operators dedicated to ABA.',
+            $learners->count(),
+            $partTimeOperators->count(),
+            $fullTimeOperators->count()
+        ));
+    }
 
-        // Inizializziamo un array di scheduling per operatori (per evitare doppie prenotazioni nello stesso slot)
-        $operatorSchedule = [];
-        foreach ($allOperators as $operator) {
-            $operatorSchedule[$operator->id] = [];
-            Learner::factory()->for($operator)->for($user)->count(3)->create();
+    private function groupSlotsByDaySpan(Collection $slots): Collection
+    {
+        return $slots
+            ->groupBy('week_day')
+            ->map(fn (Collection $daySlots) => $daySlots->groupBy('day_span'));
+    }
+
+    private function createOperatorsWithAvailability(
+        User $user,
+        Discipline $abaDiscipline,
+        Collection $slotMatrix,
+        Collection $allDisciplines,
+        Generator $faker
+    ): array {
+        $partTimeOperators = Operator::factory()
+            ->for($user)
+            ->count(6)
+            ->create();
+
+        $fullTimeOperators = Operator::factory()
+            ->for($user)
+            ->count(4)
+            ->create();
+
+        $partTimeOperators->each(function (Operator $operator) use ($abaDiscipline, $slotMatrix, $faker, $allDisciplines) {
+            $this->attachOperatorDisciplines($operator, $abaDiscipline, $allDisciplines, $faker);
+            $this->assignPartTimeSlots($operator, $slotMatrix, $faker);
+        });
+
+        $fullTimeOperators->each(function (Operator $operator) use ($abaDiscipline, $slotMatrix, $faker, $allDisciplines) {
+            $this->attachOperatorDisciplines($operator, $abaDiscipline, $allDisciplines, $faker);
+            $this->assignFullTimeSlots($operator, $slotMatrix, $faker);
+        });
+
+        return [$partTimeOperators, $fullTimeOperators];
+    }
+
+    private function attachOperatorDisciplines(
+        Operator $operator,
+        Discipline $abaDiscipline,
+        Collection $allDisciplines,
+        Generator $faker
+    ): void {
+        $operator->disciplines()->syncWithoutDetaching([$abaDiscipline->id]);
+
+        $otherDisciplineIds = $allDisciplines
+            ->filter(fn (Discipline $discipline) => $discipline->id !== $abaDiscipline->id)
+            ->pluck('id');
+
+        if ($otherDisciplineIds->isNotEmpty()) {
+            $extra = $otherDisciplineIds
+                ->shuffle()
+                ->take($faker->numberBetween(0, min(2, $otherDisciplineIds->count())));
+
+            if ($extra->isNotEmpty()) {
+                $operator->disciplines()->syncWithoutDetaching($extra->all());
+            }
         }
-//
-//        // Creiamo 20 Studenti per l'utente
-//        $learners = Learner::factory()->for($user)->count(50)->create();
+    }
 
-        // Inizializziamo un array per lo scheduling dei learner (per evitare due appuntamenti nello stesso giorno)
-        $learnerSchedule = [];
+    private function assignPartTimeSlots(Operator $operator, Collection $slotMatrix, Generator $faker): void
+    {
+        $pairs = $this->buildDaySpanPairs($slotMatrix);
+        if ($pairs->isEmpty()) {
+            return;
+        }
 
-//        // Iteriamo tutte le settimane per ciascun learner
-//        $learners->each(function (Learner $learner) use ($faker, $weeks, $disciplines, $slots, $user, $allOperators, &$operatorSchedule, &$learnerSchedule) {
-//
-//            $this->command->info("Creating Fake Appointments for " . $learner->full_name);
-//            // Inizializza lo scheduling per il learner
-//            $learnerSchedule[$learner->id] = [];
-//            // Per ogni settimana del mese
-//            foreach ($weeks as  $week) {
-//                $weekStart =  $week['start'];
-//                $weekEnd   = $week['end'];
-//                $days = [];
-//                // Creiamo un array di date per la settimana (dal lunedì al sabato)
-//                for ($d = $weekStart->copy(); $d->lte($weekEnd); $d = $d->addDay()) {
-//                    $days[] = $d->copy();
-//                }
-//                // Per ogni disciplina
-//                foreach ($disciplines as $discipline) {
-//                    // Recupera gli operatori per la disciplina tra quelli dell'utente
-//                    $availableOperators = $allOperators->filter(function($op) use ($discipline) {
-//                        return $op->disciplines->contains($discipline->id);
-//                    });
-//                    if ($availableOperators->isEmpty()) {
-//                        $this->command->warn("No operators found for discipline {$discipline->slug}. Skipping appointments for this discipline.");
-//                        continue;
-//                    }
-//                    $appointmentsNeeded = 3; // 3 appuntamenti per disciplina durante la settimana
-//                    // Seleziona 3 giorni distinti dalla settimana in cui programmare gli appuntamenti
-//                    $shuffledDays = $days;
-//                    shuffle($shuffledDays);
-//                    $selectedDays = array_slice($shuffledDays, 0, $appointmentsNeeded);
-//
-//                    // Per ogni appuntamento da creare, scegliamo uno slot casuale tra quelli disponibili
-//                    foreach ($selectedDays as $day) {
-//                        $dayKey = $day->toDateString();
-//                        // Controlla che lo studente non abbia già un appuntamento in questo giorno
-//                        if (isset($learnerSchedule[$learner->id][$dayKey])) {
-//                           // Learner already has an appointment on   Skipping.
-//                            continue;
-//                        }
-//                        // Cerca un operatore disponibile per questa disciplina e per uno slot casuale del giorno
-//                        $operatorFound = null;
-//                        $chosenSlotIndex = null;
-//                        $chosenSlot = null;
-//                        foreach ($availableOperators as $operator) {
-//                            $opId = $operator->id;
-//                            if (!isset($operatorSchedule[$opId][$dayKey])) {
-//                                $operatorSchedule[$opId][$dayKey] = [];
-//                            }
-//                            // Crea una copia dello slot array e lo mescola per scegliere in modo casuale
-//                            $shuffledSlots = $slots;
-//                            shuffle($shuffledSlots);
-//                            foreach ($shuffledSlots as $slot) {
-//                                // Trova l'indice originale dello slot
-//                                $slotIndex = array_search($slot, $slots);
-//                                if (!in_array($slotIndex, $operatorSchedule[$opId][$dayKey])) {
-//                                    $operatorFound = $operator;
-//                                    $chosenSlotIndex = $slotIndex;
-//                                    $chosenSlot = $slot;
-//                                    break;
-//                                }
-//                            }
-//                            if ($operatorFound) break;
-//                        }
-//                        if (!$operatorFound) {
-//                            $this->command->warn("No available operator for discipline {$discipline->slug} on {$dayKey} for learner {$learner->full_name}. Appointment skipped.");
-//                            continue;
-//                        }
-//                        // Imposta orari combinando la data corrente con l'orario dello slot scelto
-//                        $startTime = Carbon::parse($day->format('Y-m-d') . ' ' . $chosenSlot[0]);
-//                        $endTime   = Carbon::parse($day->format('Y-m-d') . ' ' . $chosenSlot[1]);
-//
-//                        // Crea l'appuntamento
-//                        $title = $learner->full_name . ' (' . $operatorFound->name . ') - ' . strtoupper($discipline->slug);
-//                        $appointment_attributes = [
-//                            'starts_at' => $startTime,
-//                            'ends_at' => $endTime,
-//                            'discipline_id' => $discipline->id,
-//                            'title' => $title,
-//                            'comments' => 'Seeded appointment for discipline ' . $discipline->slug,
-//                        ];
-//
-//                        if ($startTime->isPast()) {
-//                            $appointment_attributes['operator_signed_at'] = $endTime;
-//                             // leraners signs randomly
-//                            if ($faker->boolean(75))
-//                                $appointment_attributes['learner_signed_at'] = $endTime;
-//                        }
-//
-//                        Appointment::factory()
-//                            ->for($operatorFound)   // Imposta operator_id
-//                            ->for($user, 'user')    // Imposta user_id
-//                            ->for($learner, 'learner') // Imposta learner_id
-//                            ->create($appointment_attributes);
-//                        // Segna che lo studente ha un appuntamento in questo giorno
-//                        $learnerSchedule[$learner->id][$dayKey] = true;
-//                        // Segna lo slot come occupato per questo operatore
-//                        $operatorSchedule[$operatorFound->id][$dayKey][] = $chosenSlotIndex;
-//                    }
-//                }
-//            }
-//        });
+        $morningPairs = $pairs->filter(fn (array $pair) => $pair['span'] === 'Morning');
+        $afternoonPairs = $pairs->filter(fn (array $pair) => $pair['span'] === 'Afternoon');
+        $eveningPairs = $pairs->filter(fn (array $pair) => $pair['span'] === 'Evening');
+
+        $selectedPairs = collect();
+
+        if ($morningPairs->isNotEmpty()) {
+            $selectedPairs = $selectedPairs->concat(
+                $this->pickPairs($morningPairs, 2, 3, $faker)
+            );
+        }
+
+        if ($afternoonPairs->isNotEmpty()) {
+            $selectedPairs = $selectedPairs->concat(
+                $this->pickPairs($afternoonPairs, 2, 3, $faker)
+            );
+        }
+
+        if ($selectedPairs->count() < 4 && $eveningPairs->isNotEmpty()) {
+            $selectedPairs = $selectedPairs->concat(
+                $this->pickPairs($eveningPairs, 1, min(2, $eveningPairs->count()), $faker)
+            );
+        }
+
+        $targetHalfDays = $faker->numberBetween(4, 6);
+
+        if ($selectedPairs->count() < $targetHalfDays) {
+            $remainingPairs = $pairs->reject(function (array $pair) use ($selectedPairs) {
+                return $selectedPairs->contains(fn (array $selected) =>
+                    $selected['day'] === $pair['day'] && $selected['span'] === $pair['span']
+                );
+            });
+
+            $selectedPairs = $selectedPairs->concat(
+                $remainingPairs->shuffle()->take($targetHalfDays - $selectedPairs->count())
+            );
+        }
+
+        $finalPairs = $selectedPairs
+            ->unique(fn (array $pair) => $pair['day'] . '-' . $pair['span'])
+            ->take($targetHalfDays);
+
+        $this->attachSlotsFromPairs($operator, $slotMatrix, $finalPairs);
+    }
+
+    private function assignFullTimeSlots(Operator $operator, Collection $slotMatrix, Generator $faker): void
+    {
+        $days = $slotMatrix->keys();
+        if ($days->isEmpty()) {
+            return;
+        }
+
+        $dayOff = $days->random();
+
+        $slotMatrix->each(function (Collection $spans, int $day) use ($operator, $dayOff) {
+            if ($day === $dayOff) {
+                return;
+            }
+
+            $spans->each(function (Collection $slots) use ($operator) {
+                $operator->slots()->syncWithoutDetaching($slots->pluck('id')->all());
+            });
+        });
+    }
+
+    private function buildDaySpanPairs(Collection $slotMatrix): Collection
+    {
+        return $slotMatrix->flatMap(function (Collection $spans, int $day) {
+            return $spans->keys()->map(fn (string $span) => [
+                'day' => $day,
+                'span' => $span,
+            ]);
+        })->values();
+    }
+
+    private function pickPairs(Collection $pairs, int $min, int $max, Generator $faker): Collection
+    {
+        if ($pairs->isEmpty()) {
+            return collect();
+        }
+
+        $max = min($max, $pairs->count());
+        $min = min($min, $max);
+
+        if ($max <= 0) {
+            return collect();
+        }
+
+        if ($min <= 0) {
+            $min = 1;
+        }
+
+        $count = $min === $max ? $min : $faker->numberBetween($min, $max);
+
+        return $pairs->shuffle()->take($count)->values();
+    }
+
+    private function attachSlotsFromPairs(Operator $operator, Collection $slotMatrix, Collection $pairs): void
+    {
+        $pairs->each(function (array $pair) use ($operator, $slotMatrix) {
+            /** @var Collection|null $spans */
+            $spans = $slotMatrix->get($pair['day']);
+            if (!$spans instanceof Collection) {
+                return;
+            }
+
+            /** @var Collection|null $slots */
+            $slots = $spans->get($pair['span']);
+
+            if ($slots instanceof Collection && $slots->isNotEmpty()) {
+                $operator->slots()->syncWithoutDetaching($slots->pluck('id')->all());
+            }
+        });
+    }
+
+    private function assignLearnerAvailability(
+        Learner $learner,
+        Collection $abaSlots,
+        Collection $operators,
+        Generator $faker
+    ): void {
+        $requiredSlots = max(1, (int) ceil($learner->weekly_minutes / 90));
+        $extraSlots = $faker->boolean(40) ? 1 : 0;
+
+        $selectedSlots = $abaSlots
+            ->shuffle()
+            ->take($requiredSlots + $extraSlots);
+
+        if ($selectedSlots->count() < $requiredSlots) {
+            $selectedSlots = $abaSlots->shuffle()->take($requiredSlots);
+        }
+
+        $learner->slots()->sync($selectedSlots->pluck('id')->all());
+
+        $targetOperators = min(max(2, $faker->numberBetween(2, 3)), $operators->count());
+
+        $operatorsWithOverlap = $operators->filter(function (Operator $operator) use ($selectedSlots) {
+            return $operator->slots
+                ->pluck('id')
+                ->intersect($selectedSlots->pluck('id'))
+                ->isNotEmpty();
+        });
+
+        $selectedOperators = $operatorsWithOverlap->shuffle()->take($targetOperators);
+
+        if ($selectedOperators->count() < 2) {
+            $additional = $operators
+                ->diff($selectedOperators)
+                ->shuffle()
+                ->take(2 - $selectedOperators->count());
+
+            $selectedOperators = $selectedOperators->concat($additional);
+        }
+
+        $learner->operators()->sync(
+            $selectedOperators
+                ->unique(fn (Operator $operator) => $operator->id)
+                ->pluck('id')
+                ->all()
+        );
     }
 }

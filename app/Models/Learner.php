@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Learner extends Model
@@ -66,13 +67,27 @@ class Learner extends Model
         return $this->hasMany(PreferenceAssessment::class);
     }
 
-    public function operator(): BelongsTo
-    {
-        return $this->belongsTo(Operator::class);
-    }
-
     public function slots()
     {
         return $this->belongsToMany(Slot::class, 'availability_learner');
+    }
+
+    public function operators(): BelongsToMany
+    {
+        return $this->belongsToMany(Operator::class, 'learner_operator')->withTimestamps();
+    }
+
+    public function getOperatorAttribute(): ?Operator
+    {
+        if ($this->relationLoaded('operators')) {
+            return $this->getRelation('operators')->first();
+        }
+
+        return $this->operators()->first();
+    }
+
+    public function getOperatorIdAttribute(): ?string
+    {
+        return $this->operator?->id;
     }
 }

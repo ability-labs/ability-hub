@@ -29,8 +29,13 @@ class LearnerAvailabilityController extends Controller
             return response()->json(['ok'=>false,'message'=>'Slot/discipline mismatch'], 422);
         }
 
-        // vincolo: la disciplina dello slot deve essere tra quelle dell’operatore del learner
-        $allowedDisciplineIds = $learner->operator?->disciplines->pluck('id')->all() ?? [];
+        // vincolo: la disciplina dello slot deve essere tra quelle degli operatori del learner
+        $learner->loadMissing('operators.disciplines');
+        $allowedDisciplineIds = $learner->operators
+            ->flatMap(fn ($operator) => $operator->disciplines)
+            ->pluck('id')
+            ->unique()
+            ->all();
         if (!in_array($slot->discipline_id, $allowedDisciplineIds, true)) {
             return response()->json(['ok'=>false,'message'=>'Slot not allowed for this learner'], 422);
         }

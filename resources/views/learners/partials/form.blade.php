@@ -13,6 +13,9 @@
     }
 
     $weeklyHours = old('weekly_hours', $weeklyHoursDefault);
+    $selectedOperatorIds = collect(old('operator_ids', $isEdit ? ($attributes->operators->pluck('id')->all() ?? []) : []))
+        ->map(fn($id) => (string) $id)
+        ->all();
 @endphp
 
 <form action="{{ $actionUrl }}" method="POST"
@@ -110,22 +113,23 @@
             @enderror
         </div>
 
-        {{-- Operator select --}}
+        {{-- Operators select --}}
         <div class="mb-4">
-            <label for="operator_id" class="block text-gray-700 dark:text-gray-300">{{ __('Assigned operator') }}</label>
-            <select name="operator_id" id="operator_id"
+            <label for="operator_ids" class="block text-gray-700 dark:text-gray-300">{{ __('Assigned operators') }}</label>
+            <select name="operator_ids[]" id="operator_ids" multiple size="{{ min(6, max(3, ($operators ?? collect())->count())) }}"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                <option value="">{{ __('Select an Operator') }}</option>
                 @foreach(($operators ?? collect()) as $op)
-                    <label>
-                        <option value="{{ $op->id }}"
-                            {{ old('operator_id', $isEdit ? ($attributes->operator_id ?? '') : '') === $op->id ? 'selected' : '' }}>
-                            {{ $op->name }}
-                        </option>
-                    </label>
+                    <option value="{{ $op->id }}"
+                        {{ in_array($op->id, $selectedOperatorIds, true) ? 'selected' : '' }}>
+                        {{ $op->name }}
+                    </option>
                 @endforeach
             </select>
-            @error('operator_id')
+            <p class="text-xs text-gray-500 mt-1">{{ __('Hold CTRL (or CMD on Mac) to select multiple operators.') }}</p>
+            @error('operator_ids')
+            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
+            @error('operator_ids.*')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
@@ -135,13 +139,16 @@
     @if($isEdit)
         <div x-show="tab === 'availability'" class="mt-6">
             @php
-                $learnerDisciplines = $attributes->operator?->disciplines ?? collect();
+                $selectedOperators = $attributes->operators ?? collect();
+                $learnerDisciplines = $selectedOperators->loadMissing('disciplines')
+                    ->flatMap(fn($operator) => $operator->disciplines)
+                    ->unique('id');
             @endphp
 
             @if($learnerDisciplines->isEmpty())
                 <div class="text-center py-4 bg-yellow-50 border border-yellow-200 rounded">
                     <p class="text-sm text-yellow-800">
-                        {{ __('No disciplines available from the assigned operator. Select an operator first.') }}
+                        {{ __('No disciplines available from the assigned operators. Select at least one operator first.') }}
                     </p>
                 </div>
             @else

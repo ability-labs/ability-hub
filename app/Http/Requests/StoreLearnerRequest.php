@@ -32,8 +32,8 @@ class StoreLearnerRequest extends FormRequest
             'birth_date' => ['required','date'],
             'gender' => ['required',new Enum(PersonGender::class)],
             'weekly_hours' => ['nullable', 'regex:/^\d+(?:[.,]5)?$/'],
-            'operator_id' => [
-                'nullable',
+            'operator_ids' => ['nullable', 'array'],
+            'operator_ids.*' => [
                 'uuid',
                 Rule::exists('operators', 'id')->where(fn($q) => $q->where('user_id', $userId)),
             ],
