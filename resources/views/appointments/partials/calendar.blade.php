@@ -1,6 +1,114 @@
+@push('styles')
+    <style>
+        .print-only {
+            display: none;
+        }
+
+        @media print {
+            body {
+                background-color: #ffffff;
+            }
+
+            .screen-only {
+                display: none !important;
+            }
+
+            .print-only {
+                display: block !important;
+            }
+
+            .print-calendar-container {
+                padding: 1.5rem;
+                color: #111827;
+                font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            }
+
+            .print-calendar-header {
+                margin-bottom: 1rem;
+                text-align: center;
+                font-size: 1.1rem;
+                font-weight: 600;
+            }
+
+            .print-calendar-table {
+                width: 100%;
+                border-collapse: collapse;
+                table-layout: fixed;
+                font-size: 0.75rem;
+            }
+
+            .print-calendar-table th,
+            .print-calendar-table td {
+                border: 1px solid #1f2937;
+                padding: 0.4rem;
+                text-align: center;
+                vertical-align: middle;
+            }
+
+            .print-calendar-table thead th {
+                background-color: #e5e7eb;
+                font-weight: 600;
+            }
+
+            .print-calendar-table__span {
+                width: 60px;
+                background-color: #f3f4f6;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+
+            .print-calendar-table__time {
+                width: 80px;
+                background-color: #f9fafb;
+                font-weight: 600;
+            }
+
+            .print-calendar-table__cell {
+                height: 60px;
+                background-color: #ffffff;
+            }
+
+            .print-calendar-event {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 40px;
+                border-radius: 4px;
+                color: #ffffff;
+                font-weight: 600;
+                padding: 0.25rem;
+                text-align: center;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .print-calendar-event + .print-calendar-event {
+                margin-top: 0.25rem;
+            }
+
+            .print-calendar-event span {
+                display: block;
+                width: 100%;
+                word-break: break-word;
+            }
+
+            .print-calendar-empty {
+                min-height: 40px;
+            }
+        }
+
+        @media screen {
+            .print-only {
+                display: none !important;
+            }
+        }
+    </style>
+@endpush
+
 <!-- Appointment schedule component -->
 <div x-data="calendarComponent()" x-init="init()" class="space-y-6">
-    @if($showFilters)
+    <div class="space-y-6 screen-only">
+        @if($showFilters)
         <div class="border rounded-lg overflow-hidden bg-white dark:bg-gray-900 shadow-sm">
             <button type="button"
                     class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-100 bg-gray-100 dark:bg-gray-800"
@@ -67,7 +175,7 @@
                 </div>
             </div>
         </div>
-    @endif
+        @endif
 
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div class="flex flex-wrap items-center gap-2">
@@ -101,6 +209,9 @@
             </button>
             <button type="button" @click="goToCurrentWeek()" class="inline-flex items-center justify-center gap-1 rounded-md border border-transparent bg-blue-50 px-3 py-1.5 text-blue-700 transition hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-blue-900/40 dark:text-blue-200 dark:hover:bg-blue-900/60">
                 {{ __('Current week') }}
+            </button>
+            <button type="button" @click="printCalendar()" class="inline-flex items-center justify-center gap-1 rounded-md border border-transparent bg-gray-200 px-3 py-1.5 text-gray-700 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+                {{ __('Print calendar') }}
             </button>
         </div>
     </div>
@@ -394,6 +505,51 @@
             </template>
         </div>
     </div>
+    </div>
+
+    <div class="print-only">
+        <div class="print-calendar-container">
+            <div class="print-calendar-header" x-text="weekLabel()"></div>
+            <table class="print-calendar-table">
+                <thead>
+                    <tr>
+                        <th class="print-calendar-table__span">{{ __('Span') }}</th>
+                        <th class="print-calendar-table__time">{{ __('Time') }}</th>
+                        <template x-for="day in weekDays()" :key="day.key">
+                            <th>
+                                <div class="font-semibold capitalize" x-text="day.label"></div>
+                                <div class="text-xs" x-text="day.dateLabel"></div>
+                            </th>
+                        </template>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="span in spans" :key="span">
+                        <template x-for="(slot, index) in slotsBySpan(span)" :key="slot.start">
+                            <tr>
+                                <template x-if="index === 0">
+                                    <th class="print-calendar-table__span" :rowspan="slotsBySpan(span).length" x-text="spanLabels[span]"></th>
+                                </template>
+                                <th class="print-calendar-table__time" x-text="slotLabel(slot)"></th>
+                                <template x-for="day in weekDays()" :key="day.key">
+                                    <td class="print-calendar-table__cell">
+                                        <template x-if="eventsForSlot(day, slot).length === 0">
+                                            <div class="print-calendar-empty"></div>
+                                        </template>
+                                        <template x-for="event in eventsForSlot(day, slot)" :key="event.id">
+                                            <div class="print-calendar-event" :style="`background-color: ${event.extendedProps.operator.color};`">
+                                                <span x-text="event.extendedProps.learner.full_name"></span>
+                                            </div>
+                                        </template>
+                                    </td>
+                                </template>
+                            </tr>
+                        </template>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 @push('scripts')
@@ -540,8 +696,16 @@
                     this.currentWeekStart = this.startOfWeek(new Date());
                 },
 
+                printCalendar() {
+                    window.print();
+                },
+
                 slotsBySpan(span) {
                     return this.slots.filter(slot => slot.span === span);
+                },
+
+                slotLabel(slot) {
+                    return `${slot.start} – ${slot.end}`;
                 },
 
                 eventsForSlot(day, slot) {
