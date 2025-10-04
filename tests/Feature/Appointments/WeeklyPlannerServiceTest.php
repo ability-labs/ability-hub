@@ -30,6 +30,15 @@ class WeeklyPlannerServiceTest extends TestCase
         $this->plannerService = new WeeklyPlannerService($this->testUser);
     }
 
+    private function createLearnerWithOperators(array $attributes, Operator ...$operators): Learner
+    {
+        $learner = Learner::factory()->create($attributes);
+
+        $learner->operators()->sync(collect($operators)->pluck('id')->all());
+
+        return $learner->fresh('operators');
+    }
+
     public function test_it_can_schedule_fully_declared_learner_with_basic_slots_configuration(): void
     {
         // Setup: Define a Monday date for the start of the week
@@ -45,7 +54,7 @@ class WeeklyPlannerServiceTest extends TestCase
 
         // Create an operator and a learner with a target of 180 weekly minutes
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 180]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 180], $operator);
 
         // Attach all created slots to both the learner and the operator
         foreach ($slots as $slot) {
@@ -159,7 +168,7 @@ class WeeklyPlannerServiceTest extends TestCase
         ]);
 
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 270]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 270], $operator);
 
         // Attach learner slots to both learner and operator, operator-only slots just to the operator
         foreach ($learnerSlots as $slot) {
@@ -197,13 +206,14 @@ class WeeklyPlannerServiceTest extends TestCase
         )->create();
 
         // Operator declares availability on different days
-        $operatorSlots = Slot::factory()->for($discipline)->count(2)->sequence(
+        $operatorSlots = Slot::factory()->for($discipline)->count(3)->sequence(
             ['duration_minutes' => 60, 'week_day' => 4, 'start_time_hour' => 9, 'start_time_minute' => 0], // Thursday 09:00
             ['duration_minutes' => 60, 'week_day' => 5, 'start_time_hour' => 9, 'start_time_minute' => 0], // Friday 09:00
+            ['duration_minutes' => 60, 'week_day' => 6, 'start_time_hour' => 9, 'start_time_minute' => 0], // Saturday 09:00
         )->create();
 
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 180]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 180], $operator);
 
         foreach ($learnerSlots as $slot) {
             $learner->slots()->attach($slot->id);
@@ -219,9 +229,9 @@ class WeeklyPlannerServiceTest extends TestCase
         $this->assertCount(3, $appointments);
         $this->assertEquals(180, $appointments->sum('duration_minutes'));
 
-        $this->assertEquals('2025-06-23 09:00:00', $appointments[0]->starts_at->format('Y-m-d H:i:s'));
-        $this->assertEquals('2025-06-24 10:00:00', $appointments[1]->starts_at->format('Y-m-d H:i:s'));
-        $this->assertEquals('2025-06-25 11:00:00', $appointments[2]->starts_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-06-26 09:00:00', $appointments[0]->starts_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-06-27 09:00:00', $appointments[1]->starts_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-06-28 09:00:00', $appointments[2]->starts_at->format('Y-m-d H:i:s'));
     }
 
     public function test_it_falls_back_to_operator_slots_after_using_learner_preferences(): void
@@ -240,10 +250,11 @@ class WeeklyPlannerServiceTest extends TestCase
         )->create();
 
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 180]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 180], $operator);
 
         foreach ($learnerPreferredSlots as $slot) {
             $learner->slots()->attach($slot->id);
+            $operator->slots()->attach($slot->id);
         }
 
         foreach ($operatorFallbackSlots as $slot) {
@@ -277,7 +288,7 @@ class WeeklyPlannerServiceTest extends TestCase
 
         // Create an operator and a learner with a target of 180 weekly minutes
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 180]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 180], $operator);
 
         // Important: Only the operator has slots declared; the learner has none attached.
         foreach ($slots as $slot) {
@@ -293,6 +304,43 @@ class WeeklyPlannerServiceTest extends TestCase
         $this->assertEquals(180, $learner->appointments()->sum('duration_minutes'));
     }
 
+    public function test_it_picks_matching_operator_before_fallback_when_multiple_assigned(): void
+    {
+        $weekStart = Carbon::parse('2025-07-07');
+        $discipline = Discipline::factory()->create();
+
+        $preferredSlot = Slot::factory()->for($discipline)->create([
+            'duration_minutes' => 60,
+            'week_day' => 1,
+            'start_time_hour' => 10,
+            'start_time_minute' => 0,
+        ]);
+
+        $fallbackSlot = Slot::factory()->for($discipline)->create([
+            'duration_minutes' => 60,
+            'week_day' => 1,
+            'start_time_hour' => 11,
+            'start_time_minute' => 0,
+        ]);
+
+        $operatorA = Operator::factory()->create(['name' => 'Alpha Operator']);
+        $operatorB = Operator::factory()->create(['name' => 'Beta Operator']);
+
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 60], $operatorA, $operatorB);
+
+        $learner->slots()->attach($preferredSlot->id);
+        $operatorA->slots()->attach($fallbackSlot->id);
+        $operatorB->slots()->attach($preferredSlot->id);
+
+        $this->plannerService->scheduleForLearner($learner, $weekStart);
+
+        $appointment = $learner->appointments()->first();
+
+        $this->assertNotNull($appointment);
+        $this->assertEquals($operatorB->id, $appointment->operator_id);
+        $this->assertEquals('2025-07-07 10:00:00', $appointment->starts_at->format('Y-m-d H:i:s'));
+    }
+
     public function test_it_handles_partial_weekly_minutes_scheduling(): void
     {
         // Create a discipline and two slots totaling 90 minutes
@@ -304,7 +352,7 @@ class WeeklyPlannerServiceTest extends TestCase
 
         // Create an operator and a learner with a target of 180 weekly minutes
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 180]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 180], $operator);
 
         // Attach these 90 minutes of slots to both the learner and the operator
         foreach ($slots as $slot) {
@@ -337,7 +385,7 @@ class WeeklyPlannerServiceTest extends TestCase
 
         // Create an operator and a learner with a target of 180 weekly minutes
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 180]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 180], $operator);
 
         // Attach all slots to both the learner and the operator
         foreach ($slots as $slot) {
@@ -382,7 +430,7 @@ class WeeklyPlannerServiceTest extends TestCase
 
         // Create an operator and a learner with a target of 60 weekly minutes
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 60]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 60], $operator);
 
         // Attach the slot to both the learner and the operator
         $learner->slots()->attach($conflictingSlot->id);
@@ -425,8 +473,8 @@ class WeeklyPlannerServiceTest extends TestCase
 
         // Create one operator and two learners, both associated with this operator
         $operator = Operator::factory()->create();
-        $learner1 = Learner::factory()->for($operator)->create(['weekly_minutes' => 60]);
-        $learner2 = Learner::factory()->for($operator)->create(['weekly_minutes' => 60]);
+        $learner1 = $this->createLearnerWithOperators(['weekly_minutes' => 60], $operator);
+        $learner2 = $this->createLearnerWithOperators(['weekly_minutes' => 60], $operator);
 
         // Both learners want the same single slot, and the operator offers it
         $learner1->slots()->attach($slot->id);
@@ -456,7 +504,7 @@ class WeeklyPlannerServiceTest extends TestCase
     {
         // Create an operator and a learner with a weekly minute target of 0
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 0]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 0], $operator);
 
         // Set the start of the week
         $weekStart = Carbon::parse('2025-06-23');
@@ -490,7 +538,7 @@ class WeeklyPlannerServiceTest extends TestCase
     {
         // Create an operator and a learner associated with them
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 180]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 180], $operator);
 
         // Set the start of the week
         $weekStart = Carbon::parse('2025-06-23');
@@ -517,7 +565,7 @@ class WeeklyPlannerServiceTest extends TestCase
 
         // Create an operator and a learner
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 60]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 60], $operator);
 
         // Attach the Monday slot to both the learner and the operator
         $learner->slots()->attach($slot->id);
@@ -546,7 +594,7 @@ class WeeklyPlannerServiceTest extends TestCase
 
         // Create an operator and a learner with a target of 180 weekly minutes
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 180]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 180], $operator);
 
         // Attach the slot to both the learner and the operator
         $learner->slots()->attach($slot->id);
@@ -582,8 +630,8 @@ class WeeklyPlannerServiceTest extends TestCase
 
         // Create one operator and two learners, both with a target of 120 weekly minutes
         $operator = Operator::factory()->create();
-        $learner1 = Learner::factory()->for($operator)->create(['weekly_minutes' => 120]);
-        $learner2 = Learner::factory()->for($operator)->create(['weekly_minutes' => 120]);
+        $learner1 = $this->createLearnerWithOperators(['weekly_minutes' => 120], $operator);
+        $learner2 = $this->createLearnerWithOperators(['weekly_minutes' => 120], $operator);
 
         // Both learners and the operator have access to all four slots
         foreach ($slots as $slot) {
@@ -631,7 +679,7 @@ class WeeklyPlannerServiceTest extends TestCase
 
         // Create operator and learner. Learner needs 180 minutes (3 sessions)
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 180]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 180], $operator);
 
         // Attach all slots to both learner and operator
         foreach ($slots as $slot) {

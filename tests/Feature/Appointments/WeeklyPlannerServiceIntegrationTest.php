@@ -29,6 +29,15 @@ class WeeklyPlannerServiceIntegrationTest extends TestCase
         $this->plannerService = new WeeklyPlannerService($this->testUser);
     }
 
+    private function createLearnerWithOperators(array $attributes, Operator ...$operators): Learner
+    {
+        $learner = Learner::factory()->create($attributes);
+
+        $learner->operators()->sync(collect($operators)->pluck('id')->all());
+
+        return $learner->fresh('operators');
+    }
+
     public function test_it_handles_real_world_scenario_with_seeded_slots(): void
     {
         // Create a discipline for slot seeding
@@ -56,10 +65,10 @@ class WeeklyPlannerServiceIntegrationTest extends TestCase
         // Create learners based on the defined profiles
         foreach ($learnerProfiles as $index => $profile) {
             // Create a learner associated with an operator (round-robin assignment)
-            $learner = Learner::factory()->for($operators[$index % 3])->create([
+            $learner = $this->createLearnerWithOperators([
                 'weekly_minutes' => $profile['weekly_minutes'],
                 'first_name' => "Learner " . ($index + 1)
-            ]);
+            ], $operators[$index % 3]);
 
             // Assign a random set of slots to the learner based on 'slot_count'
             if ($profile['slot_count'] > 0) {
@@ -132,10 +141,10 @@ class WeeklyPlannerServiceIntegrationTest extends TestCase
         // Create multiple learners who all want the same limited slots
         $learners = collect();
         for ($i = 0; $i < 5; $i++) {
-            $learner = Learner::factory()->for($operator)->create([
+            $learner = $this->createLearnerWithOperators([
                 'weekly_minutes' => 120,
                 'first_name' => "Contending Learner " . ($i + 1)
-            ]);
+            ], $operator);
 
             // All learners request the same slots, creating contention
             foreach ($limitedSlots as $slot) {
@@ -188,7 +197,7 @@ class WeeklyPlannerServiceIntegrationTest extends TestCase
 
         // Create an operator and a learner with a target of 180 weekly minutes
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 180]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 180], $operator);
 
         // Attach all created slots to both the learner and the operator
         foreach ($slots as $slot) {
@@ -237,7 +246,7 @@ class WeeklyPlannerServiceIntegrationTest extends TestCase
 
         // Create an operator and a learner with a target of 180 weekly minutes
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 180]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 180], $operator);
 
         // Attach all mixed slots to both the learner and the operator
         foreach ($mixedSlots as $slot) {
@@ -277,7 +286,7 @@ class WeeklyPlannerServiceIntegrationTest extends TestCase
 
         // Create an operator and a learner with a target of 120 weekly minutes
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 120]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 120], $operator);
 
         // Attach all potentially overlapping slots to both the learner and the operator
         foreach ($overlappingSlots as $slot) {
@@ -318,7 +327,7 @@ class WeeklyPlannerServiceIntegrationTest extends TestCase
 
         // Create an operator and a learner with a target of 300 weekly minutes
         $operator = Operator::factory()->create();
-        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 300]);
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 300], $operator);
 
         // Give the learner partial slot availability (5 random slots)
         $learnerSlots = $slots->random(5);

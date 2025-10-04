@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\WeeklyPlanException;
 use App\Models\Appointment;
 use App\Models\Learner;
+use App\Models\Operator;
 use App\Models\Slot;
 use App\Models\User;
 use Illuminate\Support\Carbon;
@@ -33,8 +34,11 @@ class WeeklyPlannerService
         // 2) Input validation senza mutate
         $this->validateInputs($learner, $weekStart);
 
-        $operator = $learner->operator;
-        if (!$operator) {
+        $learner->loadMissing('slots', 'operators.slots');
+
+        $operators = $learner->operators->sortBy('name')->values();
+
+        if ($operators->isEmpty()) {
             throw WeeklyPlanException::noOperator($learner->id);
         }
 
@@ -44,7 +48,7 @@ class WeeklyPlannerService
         }
 
         // Get available slots with conflict checking
-        $availableSlots = $this->getAvailableSlots($learner, $operator, $weekStart);
+        $availableSlots = $this->getAvailableSlots($learner, $operators, $weekStart);
 
         if ($availableSlots->isEmpty()) {
             throw WeeklyPlanException::noAvailableSlots($learner->id);
@@ -82,40 +86,113 @@ class WeeklyPlannerService
     /**
      * Get available slots prioritized by learner preferences with conflict checking
      */
-    private function getAvailableSlots(Learner $learner, $operator, Carbon $weekStartDate): Collection
+    private function getAvailableSlots(Learner $learner, Collection $operators, Carbon $weekStartDate): Collection
     {
-        $learnerSlots = $learner->slots()->get()->keyBy('id');
-        $operatorSlots = $operator->slots()->get()->keyBy('id');
+        $learnerSlots = $learner->slots->keyBy('id');
+
+        $operatorSlotsByOperator = $operators->mapWithKeys(function (Operator $operator) {
+            return [$operator->id => $operator->slots->keyBy('id')];
+        });
 
         // Determine prioritized slots based on learner availability while
         // preserving the priority order between learner-declared and fallback slots.
-        $ordered = $this->getPrioritizedSlots($learnerSlots, $operatorSlots);
+        $ordered = $this->getPrioritizedSlots($learnerSlots, $operatorSlotsByOperator, $operators);
 
         // Filter out slots that would create conflicts (time overlaps)
-        return $this->filterConflictingSlots($ordered, $learner, $operator, $weekStartDate);
+        return $this->filterConflictingSlots($ordered, $learner, $weekStartDate);
     }
 
 
     /**
      * Get slots prioritized by learner preferences
      */
-    private function getPrioritizedSlots(Collection $learnerSlots, Collection $operatorSlots): Collection
+    private function getPrioritizedSlots(
+        Collection $learnerSlots,
+        Collection $operatorSlotsByOperator,
+        Collection $operators
+    ): Collection
     {
-        if ($learnerSlots->isEmpty()) {
-            // Case: Learner has no declared availability - use operator's slots
-            return $this->sortSlotsByWeekdayTime($operatorSlots)->values();
+        $orderedLearnerSlots = $this->sortSlotsByWeekdayTime($learnerSlots)->values();
+
+        if ($orderedLearnerSlots->isEmpty()) {
+            return $this->buildFallbackAssignments($operators, $operatorSlotsByOperator, collect())->values();
         }
 
-        // Learner slots must always come first. Sort them chronologically while
-        // maintaining their priority over the operator-only availability.
-        $prioritized = $this->sortSlotsByWeekdayTime($learnerSlots)->values();
+        $assignments = collect();
 
-        // After exhausting learner preferences we can fallback to operator-only slots.
-        $operatorFallback = $this->sortSlotsByWeekdayTime(
-            $operatorSlots->diffKeys($learnerSlots)
-        )->values();
+        foreach ($orderedLearnerSlots as $slot) {
+            /** @var Operator|null $matchingOperator */
+            $matchingOperator = $operators->first(function (Operator $operator) use ($operatorSlotsByOperator, $slot) {
+                return $operatorSlotsByOperator->get($operator->id, collect())->has($slot->id);
+            });
 
-        return $prioritized->concat($operatorFallback);
+            if ($matchingOperator) {
+                $assignments->push([
+                    'slot' => $operatorSlotsByOperator->get($matchingOperator->id)->get($slot->id),
+                    'operator' => $matchingOperator,
+                ]);
+
+                $operatorSlotsByOperator->get($matchingOperator->id)->forget($slot->id);
+            }
+        }
+
+        $fallbackAssignments = $this->buildFallbackAssignments($operators, $operatorSlotsByOperator, $orderedLearnerSlots);
+
+        return $assignments->concat($fallbackAssignments)->values();
+    }
+
+    private function buildFallbackAssignments(
+        Collection $operators,
+        Collection $operatorSlotsByOperator,
+        Collection $learnerSlots
+    ): Collection {
+        return $operators->flatMap(function (Operator $operator) use ($operatorSlotsByOperator, $learnerSlots) {
+            $slots = $operatorSlotsByOperator->get($operator->id, collect());
+
+            if ($slots->isEmpty()) {
+                return collect();
+            }
+
+            $sortedSlots = $this->sortRemainingSlotsForFallback($slots, $learnerSlots)->values();
+
+            return $sortedSlots->map(fn (Slot $slot) => [
+                'slot' => $slot,
+                'operator' => $operator,
+            ]);
+        });
+    }
+
+    private function sortRemainingSlotsForFallback(Collection $slots, Collection $learnerSlots): Collection
+    {
+        if ($slots->isEmpty()) {
+            return collect();
+        }
+
+        return $slots->sortBy(function (Slot $slot) use ($learnerSlots) {
+            return $this->fallbackSortScore($slot, $learnerSlots);
+        });
+    }
+
+    private function fallbackSortScore(Slot $slot, Collection $learnerSlots): int
+    {
+        $baseIndex = $this->slotMinutesIndex($slot);
+
+        if ($learnerSlots->isEmpty()) {
+            return $baseIndex;
+        }
+
+        $closestDistance = $learnerSlots
+            ->map(fn (Slot $reference) => abs($baseIndex - $this->slotMinutesIndex($reference)))
+            ->min();
+
+        return ($closestDistance * 100000) + $baseIndex;
+    }
+
+    private function slotMinutesIndex(Slot $slot): int
+    {
+        return ($slot->week_day - 1) * 24 * 60
+            + ($slot->start_time_hour * 60)
+            + $slot->start_time_minute;
     }
 
     private function sortSlotsByWeekdayTime(Collection $slots): Collection
@@ -128,15 +205,20 @@ class WeeklyPlannerService
     /**
      * Filter out slots that would create scheduling conflicts
      */
-    private function filterConflictingSlots(Collection $slots, Learner $learner, $operator, Carbon $weekStartDate): Collection
+    private function filterConflictingSlots(Collection $assignments, Learner $learner, Carbon $weekStartDate): Collection
     {
-        return $slots->filter(function ($slot) use ($learner, $operator, $weekStartDate) {
+        return $assignments->filter(function (array $assignment) use ($learner, $weekStartDate) {
+            /** @var Slot $slot */
+            $slot = $assignment['slot'];
+            /** @var Operator $operator */
+            $operator = $assignment['operator'];
+
             $appointmentStartTime = $this->calculateAppointmentStartTime($slot, $weekStartDate);
             $appointmentEndTime = $appointmentStartTime->copy()->addMinutes($slot->duration_minutes);
 
             // Check for conflicts with existing appointments
             return !$this->hasConflictingAppointment($learner, $operator, $appointmentStartTime, $appointmentEndTime);
-        });
+        })->values();
     }
 
     /**
@@ -152,7 +234,7 @@ class WeeklyPlannerService
     /**
      * Check if there's a conflicting appointment for either learner or operator
      */
-    private function hasConflictingAppointment(Learner $learner, $operator, Carbon $startTime, Carbon $endTime): bool
+    private function hasConflictingAppointment(Learner $learner, Operator $operator, Carbon $startTime, Carbon $endTime): bool
     {
         // Check learner conflicts
         $learnerConflicts = Appointment::where('learner_id', $learner->id)
@@ -177,7 +259,9 @@ class WeeklyPlannerService
      * Create appointments from a collection of slots until the required minutes are met.
      * Enforces: max 1 appointment per learner per day (week).
      */
-    private function createAppointmentsFromSlots(Learner $learner, Collection $slots, Carbon $weekStartDate, int $minutesToSchedule): array
+
+
+    private function createAppointmentsFromSlots(Learner $learner, Collection $assignments, Carbon $weekStartDate, int $minutesToSchedule): array
     {
         $appointments = [];
 
@@ -185,7 +269,12 @@ class WeeklyPlannerService
         $weekEnd = $weekStartDate->copy()->endOfWeek();
         $daysTaken = $this->getLearnerScheduledDaysInWeek($learner, $weekStartDate, $weekEnd);
 
-        foreach ($slots as $slot) {
+        foreach ($assignments as $assignment) {
+            /** @var Slot $slot */
+            $slot = $assignment['slot'];
+            /** @var Operator $operator */
+            $operator = $assignment['operator'];
+
             if ($minutesToSchedule <= 0) {
                 break;
             }
@@ -202,7 +291,7 @@ class WeeklyPlannerService
             $appointmentEnd = $appointmentStart->copy()->addMinutes($useMinutes);
 
             // Check for conflicts with DB (learner/operator) - safety
-            if ($this->hasConflictingAppointment($learner, $learner->operator, $appointmentStart, $appointmentEnd)) {
+            if ($this->hasConflictingAppointment($learner, $operator, $appointmentStart, $appointmentEnd)) {
                 // even if slot day not taken, time conflict means skip
                 continue;
             }
@@ -211,11 +300,9 @@ class WeeklyPlannerService
             $created = Appointment::create([
                 'user_id'          => $this->user->id,
                 'learner_id'       => $learner->id,
-                'operator_id'      => $learner->operator_id,
+                'operator_id'      => $operator->id,
                 'discipline_id'    => $slot->discipline_id,
-                'title'            => trim($learner->first_name . ' ' . $learner->last_name)
-                    . ' / ' .
-                    trim($learner->operator->first_name . ' ' . $learner->operator->last_name),
+                'title'            => $this->generateAppointmentTitle($learner, $operator),
                 'starts_at'        => $appointmentStart,
                 'ends_at'          => $appointmentEnd,
                 'duration_minutes' => $useMinutes,
@@ -256,9 +343,9 @@ class WeeklyPlannerService
     /**
      * Generate appointment title
      */
-    private function generateAppointmentTitle(Learner $learner): string
+    private function generateAppointmentTitle(Learner $learner, Operator $operator): string
     {
-        return trim($learner->name) . ' / ' . trim($learner->operator->name);
+        return trim($learner->name) . ' / ' . trim($operator->name);
     }
 
     /**

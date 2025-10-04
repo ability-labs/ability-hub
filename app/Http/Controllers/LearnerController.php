@@ -78,6 +78,13 @@ class LearnerController extends Controller
     {
         $attributes = $request->validated();
 
+        $operatorIds = collect($attributes['operator_ids'] ?? [])
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+        unset($attributes['operator_ids']);
+
         if (isset($attributes['weekly_hours']) && $attributes['weekly_hours'] !== '') {
             $hours = (float) str_replace(',', '.', $attributes['weekly_hours']);
             $attributes['weekly_minutes'] = (int) round($hours * 60); // 4.5 -> 270
@@ -88,7 +95,7 @@ class LearnerController extends Controller
 
         $attributes['user_id'] = $request->user()->id;
 
-        $storeLearnerAction->execute($attributes);
+        $storeLearnerAction->execute($attributes, $operatorIds);
 
         return redirect()->route('learners.index')->with('success');
     }
@@ -106,7 +113,7 @@ class LearnerController extends Controller
         $user->load(['learners', 'operators']);
 
         return view('learners.show', [
-            'learner' => $learner->load('appointments','datasheets'),
+            'learner' => $learner->load('appointments','datasheets','operators'),
             'events' => $learner->appointments->map(fn (Appointment $appointment) => $appointment->toFullCalendar()),
 
             'learners' => $user->learners,
@@ -124,7 +131,7 @@ class LearnerController extends Controller
             abort(403);
         }
 
-        $learner->load(['operator.disciplines', 'slots']);
+        $learner->load(['operators.disciplines', 'slots']);
 
         $operators = $request->user()
             ->operators()
@@ -146,6 +153,11 @@ class LearnerController extends Controller
 
         $attributes = $request->validated();
 
+        $operatorIds = array_key_exists('operator_ids', $attributes)
+            ? collect($attributes['operator_ids'])->filter()->unique()->values()->all()
+            : null;
+        unset($attributes['operator_ids']);
+
         if (array_key_exists('weekly_hours', $attributes)) {
             if ($attributes['weekly_hours'] === '' || $attributes['weekly_hours'] === null) {
                 $attributes['weekly_minutes'] = $learner->weekly_minutes;
@@ -156,11 +168,7 @@ class LearnerController extends Controller
             unset($attributes['weekly_hours']);
         }
 
-        if (array_key_exists('operator_id', $attributes) && empty($attributes['operator_id'])) {
-            $attributes['operator_id'] = null;
-        }
-
-        $updateLearnerAction->execute($learner, $attributes);
+        $updateLearnerAction->execute($learner, $attributes, $operatorIds);
 
         return redirect()->route('learners.index')->with('success');
     }

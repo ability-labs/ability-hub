@@ -3,15 +3,20 @@
 namespace App\Actions\Learners;
 
 use App\Models\Learner;
+use Illuminate\Support\Facades\DB;
 
 class StoreLearnerAction
 {
-    public function execute(array $attributes): Learner
+    public function execute(array $attributes, array $operatorIds = []): Learner
     {
-        $learner = new Learner();
-        $learner->fill($attributes);
-        $learner->save();
+        return DB::transaction(function () use ($attributes, $operatorIds) {
+            $learner = new Learner();
+            $learner->fill($attributes);
+            $learner->save();
 
-        return $learner;
+            $learner->operators()->sync($operatorIds);
+
+            return $learner;
+        });
     }
 }

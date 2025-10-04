@@ -80,7 +80,12 @@ class FakeDataSeeder extends Seeder
         $operatorSchedule = [];
         foreach ($allOperators as $operator) {
             $operatorSchedule[$operator->id] = [];
-            Learner::factory()->for($operator)->for($user)->count(3)->create();
+
+            Learner::factory()
+                ->for($user)
+                ->count(3)
+                ->create()
+                ->each(fn (Learner $learner) => $learner->operators()->sync([$operator->id]));
         }
 //
 //        // Creiamo 20 Studenti per l'utente

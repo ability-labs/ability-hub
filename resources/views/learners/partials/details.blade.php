@@ -56,6 +56,16 @@
                         <span class="font-bold text-gray-700 dark:text-gray-300">{{__('Age')}}:</span>
                         <span class="text-gray-900 dark:text-gray-100">{{ $learner->age }}</span>
                     </div>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-gray-700 dark:text-gray-300">{{ __('Assigned operators') }}:</span>
+                        @if($learner->operators->isNotEmpty())
+                            <span class="text-gray-900 dark:text-gray-100">
+                                {{ $learner->operators->pluck('name')->implode(', ') }}
+                            </span>
+                        @else
+                            <span class="text-gray-500 dark:text-gray-400">{{ __('No operators assigned') }}</span>
+                        @endif
+                    </div>
                 </div>
 
             </div>

@@ -35,8 +35,8 @@ class Operator extends Model
         return $this->hasMany(Appointment::class);
     }
 
-    public function learners(): HasMany
+    public function learners(): BelongsToMany
     {
-        return $this->hasMany(Learner::class);
+        return $this->belongsToMany(Learner::class, 'learner_operator')->withTimestamps();
     }
 }
