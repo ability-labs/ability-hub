@@ -107,9 +107,9 @@
 
     <!-- Scatter table view -->
     <div x-show="viewMode === 'scatter'" class="space-y-4">
-        <div class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible md:snap-none">
+        <div class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-5 md:gap-0 md:overflow-visible md:snap-none">
             <template x-for="day in weekDays()" :key="day.key">
-                <div class="min-w-[calc(100vw-4rem)] snap-center rounded-lg border border-gray-200 bg-white shadow-sm transition hover:border-blue-200 focus-within:border-blue-400 dark:border-gray-700 dark:bg-gray-900 md:min-w-0">
+                <div class="min-w-[calc(100vw-4rem)] snap-center border border-gray-200 bg-white shadow-sm transition hover:border-blue-200 focus-within:border-blue-400 dark:border-gray-700 dark:bg-gray-900 md:min-w-0">
                     <div class="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
                         <div class="flex items-baseline justify-between">
                             <span class="text-sm font-semibold capitalize" x-text="day.label"></span>
@@ -125,11 +125,11 @@
                                 <div>
                                     <template x-for="slot in slotsBySpan(span)" :key="slot.start">
                                         <div class="border-b border-gray-100 last:border-b-0 dark:border-gray-800">
-                                            <div class="px-4 pt-3 text-xs font-semibold text-gray-500" x-text="slot.label"></div>
+{{--                                            <div class="px-4 pt-3 text-xs font-semibold text-gray-500" x-text="slot.label"></div>--}}
                                             <div class="flex flex-col gap-2 px-4 pb-4 pt-2">
                                                 <template x-if="eventsForSlot(day, slot).length === 0">
                                                     <button type="button"
-                                                            class="flex h-16 items-center justify-center rounded-md border-2 border-dashed border-gray-200 text-xs font-semibold uppercase tracking-wide text-gray-400 transition hover:border-blue-300 hover:text-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:border-gray-700 dark:text-gray-500 dark:hover:border-blue-500"
+                                                            class="flex h-14 items-center justify-center rounded-md border-2 border-dashed border-gray-200 text-xs font-semibold uppercase tracking-wide text-gray-400 transition hover:border-blue-300 hover:text-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:border-gray-700 dark:text-gray-500 dark:hover:border-blue-500"
                                                             @click="openSlot(day, slot)">
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-2 h-4 w-4">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -137,9 +137,10 @@
                                                         {{ __('Add appointment') }}
                                                     </button>
                                                 </template>
-                                                <template x-for="event in eventsForSlot(day, slot)" :key="event.id">
+                                                <div class="flex flex-row overflow-x-scroll">
+                                                    <template x-for="event in eventsForSlot(day, slot)" :key="event.id">
                                                     <button type="button"
-                                                            class="rounded-md border border-transparent px-3 py-2 text-left text-sm font-medium text-gray-900 shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:text-gray-100"
+                                                            class="h-16 rounded-md border border-transparent px-3 py-2 text-left text-sm font-medium text-gray-900 shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:text-gray-100"
                                                             :style="eventBackgroundStyle(event)"
                                                             @click="openExistingEvent(event)">
                                                         <div class="flex items-start justify-between gap-2">
@@ -147,16 +148,17 @@
                                                             <span class="text-xs font-semibold" x-text="event.timeRange"></span>
                                                         </div>
                                                         <div class="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-600 dark:text-gray-200">
-                                                            <span class="inline-flex items-center gap-1 rounded-full bg-white/70 px-2 py-0.5 text-[11px] font-semibold text-gray-700 shadow-sm dark:bg-gray-800/80 dark:text-gray-100">
-                                                                <span class="inline-block h-2.5 w-2.5 rounded-full" :style="`background-color: ${event.extendedProps.operator.color}`"></span>
-                                                                <span x-text="event.extendedProps.operator.name"></span>
-                                                            </span>
-                                                            <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold text-white" :style="`background-color: ${event.extendedProps.discipline.color || '#4f46e5'}`">
-                                                                <span x-text="disciplineLabel(event.extendedProps.discipline)"></span>
-                                                            </span>
+{{--                                                            <span class="inline-flex items-center gap-1 rounded-full bg-white/70 px-2 py-0.5 text-[11px] font-semibold text-gray-700 shadow-sm dark:bg-gray-800/80 dark:text-gray-100">--}}
+{{--                                                                <span class="inline-block h-2.5 w-2.5 rounded-full" :style="`background-color: ${event.extendedProps.operator.color}`"></span>--}}
+{{--                                                                <span x-text="event.extendedProps.operator.name"></span>--}}
+{{--                                                            </span>--}}
+{{--                                                            <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold text-white" :style="`background-color: ${event.extendedProps.discipline.color || '#4f46e5'}`">--}}
+{{--                                                                <span x-text="disciplineLabel(event.extendedProps.discipline)"></span>--}}
+{{--                                                            </span>--}}
                                                         </div>
                                                     </button>
                                                 </template>
+                                                </div>
                                             </div>
                                         </div>
                                     </template>
