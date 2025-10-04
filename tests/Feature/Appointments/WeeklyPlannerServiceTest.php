@@ -67,6 +67,123 @@ class WeeklyPlannerServiceTest extends TestCase
         $this->assertEquals('2025-06-25 11:00:00', $appointments[2]->starts_at->format('Y-m-d H:i:s'));
     }
 
+    public function test_it_honours_learner_slots_even_if_operator_has_earlier_availability(): void
+    {
+        $weekStart = Carbon::parse('2025-10-06'); // Monday
+        $discipline = Discipline::factory()->create();
+
+        // Learner declares three 90-minute slots
+        $learnerSlots = collect([
+            Slot::factory()->for($discipline)->create([
+                'duration_minutes' => 90,
+                'week_day' => 1,
+                'start_time_hour' => 12,
+                'start_time_minute' => 0,
+            ]), // Monday 12:00-13:30
+            Slot::factory()->for($discipline)->create([
+                'duration_minutes' => 90,
+                'week_day' => 3,
+                'start_time_hour' => 12,
+                'start_time_minute' => 0,
+            ]), // Wednesday 12:00-13:30
+            Slot::factory()->for($discipline)->create([
+                'duration_minutes' => 90,
+                'week_day' => 5,
+                'start_time_hour' => 17,
+                'start_time_minute' => 0,
+            ]), // Friday 17:00-18:30
+        ]);
+
+        // Operator declares a full set of slots including earlier times
+        $operatorOnlySlots = collect([
+            Slot::factory()->for($discipline)->create([
+                'duration_minutes' => 90,
+                'week_day' => 1,
+                'start_time_hour' => 9,
+                'start_time_minute' => 0,
+            ]),
+            Slot::factory()->for($discipline)->create([
+                'duration_minutes' => 90,
+                'week_day' => 1,
+                'start_time_hour' => 10,
+                'start_time_minute' => 30,
+            ]),
+            Slot::factory()->for($discipline)->create([
+                'duration_minutes' => 90,
+                'week_day' => 2,
+                'start_time_hour' => 9,
+                'start_time_minute' => 0,
+            ]),
+            Slot::factory()->for($discipline)->create([
+                'duration_minutes' => 90,
+                'week_day' => 2,
+                'start_time_hour' => 10,
+                'start_time_minute' => 30,
+            ]),
+            Slot::factory()->for($discipline)->create([
+                'duration_minutes' => 90,
+                'week_day' => 4,
+                'start_time_hour' => 14,
+                'start_time_minute' => 0,
+            ]),
+            Slot::factory()->for($discipline)->create([
+                'duration_minutes' => 90,
+                'week_day' => 4,
+                'start_time_hour' => 15,
+                'start_time_minute' => 30,
+            ]),
+            Slot::factory()->for($discipline)->create([
+                'duration_minutes' => 90,
+                'week_day' => 4,
+                'start_time_hour' => 17,
+                'start_time_minute' => 0,
+            ]),
+            Slot::factory()->for($discipline)->create([
+                'duration_minutes' => 90,
+                'week_day' => 4,
+                'start_time_hour' => 18,
+                'start_time_minute' => 30,
+            ]),
+            Slot::factory()->for($discipline)->create([
+                'duration_minutes' => 90,
+                'week_day' => 5,
+                'start_time_hour' => 14,
+                'start_time_minute' => 0,
+            ]),
+            Slot::factory()->for($discipline)->create([
+                'duration_minutes' => 90,
+                'week_day' => 5,
+                'start_time_hour' => 15,
+                'start_time_minute' => 30,
+            ]),
+        ]);
+
+        $operator = Operator::factory()->create();
+        $learner = Learner::factory()->for($operator)->create(['weekly_minutes' => 270]);
+
+        // Attach learner slots to both learner and operator, operator-only slots just to the operator
+        foreach ($learnerSlots as $slot) {
+            $learner->slots()->attach($slot->id);
+            $operator->slots()->attach($slot->id);
+        }
+
+        foreach ($operatorOnlySlots as $slot) {
+            $operator->slots()->attach($slot->id);
+        }
+
+        $this->plannerService->scheduleForLearner($learner, $weekStart);
+
+        $appointments = $learner->appointments()->orderBy('starts_at')->get();
+
+        $this->assertCount(3, $appointments);
+        $this->assertEquals(270, $appointments->sum('duration_minutes'));
+
+        // Ensure appointments align with the learner-declared slots (not the earlier operator slots)
+        $this->assertEquals('2025-10-06 12:00:00', $appointments[0]->starts_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-10-08 12:00:00', $appointments[1]->starts_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-10-10 17:00:00', $appointments[2]->starts_at->format('Y-m-d H:i:s'));
+    }
+
     public function test_it_prioritizes_learner_slots_even_without_operator_overlap(): void
     {
         $weekStart = Carbon::parse('2025-06-23');
