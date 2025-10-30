@@ -20,7 +20,8 @@ class OperatorFactory extends Factory
         return [
             'user_id' => User::factory(),
             'name' => $this->faker->name(),
-            'vat_id' => $this->faker->creditCardNumber()
+            'vat_id' => $this->faker->creditCardNumber(),
+            'color' => $this->faker->hexColor(),
         ];
     }
 }

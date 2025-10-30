@@ -85,7 +85,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
+                    <div class="print:hidden flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
                         <p class="hidden md:block text-sm text-gray-600 dark:text-gray-400 max-w-2xl">
                             {{ __('Tap an empty slot to add a meeting or select an existing one to manage details.') }}
                         </p>
