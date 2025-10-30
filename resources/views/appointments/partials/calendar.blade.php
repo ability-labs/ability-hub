@@ -1,6 +1,7 @@
 <!-- Appointment schedule component -->
 <div x-data="calendarComponent()" x-init="init()" class="space-y-6">
-    @if($showFilters)
+    <div class="space-y-6 screen-only">
+        @if($showFilters)
         <div class="border rounded-lg overflow-hidden bg-white dark:bg-gray-900 shadow-sm">
             <button type="button"
                     class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-100 bg-gray-100 dark:bg-gray-800"
@@ -67,9 +68,9 @@
                 </div>
             </div>
         </div>
-    @endif
+        @endif
 
-    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div class="print:hidden flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div class="flex flex-wrap items-center gap-2">
             <span class="text-sm font-semibold text-gray-500 uppercase">{{ __('View') }}</span>
             <div class="inline-flex rounded-lg border border-gray-200 bg-gray-100 p-1 dark:border-gray-700 dark:bg-gray-800">
@@ -101,6 +102,9 @@
             </button>
             <button type="button" @click="goToCurrentWeek()" class="inline-flex items-center justify-center gap-1 rounded-md border border-transparent bg-blue-50 px-3 py-1.5 text-blue-700 transition hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-blue-900/40 dark:text-blue-200 dark:hover:bg-blue-900/60">
                 {{ __('Current week') }}
+            </button>
+            <button type="button" @click="printCalendar()" class="inline-flex items-center justify-center gap-1 rounded-md border border-transparent bg-gray-200 px-3 py-1.5 text-gray-700 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+                {{ __('Print calendar') }}
             </button>
         </div>
     </div>
@@ -140,10 +144,10 @@
                                                 <div class="flex flex-row overflow-x-scroll">
                                                     <template x-for="event in eventsForSlot(day, slot)" :key="event.id">
                                                     <button type="button"
-                                                            class="h-16 rounded-md border border-transparent px-3 py-2 text-left text-sm font-medium text-gray-900 shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:text-gray-100"
+                                                            class="h-16 w-full rounded-md border border-transparent px-3 py-2 text-left text-sm font-medium text-gray-900 shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:text-gray-100"
                                                             :style="eventBackgroundStyle(event)"
                                                             @click="openExistingEvent(event)">
-                                                        <div class="flex items-start justify-between gap-2">
+                                                        <div class="flex flex-col items-start justify-between gap-2">
                                                             <span class="font-semibold" x-text="event.extendedProps.learner.full_name"></span>
                                                             <span class="text-xs font-semibold" x-text="event.timeRange"></span>
                                                         </div>
@@ -394,6 +398,7 @@
             </template>
         </div>
     </div>
+    </div>
 </div>
 
 @push('scripts')
@@ -540,8 +545,16 @@
                     this.currentWeekStart = this.startOfWeek(new Date());
                 },
 
+                printCalendar() {
+                    window.print();
+                },
+
                 slotsBySpan(span) {
                     return this.slots.filter(slot => slot.span === span);
+                },
+
+                slotLabel(slot) {
+                    return `${slot.start} – ${slot.end}`;
                 },
 
                 eventsForSlot(day, slot) {
