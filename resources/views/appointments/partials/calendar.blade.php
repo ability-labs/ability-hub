@@ -336,22 +336,47 @@
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div>
                             <label class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Learner') }}</label>
-                            <select x-model="selectedLearner" class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
-                                <template x-for="learner in learners" :key="learner.id">
-                                    <option :value="learner.id" x-text="learner.full_name"></option>
-                                </template>
-                            </select>
+                            <p class="mt-1 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                                <span x-text="learnerName(selectedLearner) || '—'"></span>
+                            </p>
                             <template x-if="errors.learner_id">
                                 <p class="mt-1 text-xs text-red-500" x-text="errors.learner_id[0]"></p>
                             </template>
                         </div>
                         <div>
                             <label class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Operator') }}</label>
-                            <select x-model="selectedOperator" @change="updateAvailableDisciplines()" class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
-                                <template x-for="op in operators" :key="op.id">
-                                    <option :value="op.id" x-text="op.name"></option>
-                                </template>
-                            </select>
+                            <template x-if="!editingOperator">
+                                <div class="mt-1 flex items-center gap-2">
+                                    <p class="flex-1 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                                        <span x-text="operatorName(selectedOperator) || '—'"></span>
+                                    </p>
+                                    <button type="button"
+                                            class="inline-flex items-center rounded-md border border-transparent bg-gray-200 p-2 text-gray-600 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                                            @click="editingOperator = true">
+                                        <span class="sr-only">{{ __('Edit operator') }}</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487a2.1 2.1 0 0 1 2.97 2.97L8.488 18.802a4.2 4.2 0 0 1-1.585.99l-3.18 1.06 1.06-3.18a4.2 4.2 0 0 1 .99-1.585L16.862 4.487Zm0 0L19.5 7.125" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </template>
+                            <template x-if="editingOperator">
+                                <div class="mt-1 flex items-center gap-2">
+                                    <select x-model="selectedOperator" @change="updateAvailableDisciplines(); editingOperator = false" class="flex-1 rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
+                                        <template x-for="op in operators" :key="op.id">
+                                            <option :value="op.id" x-text="op.name"></option>
+                                        </template>
+                                    </select>
+                                    <button type="button"
+                                            class="inline-flex items-center rounded-md border border-transparent bg-gray-200 p-2 text-gray-600 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                                            @click="editingOperator = false">
+                                        <span class="sr-only">{{ __('Cancel operator edit') }}</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6m0 12L6 6" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </template>
                             <template x-if="errors.operator_id">
                                 <p class="mt-1 text-xs text-red-500" x-text="errors.operator_id[0]"></p>
                             </template>
@@ -438,6 +463,7 @@
                 selectedDiscipline: "",
                 availableDisciplines: [],
                 selectedEvent: {},
+                editingOperator: false,
 
                 init() {
                     this.currentWeekStart = this.startOfWeek(new Date());
@@ -450,7 +476,7 @@
                 },
 
                 enrichEvent(event) {
-                    const startDate = new Date(event.start);
+                        const startDate = new Date(event.start);
                     const endDate = new Date(event.end);
                     const operatorName = event.extendedProps.operator.name || '';
                     return {
@@ -580,6 +606,16 @@
                     return discipline.name || '';
                 },
 
+                operatorName(id) {
+                    const operator = this.operators.find(op => op.id === id);
+                    return operator ? operator.name : '';
+                },
+
+                learnerName(id) {
+                    const learner = this.learners.find(item => item.id === id);
+                    return learner ? learner.full_name : '';
+                },
+
                 formatTime(date) {
                     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
                 },
@@ -622,6 +658,7 @@
                     this.selectedLearner = '';
                     this.selectedDiscipline = "";
                     this.availableDisciplines = [];
+                    this.editingOperator = false;
                     this.popup = 'add';
                 },
 
@@ -637,6 +674,7 @@
                     this.selectedLearner = event.extendedProps.learner.id;
                     this.selectedDiscipline = event.extendedProps.discipline.id;
                     this.updateAvailableDisciplines();
+                    this.editingOperator = false;
                     this.popup = 'modify';
                 },
 
@@ -775,6 +813,7 @@
                     this.selectedDiscipline = "";
                     this.availableDisciplines = [];
                     this.errors = {};
+                    this.editingOperator = false;
                 },
             }
         }
