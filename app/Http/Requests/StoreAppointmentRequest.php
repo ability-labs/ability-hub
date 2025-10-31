@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class   StoreAppointmentRequest extends FormRequest
@@ -30,5 +31,26 @@ class   StoreAppointmentRequest extends FormRequest
             'ends_at'   => 'required|date|after:start_time',
             'comments'     => 'string|nullable|max:2048'
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $timezone = config('app.timezone');
+
+        foreach (['starts_at', 'ends_at'] as $field) {
+            $value = $this->input($field);
+
+            if (!$value) {
+                continue;
+            }
+
+            try {
+                $this->merge([
+                    $field => Carbon::parse($value)->setTimezone($timezone)->toDateTimeString(),
+                ]);
+            } catch (\Throwable $e) {
+                // Ignore parsing issues and let the validator handle the error
+            }
+        }
     }
 }

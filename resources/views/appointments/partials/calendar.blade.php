@@ -684,6 +684,19 @@
                     return d.toISOString().slice(0, 16);
                 },
 
+                toIsoString(value) {
+                    if (!value) {
+                        return value;
+                    }
+
+                    const date = new Date(value);
+                    if (Number.isNaN(date.getTime())) {
+                        return value;
+                    }
+
+                    return date.toISOString();
+                },
+
                 updateAvailableDisciplines() {
                     const op = this.operators.find(o => o.id === this.selectedOperator);
                     this.availableDisciplines = op ? op.disciplines : [];
@@ -696,8 +709,8 @@
                     this.errors = {};
                     const payload = {
                         title: '',
-                        starts_at: this.selectedEvent.startStr,
-                        ends_at: this.selectedEvent.endStr,
+                        starts_at: this.toIsoString(this.selectedEvent.startStr),
+                        ends_at: this.toIsoString(this.selectedEvent.endStr),
                         operator_id: this.selectedOperator,
                         learner_id: this.selectedLearner,
                         discipline_id: this.selectedDiscipline,
@@ -738,8 +751,8 @@
                     this.errors = {};
                     const payload = {
                         title: '',
-                        starts_at: eventData.startStr,
-                        ends_at: eventData.endStr,
+                        starts_at: this.toIsoString(eventData.startStr),
+                        ends_at: this.toIsoString(eventData.endStr),
                         operator_id: this.selectedOperator,
                         learner_id: this.selectedLearner,
                         discipline_id: this.selectedDiscipline,
