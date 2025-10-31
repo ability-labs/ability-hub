@@ -1,3 +1,7 @@
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet" />
+@endpush
+
 <!-- Appointment schedule component -->
 <div x-data="calendarComponent()" x-init="init()" class="space-y-6">
     <div class="space-y-6 screen-only">
@@ -86,6 +90,12 @@
                         class="relative rounded-md px-3 py-1.5 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
                     {{ __('List') }}
                 </button>
+                <button type="button"
+                        @click="viewMode = 'calendar'"
+                        :class="viewMode === 'calendar' ? 'bg-white dark:bg-gray-700 text-blue-600 shadow-sm' : 'text-gray-600 dark:text-gray-300'"
+                        class="relative rounded-md px-3 py-1.5 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+                    {{ __('Calendar') }}
+                </button>
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
@@ -173,6 +183,11 @@
                 </div>
             </template>
         </div>
+    </div>
+
+    <!-- Calendar view -->
+    <div x-show="viewMode === 'calendar'" class="rounded-lg border border-gray-200 bg-white p-2 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+        <div x-ref="fullCalendar" class="h-[720px]"></div>
     </div>
 
     <!-- List view -->
@@ -427,9 +442,11 @@
 </div>
 
 @push('scripts')
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
     <script>
         function calendarComponent() {
             return {
+                locale: document.documentElement.lang,
                 popup: false,
                 errors: {},
                 viewMode: 'scatter',
@@ -438,6 +455,13 @@
                 spanLabels: {
                     Morning: '{{ __('Morning') }}',
                     Afternoon: '{{ __('Afternoon') }}',
+                },
+                buttonText: {
+                    today:   '{{__('Today')}}',
+                    month:    '{{__('Month')}}',
+                    week:     '{{__('Week')}}',
+                    day:      '{{__('Day')}}',
+                    list:     '{{__('List')}}'
                 },
                 slots: [
                     { span: 'Morning', start: '09:00', end: '10:30' },
@@ -464,6 +488,9 @@
                 availableDisciplines: [],
                 selectedEvent: {},
                 editingOperator: false,
+                calendar: null,
+                calendarEventSourceId: 'appointments-calendar-source',
+                calendarViewType: 'timeGridWeek',
 
                 init() {
                     this.currentWeekStart = this.startOfWeek(new Date());
@@ -473,6 +500,14 @@
                     }));
                     this.allEvents = this.allEvents.map(event => this.enrichEvent(event));
                     this.applyFilters();
+                    this.$watch('viewMode', value => {
+                        if (value === 'calendar') {
+                            this.$nextTick(() => this.ensureCalendar());
+                        }
+                    });
+                    this.$watch('currentWeekStart', () => {
+                        this.syncCalendarDate();
+                    });
                 },
 
                 enrichEvent(event) {
@@ -504,6 +539,9 @@
                         }
                         return ok;
                     });
+                    if (this.calendar) {
+                        this.syncCalendarEvents();
+                    }
                 },
 
                 activeFilterLabel() {
@@ -703,6 +741,113 @@
                     if (!this.availableDisciplines.find(d => d.id === this.selectedDiscipline)) {
                         this.selectedDiscipline = "";
                     }
+                },
+
+                ensureCalendar() {
+                    if (this.calendar) {
+                        this.syncCalendarDate();
+                        this.syncCalendarEvents();
+                        return;
+                    }
+
+                    if (typeof FullCalendar === 'undefined') {
+                        console.error('FullCalendar library is not loaded.');
+                        return;
+                    }
+
+                    const calendarEl = this.$refs.fullCalendar;
+                    if (!calendarEl) {
+                        return;
+                    }
+
+                    this.calendar = new FullCalendar.Calendar(calendarEl, {
+                        slotLabelFormat: {
+                            hour12: false,
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            omitZeroMinute: false,
+                            meridiem: 'short'
+                        },
+                        initialView: this.calendarViewType,
+                        initialDate: this.currentWeekStart,
+                        firstDay: 1,
+                        hiddenDays: [0, 6],
+                        allDaySlot: false,
+                        slotMinTime: '09:00:00',
+                        slotMaxTime: '20:00:00',
+                        slotDuration: '01:30:00',
+                        slotLabelInterval: '01:30:00',
+                        height: 'auto',
+                        headerToolbar: {
+                            left: '',
+                            center: '',
+                            right: 'timeGridDay,timeGridWeek,dayGridMonth'
+                        },
+                        selectable: true,
+                        selectMirror: true,
+                        selectOverlap: false,
+                        select: (selectionInfo) => {
+                            const start = selectionInfo.start;
+                            const end = selectionInfo.end || new Date(start.getTime() + 90 * 60 * 1000);
+                            const day = {
+                                date: start,
+                                key: this.dateKey(start),
+                            };
+                            const slot = {
+                                start: this.formatTime(start),
+                                end: this.formatTime(end),
+                            };
+                            this.openSlot(day, slot);
+                            this.calendar.unselect();
+                        },
+                        eventClick: (info) => {
+                            info.jsEvent?.preventDefault?.();
+                            const eventData = this.allEvents.find(event => String(event.id) === String(info.event.id));
+                            if (eventData) {
+                                this.openExistingEvent(eventData);
+                            }
+                        },
+                        datesSet: (info) => {
+                            this.calendarViewType = info.view.type;
+                        },
+                        eventTimeFormat: {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false,
+                        },
+                    });
+
+                    this.calendar.render();
+                    this.syncCalendarEvents();
+                    this.syncCalendarDate();
+                },
+
+                syncCalendarEvents() {
+                    if (!this.calendar) {
+                        return;
+                    }
+
+                    const existingSource = this.calendar.getEventSourceById(this.calendarEventSourceId);
+                    if (existingSource) {
+                        existingSource.remove();
+                    }
+
+                    this.calendar.addEventSource({
+                        id: this.calendarEventSourceId,
+                        events: this.filteredEvents.map(event => ({
+                            ...event,
+                            start: event.start,
+                            end: event.end,
+                        })),
+                    });
+                },
+
+                syncCalendarDate() {
+                    if (!this.calendar || !this.currentWeekStart) {
+                        return;
+                    }
+
+                    this.calendar.gotoDate(this.currentWeekStart);
                 },
 
                 storeEvent() {
