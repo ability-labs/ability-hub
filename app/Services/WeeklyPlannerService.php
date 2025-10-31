@@ -20,6 +20,24 @@ class WeeklyPlannerService
     {
     }
 
+    private function getApplicationTimezone(): string
+    {
+        return config('app.timezone', 'UTC');
+    }
+
+    private function normalizeWeekStart(Carbon $weekStartDate): Carbon
+    {
+        $weekStart = $weekStartDate->copy()->startOfWeek();
+
+        $timezone = $this->getApplicationTimezone();
+
+        return Carbon::createFromFormat(
+            'Y-m-d H:i:s',
+            $weekStart->format('Y-m-d') . ' 00:00:00',
+            $timezone
+        );
+    }
+
     /**
      * Schedule weekly appointments for a given learner.
      *
@@ -28,8 +46,8 @@ class WeeklyPlannerService
      */
     public function scheduleForLearner(Learner $learner, Carbon $weekStartDate): array
     {
-        // 1) Copia pulita e forzo lunedì
-        $weekStart = $weekStartDate->copy()->startOfWeek();
+        // 1) Copia pulita e forzo lunedì normalizzando sul fuso orario dell'applicazione
+        $weekStart = $this->normalizeWeekStart($weekStartDate);
 
         // 2) Input validation senza mutate
         $this->validateInputs($learner, $weekStart);
@@ -227,6 +245,7 @@ class WeeklyPlannerService
     private function calculateAppointmentStartTime(Slot $slot, Carbon $weekStartDate): Carbon
     {
         return $weekStartDate->copy()
+            ->startOfDay()
             ->addDays($slot->week_day - 1) // week_day 1=Monday
             ->setTime($slot->start_time_hour, $slot->start_time_minute);
     }
@@ -333,7 +352,7 @@ class WeeklyPlannerService
         $days = [];
         foreach ($existing as $appt) {
             // use dayOfWeekIso to get 1..7 (Monday..Sunday)
-            $days[] = (int) $appt->starts_at->dayOfWeekIso;
+            $days[] = (int) $appt->starts_at->copy()->setTimezone($this->getApplicationTimezone())->dayOfWeekIso;
         }
 
         return array_values(array_unique($days));
@@ -354,9 +373,11 @@ class WeeklyPlannerService
     private function getRemainingMinutesForWeek(Learner $learner, Carbon $weekStart): int
     {
         $weekEnd = $weekStart->copy()->endOfWeek();
+
         $already = $learner->appointments()
             ->whereBetween('starts_at', [$weekStart, $weekEnd])
             ->sum('duration_minutes');
+
         return max(0, $learner->weekly_minutes - $already);
     }
 
@@ -365,10 +386,11 @@ class WeeklyPlannerService
      */
     public function getSchedulingSummary(Learner $learner, Carbon $weekStartDate): array
     {
-        $weekEndDate = $weekStartDate->copy()->endOfWeek();
+        $weekStart = $this->normalizeWeekStart($weekStartDate);
+        $weekEndDate = $weekStart->copy()->endOfWeek();
 
         $appointments = $learner->appointments()
-            ->whereBetween('starts_at', [$weekStartDate, $weekEndDate])
+            ->whereBetween('starts_at', [$weekStart, $weekEndDate])
             ->get();
 
         $scheduledMinutes = $appointments->sum('duration_minutes');
@@ -376,7 +398,7 @@ class WeeklyPlannerService
 
         return [
             'learner_id' => $learner->id,
-            'week_start' => $weekStartDate->format('Y-m-d'),
+            'week_start' => $weekStart->format('Y-m-d'),
             'weekly_minutes_target' => $learner->weekly_minutes,
             'scheduled_minutes' => $scheduledMinutes,
             'remaining_minutes' => $remainingMinutes,

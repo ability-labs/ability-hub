@@ -76,6 +76,46 @@ class WeeklyPlannerServiceTest extends TestCase
         $this->assertEquals('2025-06-25 11:00:00', $appointments[2]->starts_at->format('Y-m-d H:i:s'));
     }
 
+    public function test_it_normalizes_slot_times_with_timezone_offset(): void
+    {
+        $originalConfigTz = config('app.timezone');
+        $originalPhpTz = date_default_timezone_get();
+        $targetTimezone = 'Europe/Rome';
+
+        config(['app.timezone' => $targetTimezone]);
+        date_default_timezone_set($targetTimezone);
+
+        try {
+            $discipline = Discipline::factory()->create();
+            $slot = Slot::factory()->for($discipline)->create([
+                'duration_minutes' => 60,
+                'week_day' => 1,
+                'start_time_hour' => 9,
+                'start_time_minute' => 0,
+            ]);
+
+            $operator = Operator::factory()->create();
+            $operator->slots()->attach($slot->id);
+
+            $learner = $this->createLearnerWithOperators(['weekly_minutes' => 60], $operator);
+            $learner->slots()->attach($slot->id);
+            $learner->load('slots', 'operators');
+
+            $weekStart = Carbon::parse('2025-06-23', $targetTimezone);
+
+            $this->plannerService->scheduleForLearner($learner, $weekStart);
+
+            $appointment = $learner->appointments()->first();
+
+            $this->assertNotNull($appointment);
+            $this->assertEquals('09:00', $appointment->starts_at->copy()->setTimezone($targetTimezone)->format('H:i'));
+            $this->assertEquals('07:00', $appointment->starts_at->copy()->setTimezone('UTC')->format('H:i'));
+        } finally {
+            config(['app.timezone' => $originalConfigTz]);
+            date_default_timezone_set($originalPhpTz ?: 'UTC');
+        }
+    }
+
     public function test_it_honours_learner_slots_even_if_operator_has_earlier_availability(): void
     {
         $weekStart = Carbon::parse('2025-10-06'); // Monday
