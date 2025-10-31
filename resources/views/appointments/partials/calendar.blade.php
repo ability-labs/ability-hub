@@ -378,6 +378,7 @@
                             <template x-if="editingOperator">
                                 <div class="mt-1 flex items-center gap-2">
                                     <select x-model="selectedOperator" @change="updateAvailableDisciplines(); editingOperator = false" class="flex-1 rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
+                                        <option value="-">Scegli un nuovo operatore</option>
                                         <template x-for="op in operators" :key="op.id">
                                             <option :value="op.id" x-text="op.name"></option>
                                         </template>
