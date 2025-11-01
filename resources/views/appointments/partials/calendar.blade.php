@@ -287,7 +287,7 @@
                             </button>
                         </div>
                     </div>
-                    <select id="plan_learners" multiple size="10" x-model="planLearners" x-ref="planLearnersSelect" class="mt-2 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800">
+                    <select id="plan_learners" multiple size="5" x-model="planLearners" x-ref="planLearnersSelect" class="mt-2 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800">
                         <template x-for="learner in learners" :key="learner.id">
                             <option :value="learner.id" x-text="learner.full_name || learner.name || ''"></option>
                         </template>

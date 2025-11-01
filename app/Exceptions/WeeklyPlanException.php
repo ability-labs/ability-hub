@@ -25,33 +25,33 @@ class WeeklyPlanException extends RuntimeException
 
     public static function noOperator(string $learnerId): self
     {
-        return new self("Learner {$learnerId}: nessun operatore assegnato.", self::NO_OPERATOR);
+        return new self("nessun operatore assegnato.", self::NO_OPERATOR);
     }
 
     public static function noWeeklyMinutes(string $learnerId): self
     {
-        return new self( "Learner {$learnerId}: minuti settimanali a 0.", self::NO_WEEKLY_MINUTES);
+        return new self( "minuti settimanali a 0.", self::NO_WEEKLY_MINUTES);
     }
 
     public static function alreadyFulfilled(string $learnerId): self
     {
-        return new self("Learner {$learnerId}: minuti già soddisfatti in questa settimana.", self::ALREADY_FULFILLED);
+        return new self("minuti già soddisfatti in questa settimana.", self::ALREADY_FULFILLED);
     }
 
     public static function noAvailableSlots(string $learnerId): self
     {
-        return new self("Learner {$learnerId}: nessuna disponibilità utile.", self::NO_AVAILABLE_SLOTS);
+        return new self("nessuna disponibilità utile.", self::NO_AVAILABLE_SLOTS);
     }
 
     public static function allSlotsConflict(string $learnerId): self
     {
-        return new self("Learner {$learnerId}: tutti gli slot andavano in conflitto.", self::ALL_SLOTS_CONFLICT);
+        return new self("tutti gli slot andavano in conflitto.", self::ALL_SLOTS_CONFLICT);
     }
 
     public static function insufficientCapacity(string $learnerId, int $remaining): self
     {
         return new self(
-            "Impossibile soddisfare i weekly_minutes per il learner {$learnerId}. Minuti mancanti: {$remaining}.",
+            "Impossibile soddisfare i minuti settimanali. Minuti mancanti: {$remaining}.",
             self::INSUFFICIENT_CAPACITY
         );
     }
@@ -59,7 +59,7 @@ class WeeklyPlanException extends RuntimeException
     public static function noAvailableCapacity(mixed $learnerId)
     {
         return new self(
-            "Impossibile trovare uno slot disponibile per il learner {$learnerId}.",
+            "Impossibile trovare uno slot disponibile.",
             self::INSUFFICIENT_CAPACITY
         );
     }
@@ -67,7 +67,7 @@ class WeeklyPlanException extends RuntimeException
     public static function invalidLearner(mixed $id)
     {
         return new self(
-            "Learner non valido: {$id}.",
+            "Studente non valido.",
             self::INVALID_LEARNER
         );
     }
