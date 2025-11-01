@@ -1,38 +1,32 @@
 # AbilityHub
 
-AbilityHub è una piattaforma gestionale per centri di abilitazione che coordina utenti, operatori, apprendenti, slot disciplinari e appuntamenti settimanali basati su disponibilità condivise.
+AbilityHub è una piattaforma gestionale per centri abilitativi che coordinano percorsi educativi per persone con autismo, DSA, ADHD e altre difficoltà comunicative. L'obiettivo principale è supportare il team multidisciplinare nella costruzione di terapie coerenti, tracciabili e condivise.
 
-## Architettura e stack
+## Missione del progetto
 
-- **Backend:** Laravel 11 con Filament e servizi applicativi (es. `WeeklyPlannerService`) governa la logica di dominio e affida la validazione alle Form Request.
-- **Frontend:** Blade, componenti riusabili e AlpineJS alimentano un’interfaccia responsiva compilata tramite Vite e Tailwind.
-- **Persistenza:** Tabelle ad UUID con pivot per discipline, disponibilità e priorità rappresentano calendario e preferenze settimanali.
+- **Centralizzare i dati clinico-educativi** di apprendenti, operatori e famiglie, riducendo i silos informativi che spesso ostacolano la continuità terapeutica.
+- **Coordinare l'agenda settimanale** del centro, automatizzando l'assegnazione di appuntamenti in base a priorità, disponibilità e obiettivi di minuti terapeutici.
+- **Supportare la presa dati strutturata** tramite schede digitali (datasheet) e assessment delle preferenze, così da generare insight utili a supervisioni, ricerca e training.
+- **Abilitare l'analisi assistita da algoritmi e LLM**, trasformando le raccolte dati in suggerimenti predittivi su progressi, criticità e personalizzazione degli interventi.
 
 ## Funzionalità principali
 
-- **Calendario appuntamenti e pianificazione settimanale** con creazione, aggiornamento, cancellazione e generazione automatica via servizi dedicati e interfaccia FullCalendar/Alpine.
-- **Gestione apprendenti** con assegnazione operatori prioritizzati, minuti settimanali e sincronizzazione tramite azioni transazionali.
-- **Gestione operatori** con colori, discipline e vista calendario dedicata, oltre al toggle della loro disponibilità sugli slot.
-- **Disponibilità condivise**: apprendenti e operatori attivano/disattivano slot compatibili con controlli di coerenza disciplinare.
-- **Datasheet e Preference Assessment** con report generati a partire da tipi configurabili e servizi di aggregazione categorie/subcategorie.
-- **Onboarding a invito** con generazione e invio di codici registrazione via notifica e modello dedicato.
+| Area | Funzionalità | Valore per il centro abilitativo |
+| ---- | ------------ | -------------------------------- |
+| Pianificazione terapeutica | Calendario condiviso, servizio di pianificazione settimanale, gestione dei conflitti e rispetto dei minuti obiettivo | Garantisce continuità operativa e riduce gli errori umani nella costruzione dell'orario |
+| Gestione equipe | Profilazione di operatori, assegnazione priorità, sincronizzazione automatica delle disponibilità | Consente di bilanciare il carico di lavoro e di rispettare la seniority clinica |
+| Monitoraggio apprendenti | Schede di presa dati, assessment preferenze, reportistica aggregata | Permette di adattare le terapie sulla base di evidenze osservabili |
+| Collaborazione e famiglie | Onboarding guidato, notifiche, inviti e condivisione di report | Favorisce trasparenza e coinvolgimento del contesto familiare |
 
-## Roadmap verso API-first e MCP
+## Perché contribuire
 
-L’app espone attualmente solo rotte web autenticate; la logica di dominio è centralizzata in servizi e azioni riutilizzabili, facilitando l’esposizione futura di API REST con Laravel Sanctum e la serializzazione dei dati verso un server MCP che condivida gli stessi aggregati (viste, API, MCP).
+AbilityHub nasce per offrire strumenti di lavoro concreti alle équipe che operano in centri abilitativi. La roadmap evolve verso un ecosistema API-first e MCP-ready, in cui servizi e azioni applicative fungono da singola fonte di verità per web app, app mobile e canali conversational AI. Ogni contributo che migliora l'accuratezza dei servizi, la qualità dei dati o la fruibilità dei flussi operativi aiuta professionisti e famiglie a prendere decisioni informate.
 
-## Setup e avvio
+## Come iniziare a contribuire
 
-1. Clona il repository e installa le dipendenze PHP: `composer install` (PHP ≥ 8.2).
-2. Copia l’`.env`, genera la chiave applicativa ed esegui le migrazioni (`php artisan migrate`).
-3. Installa le dipendenze front-end e avvia Vite: `npm install && npm run dev`.
-4. Avvia il server locale (`php artisan serve`) o usa lo script `composer run dev` che orchestra server, queue, log viewer e Vite in parallelo.
+1. Clona il repository e installa le dipendenze PHP con `composer install` (PHP ≥ 8.2).
+2. Copia `.env.example` in `.env`, genera la chiave (`php artisan key:generate`) ed esegui `php artisan migrate`.
+3. Installa le dipendenze front-end (`npm install`) e avvia l'ambiente di sviluppo con `composer run dev`.
+4. Consulta la cartella `docs/` per comprendere i servizi complessi (planner, datasheet, assessment) prima di proporre modifiche funzionali.
 
-## Strumenti di qualità e test
-
-- PHPUnit, Laravel Pint e Collision sono già inclusi per testing e static analysis; esegui `./vendor/bin/pint` e `php artisan test` prima di ogni PR.
-- Le migrazioni definiscono chiavi UUID e vincoli `cascade/null` per mantenere l’integrità dei dati durante le evoluzioni.
-
-## Documentazione e supporto
-
-- Il servizio di pianificazione è documentato in `docs/WeeklyPannerService.md`; aggiorna questo file per ogni modifica sostanziale all’algoritmo.
+Per ulteriori dettagli architetturali, consulta i servizi in `app/Services` e la documentazione aggiornata nella directory `docs/`.

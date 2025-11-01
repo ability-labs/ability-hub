@@ -1,85 +1,85 @@
-# Documentazione del Servizio `WeeklyPlanner`
+# Servizio di Pianificazione Settimanale
 
-**Data**: 10/07/2025 - **Autore**: Salvo Bonanno
+Il `WeeklyPlannerService` automatizza la creazione degli appuntamenti terapeutici settimanali per ogni apprendete del centro abilitativo. Il servizio nasce per trasformare le preferenze temporali del discente, le disponibilità degli operatori e gli obiettivi di terapia (minuti settimanali) in un'agenda coerente, evitando conflitti e garantendo continuità di trattamento.
 
-Questo documento descrive il processo di pianificazione settimanale gestito dal servizio `WeeklyPlannerService`. Il servizio è responsabile di assegnare appuntamenti ai discenti (learner) per raggiungere il loro obiettivo di minuti settimanali, tenendo conto della disponibilità degli operatori e delle fasce orarie preferite.
+## Scopo e contesto
 
----
-## 1. Panoramica del Servizio
+- **Obiettivo clinico**: assicurare che ciascun apprendete raggiunga i minuti di terapia pianificati, distribuendo le sessioni in modo sostenibile lungo la settimana.
+- **Vincoli organizzativi**: rispettare le priorità assegnate agli operatori, utilizzare le fasce orarie dichiarate da apprendenti e operatori, bloccare la creazione di appuntamenti sovrapposti.
+- **Dominio applicativo**: si integra con il flusso di pianificazione del centro documentato in `docs/AppointmentsPlanning.md`, diventando l'implementazione concreta dell'algoritmo descritto nel documento di dominio.
 
-Il `WeeklyPlannerService` è progettato per automatizzare la creazione di appuntamenti settimanali. Utilizza un approccio basato sulla priorità delle fasce orarie e sulla prevenzione dei conflitti per ottimizzare la programmazione.
+## Attori e dati coinvolti
 
-**Componenti Chiave:**
+| Entità | Descrizione | Attributi rilevanti |
+| ------ | ----------- | ------------------ |
+| `Learner` | Apprendente seguito dal centro | `weekly_minutes`, `slots`, relazioni con `operators` |
+| `Operator` | Professionista incaricato della terapia | `slots`, pivot `priority`, disciplina |
+| `Slot` | Fascia oraria potenziale | `week_day`, `day_span`, orario di inizio/fine, `discipline_id` |
+| `Appointment` | Sessione confermata | `starts_at`, `ends_at`, `duration_minutes`, legami con `learner` e `operator` |
 
-* **Discente (Learner):** L'individuo che necessita di appuntamenti, con un obiettivo di minuti settimanali (`weekly_minutes`).
-* **Operatore (Operator):** Il professionista che fornisce il servizio, associato a uno o più discenti.
-* **Fascia Oraria (Slot):** Una finestra di tempo disponibile per gli appuntamenti, definita per giorno della settimana, ora di inizio e durata. Le fasce orarie possono essere associate sia a discenti (preferenze) che a operatori (disponibilità).
-* **Appuntamento (Appointment):** Un evento di pianificazione concreto creato dal servizio, che lega un discente, un operatore e una fascia oraria specifica in un dato momento.
+## Flusso decisionale
 
----
-## 2. Processo di Pianificazione (`scheduleForLearner`)
+```mermaid
+digraph WeeklyPlanner {
+  rankdir=LR;
+  node [shape=rect, style=rounded, fillcolor="#F1F5F9", fontname="Inter", fontsize=11];
+  subgraph cluster_inputs {
+    label = "Input";
+    I1[weekStartDate normalizzato al lunedì];
+    I2[Learner con slots e weekly_minutes];
+    I3[Operatori assegnati ordinati per priorità];
+  }
+  Start([Avvia pianificazione]) --> Normalize[Normalizza settimana e valida dati];
+  Normalize --> Remaining[Calcola minuti ancora da pianificare];
+  Remaining -->|0 minuti| ExitReached[Esci: obiettivo già soddisfatto];
+  Remaining -->|>0 minuti| LoopSlots[Itera sulle fasce preferite del learner];
+  LoopSlots --> TryMatch[Prova matching con operatori (priorità crescente)];
+  TryMatch -->|Compatibile| CreateApp[Genera appuntamento e aggiorna minuti];
+  CreateApp --> CheckRemaining{Minuti <= 0?};
+  CheckRemaining -->|Sì| ExitDone[Obiettivo raggiunto];
+  CheckRemaining -->|No| LoopSlots;
+  TryMatch -->|Nessun match| Fallbacks;
+  subgraph cluster_fallback {
+    label = "Fallback progressivi";
+    F1[Stesso giorno + stessa fascia];
+    F2[Stesso giorno, fascia libera];
+    F3[Ricerca globale su operatori assegnati];
+  }
+  Fallbacks --> F1 --> F2 --> F3 --> Exhausted[Capacità esaurita];
+  F3 -->|Slot trovato| CreateApp;
+  Exhausted --> ExitFail[Fallimento: nessun slot disponibile];
+}
+```
 
-Il metodo principale `scheduleForLearner(Learner $learner, Carbon $weekStartDate)` è il punto di ingresso per avviare il processo di pianificazione per un discente specifico in una determinata settimana.
+## Strategie di assegnazione
 
-### Fasi del Processo:
+Il servizio applica livelli successivi di ricerca per saturare i minuti settimanali. La tabella riassume il comportamento implementato dai metodi `tryAssignSlot` ed `extendedFallback`.
 
-1.  **Normalizzazione della Data di Inizio Settimana:**
-    * La data `$weekStartDate` fornita viene copiata e **forzata al lunedì** della settimana di riferimento (`$weekStartDate->copy()->startOfWeek()`). Questo assicura che tutta la logica di pianificazione sia coerente e si riferisca sempre all'inizio della settimana standard.
+| Livello | Metodo | Strategia | Descrizione operativa |
+| ------- | ------ | --------- | --------------------- |
+| Base | `tryAssignSlot` | Slot identico | Combina slot del learner con l'operatore prioritario che condivide lo stesso slot o firma temporale. |
+| Fallback 1 | `tryAssignSlot` | Stesso giorno e fascia (`day_span`) | Utilizza qualunque slot dell'operatore nella stessa fascia giornaliera. |
+| Fallback 2 | `tryAssignSlot` | Stesso giorno, qualsiasi fascia | Consente di cambiare fascia mantenendo il giorno, pur di assegnare l'appuntamento. |
+| Fallback 3 | `extendedFallback` | Intera settimana | Scansiona tutti gli slot liberi degli operatori assegnati nella settimana corrente. |
 
-2.  **Validazione degli Input (`validateInputs`):**
-    * Viene eseguito un controllo preliminare per assicurare che il `Learner` sia valido e che il suo obiettivo di `weekly_minutes` sia maggiore di zero.
-    * Viene emesso un log di avviso se la `$weekStartDate` iniziale non è un lunedì, anche se viene poi normalizzata.
-    * Se la validazione fallisce, il processo si interrompe.
+## Regole chiave
 
-3.  **Verifica dell'Operatore:**
-    * Si controlla che il `Learner` abbia un `Operator` associato. Senza un operatore, non è possibile pianificare appuntamenti. In tal caso, il processo si interrompe.
+1. **Un solo appuntamento per giorno**: l'array `daysTaken` evita doppi booking sullo stesso giorno per il medesimo learner.
+2. **Conflitti evitati**: `hasConflictingAppointment` consulta gli appuntamenti esistenti di apprendenti e operatori per bloccare sovrapposizioni.
+3. **Validazioni rigide**: `validateInputs` impedisce l'avvio del servizio se il learner è invalido, la data non è un lunedì o i minuti settimanali sono nulli.
+4. **Transazioni atomiche**: l'intera pianificazione viene eseguita in `DB::transaction` per garantire che tutti gli appuntamenti del learner vengano creati o annullati insieme.
+5. **Titoli esplicativi**: `generateAppointmentTitle` crea etichette `Learner / Operator`, utili per la stampa del calendario condiviso con famiglie e operatori.
 
-4.  **Calcolo Minuti Rimanenti (`getRemainingMinutesForWeek`):**
-    * Il servizio calcola quanti minuti mancano al discente per raggiungere il suo obiettivo settimanale (`weekly_minutes`), sottraendo la durata degli appuntamenti già esistenti per quella settimana.
-    * Se i minuti rimanenti sono zero o meno (cioè l'obiettivo è già raggiunto o superato), il processo si interrompe.
+## Output e riepilogo
 
-5.  **Reperimento Fasce Orarie Disponibili (`getAvailableSlots`):**
-    * Questa è una fase cruciale che determina quali fasce orarie possono essere utilizzate per la pianificazione.
-    * Vengono recuperate le fasce orarie preferite dal **discente** e quelle disponibili per l'**operatore**.
-    * Viene applicata una **logica di prioritizzazione** (`getPrioritizedSlots`):
-        * Se il discente non ha dichiarato preferenze di fasce orarie, vengono considerate tutte le fasce orarie disponibili per l'operatore.
-        * Se il discente ha preferenze, vengono prima considerate le fasce orarie **comuni** (preferite dal discente E disponibili per l'operatore).
-        * Successivamente, come **fallback**, vengono considerate le fasce orarie disponibili per l'operatore ma non specificamente preferite dal discente.
-    * Infine, le fasce orarie prioritizzate vengono filtrate (`filterConflictingSlots`) per **escludere quelle che genererebbero conflitti** con appuntamenti esistenti (sia per il discente che per l'operatore) nella settimana corrente.
+Al termine, il servizio restituisce la lista degli `Appointment` creati; `getSchedulingSummary` fornisce inoltre un report aggregato con minuti pianificati, minuti rimanenti e percentuale di completamento. Questi dati alimentano i cruscotti direzionali e i reminder automatici verso coordinatori e famiglie.
 
-6.  **Creazione degli Appuntamenti (`createAppointmentsFromSlots`):**
-    * Se ci sono fasce orarie disponibili (dopo la prioritizzazione e il filtraggio), il servizio itera su di esse.
-    * Per ogni fascia oraria:
-        * Viene calcolato l'esatto `starts_at` e `ends_at` dell'appuntamento, basandosi sul giorno della settimana della fascia oraria e l'ora di inizio.
-        * La **durata effettiva** dell'appuntamento viene determinata come il minimo tra la durata della fascia oraria e i `minutesToSchedule` rimanenti. Questo assicura che non si ecceda l'obiettivo del discente.
-        * Viene eseguito un **doppio controllo dei conflitti** subito prima della creazione per gestire eventuali race condition o modifiche dell'ultimo minuto.
-        * Se non ci sono conflitti, un nuovo record `Appointment` viene creato nel database, collegando discente, operatore, disciplina, orario e durata.
-        * I `minutesToSchedule` vengono aggiornati, sottraendo la durata del nuovo appuntamento.
-    * Il ciclo continua finché i `minutesToSchedule` raggiungono zero o non ci sono più fasce orarie disponibili.
+## Metriche di monitoraggio suggerite
 
----
-## 3. Report e Riepilogo (`getSchedulingSummary`)
+| Indicatore | Fonte | Uso operativo |
+| ---------- | ----- | ------------- |
+| % minuti coperti per learner | `getSchedulingSummary` | Valutare saturazione delle terapie pianificate |
+| Giorni consecutivi occupati | Appuntamenti generati | Distribuire in modo equilibrato gli sforzi dell'apprendente |
+| Numero di fallback utilizzati | Log applicativo (`reserved`/`extendedFallback`) | Comprendere dove potenziare le disponibilità operatori |
 
-Il metodo `getSchedulingSummary(Learner $learner, Carbon $weekStartDate)` fornisce una panoramica dettagliata dello stato di pianificazione per un discente in una data settimana.
-
-### Dettagli del Riepilogo:
-
-Il metodo restituisce un array associativo contenente le seguenti informazioni:
-
-* **`learner_id`**: L'ID del discente.
-* **`week_start`**: La data di inizio (lunedì) della settimana di riferimento (formato `YYYY-MM-DD`).
-* **`weekly_minutes_target`**: L'obiettivo di minuti settimanali per il discente.
-* **`scheduled_minutes`**: Il totale dei minuti di appuntamenti programmati per il discente in quella settimana.
-* **`remaining_minutes`**: I minuti che mancano per raggiungere l'obiettivo settimanale (`weekly_minutes_target - scheduled_minutes`). Sarà sempre un valore non negativo.
-* **`appointments_count`**: Il numero totale di appuntamenti programmati per il discente in quella settimana.
-* **`completion_percentage`**: La percentuale dell'obiettivo settimanale che è stata raggiunta (calcolata come `(scheduled_minutes / weekly_minutes_target) * 100`). Se l'obiettivo è zero, la percentuale sarà zero per evitare divisioni per zero.
-
----
-## 4. Gestione dei Conflitti
-
-Il servizio implementa una robusta logica di prevenzione dei conflitti attraverso il metodo `hasConflictingAppointment`. Questo metodo verifica la presenza di sovrapposizioni con appuntamenti esistenti sia per il discente che per l'operatore. Un potenziale appuntamento è considerato in conflitto se il suo intervallo di tempo si sovrappone a quello di un appuntamento già esistente. Questa verifica viene effettuata sia durante la fase di filtraggio iniziale delle fasce orarie che come ulteriore controllo prima della creazione di ogni singolo appuntamento.
-
----
-## 5. Strategia di Fallback (No Preferenze del Discente)
-
-Un aspetto importante della logica è la gestione dei discenti che non hanno specificato alcuna preferenza di fascia oraria (`learner->slots` è vuoto). In questo scenario, il servizio non si interrompe, ma ricade automaticamente sull'utilizzo di tutte le fasce orarie disponibili per l'operatore associato al discente. Questo massimizza le possibilità di pianificazione anche in assenza di input dettagliati da parte del discente.
+Il `WeeklyPlannerService` rappresenta quindi l'orchestratore centrale della pianificazione, coerente con le regole di dominio e pronto a supportare analisi predittive sui carichi terapeutici futuri.
