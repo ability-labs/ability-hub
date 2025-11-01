@@ -1,6 +1,6 @@
 <?php
 
-namespace Datasheets\PreferenceAssessment;
+namespace Tests\Feature\Datasheets\PreferenceAssessment;
 
 use App\Services\Datasheets\PreferenceAssessment\MultipleStimulusWithReplacement;
 use Carbon\Carbon;

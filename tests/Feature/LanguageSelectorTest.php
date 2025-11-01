@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Feature;
+
 class LanguageSelectorTest extends \Tests\TestCase
 {
     public function test_it_will_read_locale_configuration_from_session()
