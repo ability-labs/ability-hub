@@ -122,6 +122,148 @@ class WeeklyPlannerServiceTest extends TestCase
         }
     }
 
+    public function test_it_uses_next_operator_when_first_is_busy_on_same_slot(): void
+    {
+        $weekStart = Carbon::parse('2025-07-07');
+        $discipline = Discipline::factory()->create();
+
+        $sharedSlot = Slot::factory()->for($discipline)->create([
+            'duration_minutes' => 60,
+            'week_day' => 1,
+            'start_time_hour' => 9,
+            'start_time_minute' => 0,
+        ]);
+
+        $primaryOperator = Operator::factory()->create();
+        $secondaryOperator = Operator::factory()->create();
+
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 60], $primaryOperator, $secondaryOperator);
+        $learner->slots()->attach($sharedSlot->id);
+
+        $primaryOperator->slots()->attach($sharedSlot->id);
+        $secondaryOperator->slots()->attach($sharedSlot->id);
+
+        $otherLearner = Learner::factory()->create();
+
+        Appointment::factory()->for($primaryOperator, 'operator')
+            ->for($otherLearner, 'learner')
+            ->create([
+                'starts_at' => $weekStart->copy()->setTime(9, 0),
+                'ends_at' => $weekStart->copy()->setTime(10, 0),
+                'duration_minutes' => 60,
+            ]);
+
+        $this->plannerService->scheduleForLearner($learner->fresh('slots', 'operators'), $weekStart);
+
+        $appointments = $learner->appointments()->get();
+
+        $this->assertCount(1, $appointments);
+        $this->assertEquals($secondaryOperator->id, $appointments->first()->operator_id);
+        $this->assertEquals('2025-07-07 09:00:00', $appointments->first()->starts_at->format('Y-m-d H:i:s'));
+    }
+
+    public function test_it_uses_same_time_slot_from_next_operator_even_with_different_slot_records(): void
+    {
+        $weekStart = Carbon::parse('2025-07-07');
+        $discipline = Discipline::factory()->create();
+
+        $learnerSlot = Slot::factory()->for($discipline)->create([
+            'duration_minutes' => 60,
+            'week_day' => 3,
+            'start_time_hour' => 17,
+            'start_time_minute' => 0,
+        ]);
+
+        $primaryOperator = Operator::factory()->create();
+        $secondaryOperator = Operator::factory()->create();
+
+        $secondarySlot = Slot::factory()->for($discipline)->create([
+            'duration_minutes' => 60,
+            'week_day' => 3,
+            'start_time_hour' => 17,
+            'start_time_minute' => 0,
+        ]);
+
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 60], $primaryOperator, $secondaryOperator);
+        $learner->slots()->attach($learnerSlot->id);
+
+        $primaryOperator->slots()->attach($learnerSlot->id);
+        $secondaryOperator->slots()->attach($secondarySlot->id);
+
+        $otherLearner = Learner::factory()->create();
+
+        Appointment::factory()->for($primaryOperator, 'operator')
+            ->for($otherLearner, 'learner')
+            ->create([
+                'starts_at' => $weekStart->copy()->addDays($learnerSlot->week_day - 1)->setTime(17, 0),
+                'ends_at' => $weekStart->copy()->addDays($learnerSlot->week_day - 1)->setTime(18, 0),
+                'duration_minutes' => 60,
+            ]);
+
+        $this->plannerService->scheduleForLearner($learner->fresh('slots', 'operators'), $weekStart);
+
+        $appointments = $learner->appointments()->get();
+
+        $this->assertCount(1, $appointments);
+        $this->assertEquals($secondaryOperator->id, $appointments->first()->operator_id);
+        $this->assertEquals('2025-07-09 17:00:00', $appointments->first()->starts_at->format('Y-m-d H:i:s'));
+    }
+
+    public function test_it_falls_back_to_alternative_slot_when_all_operators_conflict_on_preferred_one(): void
+    {
+        $weekStart = Carbon::parse('2026-01-05');
+        $discipline = Discipline::factory()->create();
+
+        $preferredSlot = Slot::factory()->for($discipline)->create([
+            'duration_minutes' => 60,
+            'week_day' => 1,
+            'start_time_hour' => 9,
+            'start_time_minute' => 0,
+        ]);
+
+        $fallbackSlot = Slot::factory()->for($discipline)->create([
+            'duration_minutes' => 60,
+            'week_day' => 1,
+            'start_time_hour' => 10,
+            'start_time_minute' => 0,
+        ]);
+
+        $primaryOperator = Operator::factory()->create();
+        $secondaryOperator = Operator::factory()->create();
+
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 60], $primaryOperator, $secondaryOperator);
+        $learner->slots()->attach($preferredSlot->id);
+
+        $primaryOperator->slots()->attach($preferredSlot->id);
+        $secondaryOperator->slots()->attach([$preferredSlot->id, $fallbackSlot->id]);
+
+        $otherLearner = Learner::factory()->create();
+
+        Appointment::factory()->for($primaryOperator, 'operator')
+            ->for($otherLearner, 'learner')
+            ->create([
+                'starts_at' => $weekStart->copy()->setTime(9, 0),
+                'ends_at' => $weekStart->copy()->setTime(10, 0),
+                'duration_minutes' => 60,
+            ]);
+
+        Appointment::factory()->for($secondaryOperator, 'operator')
+            ->for($otherLearner, 'learner')
+            ->create([
+                'starts_at' => $weekStart->copy()->setTime(9, 0),
+                'ends_at' => $weekStart->copy()->setTime(10, 0),
+                'duration_minutes' => 60,
+            ]);
+
+        $this->plannerService->scheduleForLearner($learner->fresh('slots', 'operators'), $weekStart);
+
+        $appointments = $learner->appointments()->get();
+
+        $this->assertCount(1, $appointments);
+        $this->assertEquals($secondaryOperator->id, $appointments->first()->operator_id);
+        $this->assertEquals('2026-01-05 10:00:00', $appointments->first()->starts_at->format('Y-m-d H:i:s'));
+    }
+
     public function test_it_honours_learner_slots_even_if_operator_has_earlier_availability(): void
     {
         $weekStart = Carbon::parse('2025-10-06'); // Monday
