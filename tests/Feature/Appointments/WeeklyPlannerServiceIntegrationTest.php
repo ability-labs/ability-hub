@@ -167,7 +167,7 @@ class WeeklyPlannerServiceIntegrationTest extends TestCase
         foreach ($learners as $learner) {
             $this->expectException(WeeklyPlanException::class);
             $this->plannerService->scheduleForLearner($learner, $weekStart);
-            $this->expectExceptionCode(WeeklyPlanException::NO_AVAILABLE_SLOTS);
+            $this->expectExceptionCode(WeeklyPlanException::INSUFFICIENT_CAPACITY);
 //            $results[] = $this->plannerService->getSchedulingSummary($learner, $weekStart);
         }
 

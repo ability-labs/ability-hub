@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Support\Carbon;
 use RuntimeException;
 
 class WeeklyPlanException extends RuntimeException
@@ -13,6 +14,7 @@ class WeeklyPlanException extends RuntimeException
     const NO_AVAILABLE_SLOTS = 4;
     const ALL_SLOTS_CONFLICT = 5;
     public const INVALID_DATE = 6;
+    public const INSUFFICIENT_CAPACITY = 7;
 
     public function __construct(
         string $message = '',
@@ -44,5 +46,37 @@ class WeeklyPlanException extends RuntimeException
     public static function allSlotsConflict(string $learnerId): self
     {
         return new self("Learner {$learnerId}: tutti gli slot andavano in conflitto.", self::ALL_SLOTS_CONFLICT);
+    }
+
+    public static function insufficientCapacity(string $learnerId, int $remaining): self
+    {
+        return new self(
+            "Impossibile soddisfare i weekly_minutes per il learner {$learnerId}. Minuti mancanti: {$remaining}.",
+            self::INSUFFICIENT_CAPACITY
+        );
+    }
+
+    public static function noAvailableCapacity(mixed $learnerId)
+    {
+        return new self(
+            "Impossibile trovare uno slot disponibile per il learner {$learnerId}.",
+            self::INSUFFICIENT_CAPACITY
+        );
+    }
+
+    public static function invalidLearner(mixed $id)
+    {
+        return new self(
+            "Learner non valido: {$id}.",
+            self::INVALID_LEARNER
+        );
+    }
+
+    public static function invalidDate(Carbon $weekStart)
+    {
+        return new self(
+            "Data non valida: {$weekStart}.",
+            self::INVALID_DATE
+        );
     }
 }

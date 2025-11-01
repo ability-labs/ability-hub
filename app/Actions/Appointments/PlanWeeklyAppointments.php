@@ -11,11 +11,6 @@ use Illuminate\Validation\ValidationException;
 
 class PlanWeeklyAppointments
 {
-    /**
-     * Manteniamo un ordine deterministico dei learner per evitare risultati
-     * differenti tra esecuzioni consecutive: i più "anziani" (created_at ASC)
-     * vengono schedulati prima così da preservare la priorità implicita.
-     */
     private const LEARNER_SCHEDULING_ORDER = [
         'field' => 'created_at',
         'direction' => 'asc',
@@ -35,29 +30,23 @@ class PlanWeeklyAppointments
                     'appointments' => $apps,
                 ];
             } catch (WeeklyPlanException $e) {
-                // chiave “a misura” per la UI; puoi usare anche "learners.{$learner->id}"
+                // Propaga messaggio specifico: no operator, no available slots, insufficient capacity, etc.
                 $errors["learners.{$learner->id}"] = [$e->getMessage()];
             }
         }
 
         if (empty($appointments)) {
-            // tutti falliti -> 422 standard Laravel con errors
             throw ValidationException::withMessages($errors ?: [
                 'learners' => ['Impossibile pianificare appuntamenti per i selezionati.'],
             ]);
         }
 
-        // successi parziali -> 200 con payload informativo
         return [
-            'appointments' => $appointments,
-            'errors'       => $errors, // la UI può mostrare warning per i learner falliti
+            'appointments' => $appointments, // successi (anche parziali tra learners)
+            'errors'       => $errors,       // learners falliti (incl. insufficient capacity)
         ];
     }
 
-    /**
-     * Centralizziamo la logica di ordinamento così che qualunque chiamante
-     * ottenga sempre la stessa priorità di scheduling.
-     */
     private function orderLearnersForScheduling(Collection $learners): Collection
     {
         $direction = strtolower(self::LEARNER_SCHEDULING_ORDER['direction']);
