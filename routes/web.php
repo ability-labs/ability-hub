@@ -34,6 +34,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/appointments/plan', [WeeklyPlanController::class, 'store'])
         ->name('appointments.plan');
 
+    Route::post('/appointments/week/clear', [AppointmentController::class, 'clearWeek'])
+        ->name('appointments.week.clear');
+
     Route::post('/operators/{operator}/availability/toggle', [OperatorAvailabilityController::class, 'toggle'])
         ->name('operators.availability.toggle');
 

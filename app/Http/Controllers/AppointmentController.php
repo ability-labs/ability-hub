@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Appointments\ClearWeeklyAppointments;
+use App\Http\Requests\ClearWeeklyAppointmentsRequest;
 use App\Http\Requests\StoreAppointmentRequest;
 use App\Http\Requests\UpdateAppointmentRequest;
 use App\Models\Appointment;
 use App\Models\Discipline;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class AppointmentController extends Controller
 {
@@ -108,5 +111,20 @@ class AppointmentController extends Controller
     public function show(Appointment $appointment)
     {
         return view('appointments.show', compact('appointment'));
+    }
+
+    public function clearWeek(
+        ClearWeeklyAppointmentsRequest $request,
+        ClearWeeklyAppointments $action
+    ) {
+        $user = $request->user();
+        $weekStart = Carbon::parse($request->validated('week_start'));
+
+        $deleted = $action->execute($user, $weekStart);
+
+        return response()->json([
+            'message' => __('Appointments for the selected week have been cleared.'),
+            'deleted' => $deleted,
+        ]);
     }
 }

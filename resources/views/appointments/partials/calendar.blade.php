@@ -124,6 +124,23 @@
                     class="inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-blue-600 px-3 py-1.5 text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
                 {{ __('Plan Week') }}
             </button>
+            <div class="flex flex-col items-stretch gap-1 md:flex-row md:items-center md:gap-2">
+                <button type="button"
+                        @click="clearCurrentWeek()"
+                        :disabled="isClearingWeek"
+                        :class="isClearingWeek ? 'cursor-not-allowed opacity-70' : ''"
+                        class="inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-red-50 px-3 py-1.5 text-red-700 transition hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 dark:bg-red-900/40 dark:text-red-200 dark:hover:bg-red-900/60">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.02-2.09 2.2v.917m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                    </svg>
+                    <span x-show="!isClearingWeek">{{ __('Clear week') }}</span>
+                    <span x-show="isClearingWeek">{{ __('Clearing...') }}</span>
+                </button>
+                <p x-show="clearWeekAlert"
+                   x-text="clearWeekAlert.message"
+                   :class="['mt-1 text-sm md:mt-0 md:pl-2', clearWeekAlertClasses()]">
+                </p>
+            </div>
         </div>
     </div>
 
@@ -572,6 +589,8 @@
                 planErrors: {},
                 planAlert: { type: null, messages: [] },
                 planIsGenerating: false,
+                isClearingWeek: false,
+                clearWeekAlert: null,
 
                 init() {
                     this.currentWeekStart = this.startOfWeek(new Date());
@@ -592,6 +611,7 @@
                         }
                     });
                     this.$watch('currentWeekStart', () => {
+                        this.setClearWeekAlert(null);
                         this.syncCalendarDate();
                     });
                     if (this.viewMode === 'calendar') {
@@ -696,6 +716,103 @@
 
                 goToCurrentWeek() {
                     this.currentWeekStart = this.startOfWeek(new Date());
+                },
+
+                weekEnd(weekStart) {
+                    const end = new Date(weekStart);
+                    end.setDate(end.getDate() + 5);
+                    end.setHours(23, 59, 59, 999);
+                    return end;
+                },
+
+                isWithinWeek(date, weekStart) {
+                    if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+                        return false;
+                    }
+
+                    const start = new Date(weekStart);
+                    start.setHours(0, 0, 0, 0);
+                    const end = this.weekEnd(weekStart);
+                    return date >= start && date <= end;
+                },
+
+                setClearWeekAlert(type, message = '') {
+                    if (!type) {
+                        this.clearWeekAlert = null;
+                        return;
+                    }
+
+                    this.clearWeekAlert = { type, message };
+                },
+
+                clearWeekAlertClasses() {
+                    if (!this.clearWeekAlert) {
+                        return '';
+                    }
+
+                    return this.clearWeekAlert.type === 'error'
+                        ? 'text-red-600 dark:text-red-400'
+                        : 'text-green-600 dark:text-green-400';
+                },
+
+                async clearCurrentWeek() {
+                    if (this.isClearingWeek) {
+                        return;
+                    }
+
+                    const confirmMessage = '{{ __('Are you sure you want to delete all appointments for this week?') }}';
+                    if (!window.confirm(confirmMessage)) {
+                        return;
+                    }
+
+                    this.isClearingWeek = true;
+                    this.setClearWeekAlert(null);
+
+                    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    const payload = { week_start: this.formatDateForPlan(this.currentWeekStart) };
+                    const defaultError = '{{ __('Unable to clear the selected week. Please try again later.') }}';
+
+                    try {
+                        const response = await fetch(`{{ route('appointments.week.clear') }}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': token,
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                            body: JSON.stringify(payload),
+                        });
+
+                        const data = await response.json().catch(() => ({}));
+
+                        if (!response.ok) {
+                            if (response.status === 422 && data.errors) {
+                                const firstError = Object.values(data.errors).flat().find(Boolean);
+                                this.setClearWeekAlert('error', firstError || defaultError);
+                                return;
+                            }
+
+                            this.setClearWeekAlert('error', data.message || defaultError);
+                            return;
+                        }
+
+                        this.allEvents = this.allEvents.filter(event => {
+                            return !this.isWithinWeek(event.startDate, this.currentWeekStart);
+                        });
+                        this.applyFilters();
+
+                        const successMessage = data.message || '{{ __('Appointments for the selected week have been cleared.') }}';
+                        this.setClearWeekAlert('success', successMessage);
+                        setTimeout(() => {
+                            this.setClearWeekAlert(null);
+                        }, 4000);
+                    } catch (error) {
+                        console.error(error);
+                        this.setClearWeekAlert('error', '{{ __('Network error. Please check your connection.') }}');
+                    } finally {
+                        this.isClearingWeek = false;
+                    }
                 },
 
                 openPlanModal() {
