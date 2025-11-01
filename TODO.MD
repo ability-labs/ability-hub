@@ -1,8 +1,8 @@
 ## Quick Improvements
-* [ ] Disable Auto-Completion
-* [ ] Fix Timezone Issue
+* [x] Disable Auto-Completion
+* [x] Fix Timezone Issue
 * [ ] Date Picker Cross Browser
-* [ ] Give Priority to Students Preferences in Scheduling
+* [x] Give Priority to Students Preferences in Scheduling
 * [x] Assign Multiple Operators to a Student
 * [x] Display Appointment Plan as Scatter Plot Diagram
 * [ ] Default Date Selection Based on Calendar View
