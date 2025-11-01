@@ -215,7 +215,7 @@ class WeeklyPlannerService
             $reservedOperatorSlots
         );
 
-        return $assignments->concat($fallbackAssignments->toArray())->values();
+        return $assignments->concat($fallbackAssignments)->values();
     }
 
     private function buildFallbackAssignments(
@@ -268,7 +268,7 @@ class WeeklyPlannerService
 
         if ($sameDaySameSpanSlots->isNotEmpty()) {
             // First preference: keep alternatives aligned to the learner's day and declared span.
-            $orderedSlots = $orderedSlots->concat($this->sortRemainingSlotsForFallback($sameDaySameSpanSlots, $learnerSlots)->toArray());
+            $orderedSlots = $orderedSlots->concat($this->sortRemainingSlotsForFallback($sameDaySameSpanSlots, $learnerSlots));
             $remainingSlots = $remainingSlots->diff($sameDaySameSpanSlots);
         }
 
@@ -279,17 +279,17 @@ class WeeklyPlannerService
 
             if ($sameDaySlots->isNotEmpty()) {
                 // No span-compatible option exists, widen the search to the same weekday regardless of span.
-                $orderedSlots = $orderedSlots->concat($this->sortRemainingSlotsForFallback($sameDaySlots, $learnerSlots)->toArray());
+                $orderedSlots = $orderedSlots->concat($this->sortRemainingSlotsForFallback($sameDaySlots, $learnerSlots));
                 $remainingSlots = $remainingSlots->diff($sameDaySlots);
             } else {
                 // No slot on the learner's weekdays: fall back to the generic ordering to avoid leaving availability unused.
-                return $orderedSlots->concat($this->sortRemainingSlotsForFallback($remainingSlots, $learnerSlots)->toArray())->values();
+                return $orderedSlots->concat($this->sortRemainingSlotsForFallback($remainingSlots, $learnerSlots))->values();
             }
         }
 
         if ($remainingSlots->isNotEmpty()) {
             // After prioritised matches, keep the residual availability as the ultimate fallback layer.
-            $orderedSlots = $orderedSlots->concat($this->sortRemainingSlotsForFallback($remainingSlots, $learnerSlots)->toArray());
+            $orderedSlots = $orderedSlots->concat($this->sortRemainingSlotsForFallback($remainingSlots, $learnerSlots));
         }
 
         return $orderedSlots->values();
