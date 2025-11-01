@@ -1,6 +1,9 @@
-@push('styles')
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet" />
-@endpush
+<style>
+    .fc .fc-timegrid-slot {
+        height: 2.5rem ;
+        min-height: 2.5rem;
+    }
+</style>
 
 <!-- Appointment schedule component -->
 <div x-data="calendarComponent()" x-init="init()" class="space-y-6">
@@ -79,10 +82,10 @@
             <span class="text-sm font-semibold text-gray-500 uppercase">{{ __('View') }}</span>
             <div class="inline-flex rounded-lg border border-gray-200 bg-gray-100 p-1 dark:border-gray-700 dark:bg-gray-800">
                 <button type="button"
-                        @click="viewMode = 'scatter'"
-                        :class="viewMode === 'scatter' ? 'bg-white dark:bg-gray-700 text-blue-600 shadow-sm' : 'text-gray-600 dark:text-gray-300'"
+                        @click="viewMode = 'calendar'"
+                        :class="viewMode === 'calendar' ? 'bg-white dark:bg-gray-700 text-blue-600 shadow-sm' : 'text-gray-600 dark:text-gray-300'"
                         class="relative rounded-md px-3 py-1.5 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
-                    {{ __('Grid') }}
+                    {{ __('Calendar') }}
                 </button>
                 <button type="button"
                         @click="viewMode = 'list'"
@@ -91,10 +94,10 @@
                     {{ __('List') }}
                 </button>
                 <button type="button"
-                        @click="viewMode = 'calendar'"
-                        :class="viewMode === 'calendar' ? 'bg-white dark:bg-gray-700 text-blue-600 shadow-sm' : 'text-gray-600 dark:text-gray-300'"
+                        @click="viewMode = 'scatter'"
+                        :class="viewMode === 'scatter' ? 'bg-white dark:bg-gray-700 text-blue-600 shadow-sm' : 'text-gray-600 dark:text-gray-300'"
                         class="relative rounded-md px-3 py-1.5 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
-                    {{ __('Calendar') }}
+                    {{ __('Grid') }}
                 </button>
             </div>
         </div>
@@ -450,7 +453,7 @@
                 locale: document.documentElement.lang,
                 popup: false,
                 errors: {},
-                viewMode: 'scatter',
+                viewMode: 'calendar',
                 showFilters: false,
                 spans: ['Morning', 'Afternoon'],
                 spanLabels: {
@@ -509,6 +512,9 @@
                     this.$watch('currentWeekStart', () => {
                         this.syncCalendarDate();
                     });
+                    if (this.viewMode === 'calendar') {
+                        this.$nextTick(() => this.ensureCalendar());
+                    }
                 },
 
                 enrichEvent(event) {
