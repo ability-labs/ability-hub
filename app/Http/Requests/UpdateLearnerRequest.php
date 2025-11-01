@@ -30,6 +30,7 @@ class UpdateLearnerRequest extends FormRequest
             'first_name' => 'string:128',
             'last_name' => 'string:128',
             'birth_date' => 'date',
+            'created_at' => 'date',
             'gender' => new Enum(PersonGender::class),
             'weekly_hours' => ['nullable', 'regex:/^\d+(?:[.,]5)?$/'],
             'operator_ids' => ['nullable', 'array'],

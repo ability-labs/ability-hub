@@ -133,6 +133,16 @@
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
+
+        {{--  Registration Date  --}}
+        <div class="mb-4" x-data="{ date: '{{ old('created_at', $isEdit ? $attributes->created_at->format('Y-m-d') : '') }}' }">
+            <label for="created_at" class="block text-gray-700 dark:text-gray-300">{{__('Registration Date') }}</label>
+            <input type="date" name="created_at" id="created_at" x-model="date"
+                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            @error('created_at')
+            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
     </div>
 
     {{-- AVAILABILITY TAB (solo in edit) --}}
