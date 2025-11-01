@@ -240,15 +240,59 @@ class WeeklyPlannerService
                 return collect();
             }
 
-            $sortedSlots = $this->sortRemainingSlotsForFallback($filteredSlots, $learnerSlots)->values();
+            $prioritizedSlots = $this->prioritizeFallbackSlots($filteredSlots, $learnerSlots);
 
-            return $sortedSlots->map(fn (Slot $slot) => [
+            return $prioritizedSlots->map(fn (Slot $slot) => [
                 'candidates' => collect([[
                     'slot' => $slot,
                     'operator' => $operator,
                 ]]),
             ]);
         });
+    }
+
+    private function prioritizeFallbackSlots(Collection $slots, Collection $learnerSlots): Collection
+    {
+        if ($slots->isEmpty()) {
+            return collect();
+        }
+
+        if ($learnerSlots->isEmpty()) {
+            return $this->sortRemainingSlotsForFallback($slots, $learnerSlots)->values();
+        }
+
+        $orderedSlots = collect();
+        $remainingSlots = $slots;
+
+        $sameDaySameSpanSlots = $remainingSlots->filter(fn (Slot $slot) => $this->matchesLearnerDayAndSpan($slot, $learnerSlots));
+
+        if ($sameDaySameSpanSlots->isNotEmpty()) {
+            // First preference: keep alternatives aligned to the learner's day and declared span.
+            $orderedSlots = $orderedSlots->concat($this->sortRemainingSlotsForFallback($sameDaySameSpanSlots, $learnerSlots)->toArray());
+            $remainingSlots = $remainingSlots->diff($sameDaySameSpanSlots);
+        }
+
+        $sameDaySlots = collect();
+
+        if ($sameDaySameSpanSlots->isEmpty()) {
+            $sameDaySlots = $remainingSlots->filter(fn (Slot $slot) => $this->matchesLearnerWeekDay($slot, $learnerSlots));
+
+            if ($sameDaySlots->isNotEmpty()) {
+                // No span-compatible option exists, widen the search to the same weekday regardless of span.
+                $orderedSlots = $orderedSlots->concat($this->sortRemainingSlotsForFallback($sameDaySlots, $learnerSlots)->toArray());
+                $remainingSlots = $remainingSlots->diff($sameDaySlots);
+            } else {
+                // No slot on the learner's weekdays: fall back to the generic ordering to avoid leaving availability unused.
+                return $orderedSlots->concat($this->sortRemainingSlotsForFallback($remainingSlots, $learnerSlots)->toArray())->values();
+            }
+        }
+
+        if ($remainingSlots->isNotEmpty()) {
+            // After prioritised matches, keep the residual availability as the ultimate fallback layer.
+            $orderedSlots = $orderedSlots->concat($this->sortRemainingSlotsForFallback($remainingSlots, $learnerSlots)->toArray());
+        }
+
+        return $orderedSlots->values();
     }
 
     private function sortRemainingSlotsForFallback(Collection $slots, Collection $learnerSlots): Collection
@@ -275,6 +319,24 @@ class WeeklyPlannerService
             ->min();
 
         return ($closestDistance * 100000) + $baseIndex;
+    }
+
+    private function matchesLearnerDayAndSpan(Slot $slot, Collection $learnerSlots): bool
+    {
+        return $learnerSlots->contains(function (Slot $preferredSlot) use ($slot) {
+            return $slot->week_day === $preferredSlot->week_day
+                && $this->slotSpanValue($slot) === $this->slotSpanValue($preferredSlot);
+        });
+    }
+
+    private function matchesLearnerWeekDay(Slot $slot, Collection $learnerSlots): bool
+    {
+        return $learnerSlots->contains(fn (Slot $preferredSlot) => $slot->week_day === $preferredSlot->week_day);
+    }
+
+    private function slotSpanValue(Slot $slot): ?string
+    {
+        return $slot->getAttribute('day_span');
     }
 
     private function slotSignature(Slot $slot): string

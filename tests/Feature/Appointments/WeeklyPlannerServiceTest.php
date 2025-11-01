@@ -219,6 +219,7 @@ class WeeklyPlannerServiceTest extends TestCase
             'week_day' => 1,
             'start_time_hour' => 9,
             'start_time_minute' => 0,
+            'day_span' => 'Morning',
         ]);
 
         $fallbackSlot = Slot::factory()->for($discipline)->create([
@@ -226,6 +227,7 @@ class WeeklyPlannerServiceTest extends TestCase
             'week_day' => 1,
             'start_time_hour' => 10,
             'start_time_minute' => 0,
+            'day_span' => 'Morning',
         ]);
 
         $primaryOperator = Operator::factory()->create();
@@ -262,6 +264,89 @@ class WeeklyPlannerServiceTest extends TestCase
         $this->assertCount(1, $appointments);
         $this->assertEquals($secondaryOperator->id, $appointments->first()->operator_id);
         $this->assertEquals('2026-01-05 10:00:00', $appointments->first()->starts_at->format('Y-m-d H:i:s'));
+    }
+
+    public function test_it_prefers_fallback_slot_on_same_day_and_span_before_expanding_search(): void
+    {
+        $weekStart = Carbon::parse('2026-02-02');
+        $discipline = Discipline::factory()->create();
+
+        $preferredSlot = Slot::factory()->for($discipline)->create([
+            'duration_minutes' => 60,
+            'week_day' => 1,
+            'start_time_hour' => 9,
+            'start_time_minute' => 0,
+            'day_span' => 'Morning',
+        ]);
+
+        $sameDaySameSpanFallback = Slot::factory()->for($discipline)->create([
+            'duration_minutes' => 60,
+            'week_day' => 1,
+            'start_time_hour' => 11,
+            'start_time_minute' => 0,
+            'day_span' => 'Morning',
+        ]);
+
+        $sameDayDifferentSpan = Slot::factory()->for($discipline)->create([
+            'duration_minutes' => 60,
+            'week_day' => 1,
+            'start_time_hour' => 15,
+            'start_time_minute' => 0,
+            'day_span' => 'Afternoon',
+        ]);
+
+        $differentDaySameSpan = Slot::factory()->for($discipline)->create([
+            'duration_minutes' => 60,
+            'week_day' => 2,
+            'start_time_hour' => 9,
+            'start_time_minute' => 0,
+            'day_span' => 'Morning',
+        ]);
+
+        $primaryOperator = Operator::factory()->create(['name' => 'Priority Operator']);
+        $secondaryOperator = Operator::factory()->create(['name' => 'Secondary Operator']);
+
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 60], $primaryOperator, $secondaryOperator);
+
+        $learner->slots()->attach($preferredSlot->id);
+
+        $primaryOperator->slots()->attach([
+            $preferredSlot->id,
+            $sameDaySameSpanFallback->id,
+            $sameDayDifferentSpan->id,
+        ]);
+
+        $secondaryOperator->slots()->attach([
+            $preferredSlot->id,
+            $differentDaySameSpan->id,
+        ]);
+
+        $otherLearner = Learner::factory()->create();
+
+        // Both operators are busy on the preferred slot, forcing fallback evaluation.
+        Appointment::factory()->for($primaryOperator, 'operator')
+            ->for($otherLearner, 'learner')
+            ->create([
+                'starts_at' => $weekStart->copy()->setTime(9, 0),
+                'ends_at' => $weekStart->copy()->setTime(10, 0),
+                'duration_minutes' => 60,
+            ]);
+
+        Appointment::factory()->for($secondaryOperator, 'operator')
+            ->for($otherLearner, 'learner')
+            ->create([
+                'starts_at' => $weekStart->copy()->setTime(9, 0),
+                'ends_at' => $weekStart->copy()->setTime(10, 0),
+                'duration_minutes' => 60,
+            ]);
+
+        $this->plannerService->scheduleForLearner($learner->fresh('slots', 'operators'), $weekStart);
+
+        $appointments = $learner->appointments()->get();
+
+        $this->assertCount(1, $appointments);
+        $this->assertEquals($primaryOperator->id, $appointments->first()->operator_id);
+        $this->assertEquals('2026-02-02 11:00:00', $appointments->first()->starts_at->format('Y-m-d H:i:s'));
     }
 
     public function test_it_honours_learner_slots_even_if_operator_has_earlier_availability(): void
