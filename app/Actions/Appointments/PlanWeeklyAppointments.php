@@ -11,13 +11,23 @@ use Illuminate\Validation\ValidationException;
 
 class PlanWeeklyAppointments
 {
+    /**
+     * Manteniamo un ordine deterministico dei learner per evitare risultati
+     * differenti tra esecuzioni consecutive: i più "anziani" (created_at ASC)
+     * vengono schedulati prima così da preservare la priorità implicita.
+     */
+    private const LEARNER_SCHEDULING_ORDER = [
+        'field' => 'created_at',
+        'direction' => 'asc',
+    ];
+
     public function execute(User $user, Carbon $startFrom, Collection $learners): array
     {
         $service = new WeeklyPlannerService($user);
         $appointments = [];
         $errors = [];
 
-        foreach ($learners as $learner) {
+        foreach ($this->orderLearnersForScheduling($learners) as $learner) {
             try {
                 $apps = $service->scheduleForLearner($learner, $startFrom);
                 $appointments[$learner->id] = [
@@ -42,5 +52,20 @@ class PlanWeeklyAppointments
             'appointments' => $appointments,
             'errors'       => $errors, // la UI può mostrare warning per i learner falliti
         ];
+    }
+
+    /**
+     * Centralizziamo la logica di ordinamento così che qualunque chiamante
+     * ottenga sempre la stessa priorità di scheduling.
+     */
+    private function orderLearnersForScheduling(Collection $learners): Collection
+    {
+        $direction = strtolower(self::LEARNER_SCHEDULING_ORDER['direction']);
+
+        $ordered = $direction === 'desc'
+            ? $learners->sortByDesc(self::LEARNER_SCHEDULING_ORDER['field'])
+            : $learners->sortBy(self::LEARNER_SCHEDULING_ORDER['field']);
+
+        return $ordered->values();
     }
 }
