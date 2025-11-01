@@ -119,6 +119,11 @@
             <button type="button" @click="printCalendar()" class="inline-flex items-center justify-center gap-1 rounded-md border border-transparent bg-gray-200 px-3 py-1.5 text-gray-700 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
                 {{ __('Print calendar') }}
             </button>
+            <button type="button"
+                    @click="openPlanModal()"
+                    class="inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-blue-600 px-3 py-1.5 text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+                {{ __('Plan Week') }}
+            </button>
         </div>
     </div>
 
@@ -239,6 +244,71 @@
                 </div>
             </section>
         </template>
+    </div>
+
+    <!-- Plan week modal -->
+    <div x-show="planModalOpen" class="fixed inset-0 z-50 flex items-center justify-center">
+        <div class="absolute inset-0 bg-gray-900/50"></div>
+        <div class="relative z-10 w-full max-w-xl rounded-xl bg-white p-6 shadow-xl dark:bg-gray-900" @click.away="closePlanModal()">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ __('Generate Weekly Plan') }}</h3>
+            <template x-if="planAlert.messages.length">
+                <div class="mt-4 rounded-md border px-4 py-3 text-sm" :class="planAlertClasses()">
+                    <p class="font-semibold" x-text="planAlertTitle()"></p>
+                    <ul class="mt-2 list-disc space-y-1 pl-5">
+                        <template x-for="(message, index) in planAlert.messages" :key="`plan-alert-${index}`">
+                            <li x-text="message"></li>
+                        </template>
+                    </ul>
+                </div>
+            </template>
+
+            <form class="mt-6 space-y-5" @submit.prevent>
+                <div>
+                    <label for="plan_starts_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Starting Date') }}</label>
+                    <input type="date" id="plan_starts_at" x-model="planStartsAt" class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800" />
+                    <template x-if="planErrors.starts_at">
+                        <div class="mt-1 space-y-0.5 text-xs text-red-500">
+                            <template x-for="(message, index) in planErrors.starts_at" :key="`plan-error-start-${index}`">
+                                <div x-text="message"></div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between">
+                        <label for="plan_learners" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Choose Learners') }}</label>
+                        <div class="flex gap-2 text-xs font-semibold uppercase">
+                            <button type="button" class="rounded-md border border-gray-200 px-2 py-1 text-gray-600 transition hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800" @click="selectAllPlanLearners()">
+                                {{ __('Select All') }}
+                            </button>
+                            <button type="button" class="rounded-md border border-gray-200 px-2 py-1 text-gray-600 transition hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800" @click="deselectAllPlanLearners()">
+                                {{ __('Deselect All') }}
+                            </button>
+                        </div>
+                    </div>
+                    <select id="plan_learners" multiple size="10" x-model="planLearners" x-ref="planLearnersSelect" class="mt-2 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800">
+                        <template x-for="learner in learners" :key="learner.id">
+                            <option :value="learner.id" x-text="learner.full_name || learner.name || ''"></option>
+                        </template>
+                    </select>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" @click="planAppointments()" :disabled="planIsGenerating" class="inline-flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:cursor-not-allowed disabled:opacity-60">
+                        <template x-if="!planIsGenerating">
+                            <span>{{ __('Plan') }}</span>
+                        </template>
+                        <template x-if="planIsGenerating">
+                            <span>{{ __('Planning in progress') }}...</span>
+                        </template>
+                    </button>
+                    <button type="button" @click="closePlanModal()" class="inline-flex items-center justify-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+                        {{ __('Cancel') }}
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Modal -->
@@ -495,6 +565,13 @@
                 calendar: null,
                 calendarEventSourceId: 'appointments-calendar-source',
                 calendarViewType: 'timeGridWeek',
+                planModalOpen: false,
+                planStartsAt: '',
+                planLearners: [],
+                planLearnersById: {},
+                planErrors: {},
+                planAlert: { type: null, messages: [] },
+                planIsGenerating: false,
 
                 init() {
                     this.currentWeekStart = this.startOfWeek(new Date());
@@ -504,6 +581,11 @@
                     }));
                     this.allEvents = this.allEvents.map(event => this.enrichEvent(event));
                     this.applyFilters();
+                    this.planLearnersById = this.learners.reduce((acc, learner) => {
+                        acc[String(learner.id)] = learner.full_name || learner.name || `Learner ${learner.id}`;
+                        return acc;
+                    }, {});
+                    this.planStartsAt = this.formatDateForPlan(this.getNextWeekMonday());
                     this.$watch('viewMode', value => {
                         if (value === 'calendar') {
                             this.$nextTick(() => this.ensureCalendar());
@@ -614,6 +696,166 @@
 
                 goToCurrentWeek() {
                     this.currentWeekStart = this.startOfWeek(new Date());
+                },
+
+                openPlanModal() {
+                    if (!this.planStartsAt) {
+                        this.planStartsAt = this.formatDateForPlan(this.getNextWeekMonday());
+                    }
+                    this.planModalOpen = true;
+                    this.planErrors = {};
+                    this.planAlert = { type: null, messages: [] };
+                },
+
+                closePlanModal() {
+                    this.planModalOpen = false;
+                    this.planErrors = {};
+                    this.planIsGenerating = false;
+                },
+
+                selectAllPlanLearners() {
+                    const select = this.$refs.planLearnersSelect;
+                    if (!select) {
+                        return;
+                    }
+                    this.planLearners = Array.from(select.options).map(option => option.value);
+                },
+
+                deselectAllPlanLearners() {
+                    this.planLearners = [];
+                },
+
+                planAlertTitle() {
+                    if (this.planAlert.type === 'error') return '{{ __('Errors occurred') }}';
+                    if (this.planAlert.type === 'warning') return '{{ __('Partial planning') }}';
+                    if (this.planAlert.type === 'success') return '{{ __('Operation completed') }}';
+                    return '';
+                },
+
+                planAlertClasses() {
+                    if (this.planAlert.type === 'error') {
+                        return 'border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-900/40 dark:text-red-200';
+                    }
+                    if (this.planAlert.type === 'warning') {
+                        return 'border-yellow-200 bg-yellow-50 text-yellow-700 dark:border-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200';
+                    }
+                    if (this.planAlert.type === 'success') {
+                        return 'border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-900/40 dark:text-green-200';
+                    }
+                    return 'border-gray-200 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200';
+                },
+
+                prettyPlanLearnerKey(key) {
+                    const id = key.split('.')[1];
+                    return this.planLearnersById[id] ?? `Learner ${id}`;
+                },
+
+                flattenPlanErrors(errs) {
+                    const out = [];
+                    Object.entries(errs || {}).forEach(([key, messages]) => {
+                        if (!Array.isArray(messages)) {
+                            return;
+                        }
+                        if (key.startsWith('learners.')) {
+                            const label = this.prettyPlanLearnerKey(key);
+                            messages.forEach(message => out.push(`${label}: ${message}`));
+                        } else if (key === 'learners') {
+                            messages.forEach(message => out.push(`Learners: ${message}`));
+                        } else {
+                            messages.forEach(message => out.push(`${key}: ${message}`));
+                        }
+                    });
+                    return out;
+                },
+
+                async planAppointments() {
+                    this.planErrors = {};
+                    this.planAlert = { type: null, messages: [] };
+                    this.planIsGenerating = true;
+
+                    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    const payload = {
+                        starts_at: this.planStartsAt,
+                        learners: this.planLearners,
+                    };
+
+                    try {
+                        const response = await fetch(`{{ route('appointments.plan') }}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': token,
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                            body: JSON.stringify(payload),
+                        });
+
+                        const data = await response.json().catch(() => ({}));
+
+                        if (!response.ok) {
+                            if (response.status === 422) {
+                                this.planErrors = data.errors || {};
+                                this.planAlert = {
+                                    type: 'error',
+                                    messages: this.flattenPlanErrors(this.planErrors),
+                                };
+                                return;
+                            }
+
+                            this.planAlert = {
+                                type: 'error',
+                                messages: ['{{ __('Unexpected error. Please try again later.') }}'],
+                            };
+                            return;
+                        }
+
+                        if (data.errors && Object.keys(data.errors).length) {
+                            this.planErrors = data.errors;
+                            this.planAlert = {
+                                type: 'warning',
+                                messages: [
+                                    '{{ __('Some learners could not be scheduled.') }}',
+                                    ...this.flattenPlanErrors(this.planErrors),
+                                ],
+                            };
+                            return;
+                        }
+
+                        this.planAlert = {
+                            type: 'success',
+                            messages: ['{{ __('Planning completed successfully.') }}'],
+                        };
+                        this.closePlanModal();
+                        setTimeout(() => { window.location.reload(); }, 200);
+                    } catch (error) {
+                        console.error(error);
+                        this.planAlert = {
+                            type: 'error',
+                            messages: ['{{ __('Network error. Please check your connection.') }}'],
+                        };
+                    } finally {
+                        this.planIsGenerating = false;
+                    }
+                },
+
+                getNextWeekMonday() {
+                    const today = new Date();
+                    const day = today.getDay();
+                    const diffFromMonday = (day + 6) % 7;
+                    const mondayThisWeek = new Date(today);
+                    mondayThisWeek.setHours(12, 0, 0, 0);
+                    mondayThisWeek.setDate(today.getDate() - diffFromMonday);
+                    const mondayNextWeek = new Date(mondayThisWeek);
+                    mondayNextWeek.setDate(mondayThisWeek.getDate() + 7);
+                    return mondayNextWeek;
+                },
+
+                formatDateForPlan(date) {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
                 },
 
                 printCalendar() {
