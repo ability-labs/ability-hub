@@ -52,9 +52,12 @@ class WeeklyPlannerService
         // 2) Input validation senza mutate
         $this->validateInputs($learner, $weekStart);
 
-        $learner->loadMissing('slots', 'operators.slots');
+        $learner->loadMissing([
+            'slots',
+            'operators' => fn ($query) => $query->with('slots'),
+        ]);
 
-        $operators = $learner->operators->sortBy('name')->values();
+        $operators = $this->sortOperatorsByPriority($learner->operators);
 
         if ($operators->isEmpty()) {
             throw WeeklyPlanException::noOperator($learner->id);
@@ -81,6 +84,30 @@ class WeeklyPlannerService
 
             return $appointments;
         });
+    }
+
+    /**
+     * Ensure operators are ordered using the pivot priority with sensible fallbacks.
+     */
+    private function sortOperatorsByPriority(Collection $operators): Collection
+    {
+        return $operators
+            ->sortBy(function (Operator $operator) {
+                $priority = data_get($operator, 'pivot.priority');
+
+                return [
+                    $this->normalizeOperatorPriority($priority),
+                    $operator->name ?? $operator->id,
+                ];
+            })
+            ->values();
+    }
+
+    private function normalizeOperatorPriority(mixed $priority): int
+    {
+        return is_numeric($priority)
+            ? (int) $priority
+            : Learner::DEFAULT_OPERATOR_PRIORITY;
     }
 
     /**

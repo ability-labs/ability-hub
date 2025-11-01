@@ -33,7 +33,13 @@ class WeeklyPlannerServiceIntegrationTest extends TestCase
     {
         $learner = Learner::factory()->create($attributes);
 
-        $learner->operators()->sync(collect($operators)->pluck('id')->all());
+        $prioritizedOperators = collect($operators)
+            ->values()
+            ->mapWithKeys(fn (Operator $operator, int $index) => [
+                $operator->id => ['priority' => $index + 1],
+            ]);
+
+        $learner->operators()->sync($prioritizedOperators->all());
 
         return $learner->fresh('operators');
     }

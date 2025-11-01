@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Learner extends Model
 {
+    public const DEFAULT_OPERATOR_PRIORITY = PHP_INT_MAX;
+
     /** @use HasFactory<\Database\Factories\LearnerFactory> */
     use HasFactory, HasUuids;
 
@@ -74,7 +76,11 @@ class Learner extends Model
 
     public function operators(): BelongsToMany
     {
-        return $this->belongsToMany(Operator::class, 'learner_operator')->withTimestamps();
+        return $this->belongsToMany(Operator::class, 'learner_operator')
+            ->withTimestamps()
+            ->withPivot('priority')
+            ->orderByPivot('priority')
+            ->orderBy('operators.name');
     }
 
     public function getOperatorAttribute(): ?Operator

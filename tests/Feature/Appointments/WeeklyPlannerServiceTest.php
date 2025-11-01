@@ -34,7 +34,13 @@ class WeeklyPlannerServiceTest extends TestCase
     {
         $learner = Learner::factory()->create($attributes);
 
-        $learner->operators()->sync(collect($operators)->pluck('id')->all());
+        $prioritizedOperators = collect($operators)
+            ->values()
+            ->mapWithKeys(fn (Operator $operator, int $index) => [
+                $operator->id => ['priority' => $index + 1],
+            ]);
+
+        $learner->operators()->sync($prioritizedOperators->all());
 
         return $learner->fresh('operators');
     }
@@ -379,6 +385,42 @@ class WeeklyPlannerServiceTest extends TestCase
         $this->assertNotNull($appointment);
         $this->assertEquals($operatorB->id, $appointment->operator_id);
         $this->assertEquals('2025-07-07 10:00:00', $appointment->starts_at->format('Y-m-d H:i:s'));
+    }
+
+    public function test_it_uses_operator_priority_when_only_fallback_slots_are_available(): void
+    {
+        $weekStart = Carbon::parse('2025-07-07');
+        $discipline = Discipline::factory()->create();
+
+        $highPriorityOperator = Operator::factory()->create(['name' => 'Zulu Operator']);
+        $lowPriorityOperator = Operator::factory()->create(['name' => 'Alpha Operator']);
+
+        $learner = $this->createLearnerWithOperators(['weekly_minutes' => 60], $highPriorityOperator, $lowPriorityOperator);
+
+        $highPrioritySlot = Slot::factory()->for($discipline)->create([
+            'duration_minutes' => 60,
+            'week_day' => 1,
+            'start_time_hour' => 9,
+            'start_time_minute' => 0,
+        ]);
+
+        $lowPrioritySlot = Slot::factory()->for($discipline)->create([
+            'duration_minutes' => 60,
+            'week_day' => 2,
+            'start_time_hour' => 9,
+            'start_time_minute' => 0,
+        ]);
+
+        $highPriorityOperator->slots()->attach($highPrioritySlot->id);
+        $lowPriorityOperator->slots()->attach($lowPrioritySlot->id);
+
+        $this->plannerService->scheduleForLearner($learner, $weekStart);
+
+        $appointment = $learner->appointments()->first();
+
+        $this->assertNotNull($appointment);
+        $this->assertEquals($highPriorityOperator->id, $appointment->operator_id);
+        $this->assertEquals('2025-07-07 09:00:00', $appointment->starts_at->format('Y-m-d H:i:s'));
     }
 
     public function test_it_handles_partial_weekly_minutes_scheduling(): void

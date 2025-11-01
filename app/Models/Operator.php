@@ -37,6 +37,11 @@ class Operator extends Model
 
     public function learners(): BelongsToMany
     {
-        return $this->belongsToMany(Learner::class, 'learner_operator')->withTimestamps();
+        return $this->belongsToMany(Learner::class, 'learner_operator')
+            ->withTimestamps()
+            ->withPivot('priority')
+            ->orderByPivot('priority')
+            ->orderBy('learners.last_name')
+            ->orderBy('learners.first_name');
     }
 }
