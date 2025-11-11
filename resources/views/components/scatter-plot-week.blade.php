@@ -28,6 +28,7 @@
         $spanOrder = ['Morning'=>1,'Afternoon'=>2];
         $spans = $slots->pluck('day_span')->unique()->values()
             ->sortBy(fn($s) => $spanOrder[$s] ?? 99);
+        $weekReference = \Carbon\CarbonImmutable::now('UTC')->startOfWeek();
     @endphp
 
     <h2 class="text-center text-xl font-bold">{{ __('Discipline') . ': ' . $discipline->name }}</h2>
@@ -74,8 +75,22 @@
                                         <thead>
                                         <tr>
                                             @foreach($daySlots as $slot)
+                                                @php
+                                                    $slotStartUtc = $weekReference
+                                                        ->addDays($slot->week_day - 1)
+                                                        ->setTime($slot->start_time_hour, $slot->start_time_minute);
+                                                    $slotEndUtc = $weekReference
+                                                        ->addDays($slot->week_day - 1)
+                                                        ->setTime($slot->end_time_hour, $slot->end_time_minute);
+                                                @endphp
                                                 <th class="bg-gray-100 font-medium text-[11px] border border-gray-700 px-1 py-1">
-                                                    {{ sprintf('%02d:%02d–%02d:%02d', $slot->start_time_hour, $slot->start_time_minute, $slot->end_time_hour, $slot->end_time_minute) }}
+                                                    <span
+                                                        class="slot-time-label"
+                                                        data-slot-start="{{ $slotStartUtc->toIso8601String() }}"
+                                                        data-slot-end="{{ $slotEndUtc->toIso8601String() }}"
+                                                    >
+                                                        {{ sprintf('%02d:%02d–%02d:%02d', $slot->start_time_hour, $slot->start_time_minute, $slot->end_time_hour, $slot->end_time_minute) }}
+                                                    </span>
                                                 </th>
                                             @endforeach
                                         </tr>
@@ -147,6 +162,24 @@
                     }
                 }
             }
+
+            if (typeof window.updateAvailabilitySlotTimes !== 'function') {
+                window.updateAvailabilitySlotTimes = function () {
+                    const formatter = new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
+                    document.querySelectorAll('.slot-time-label[data-slot-start][data-slot-end]').forEach((el) => {
+                        const start = new Date(el.dataset.slotStart ?? '');
+                        const end = new Date(el.dataset.slotEnd ?? '');
+                        if (!Number.isNaN(start.getTime()) && !Number.isNaN(end.getTime())) {
+                            el.textContent = `${formatter.format(start)}–${formatter.format(end)}`;
+                        }
+                    });
+                };
+
+                window.addEventListener('DOMContentLoaded', () => window.updateAvailabilitySlotTimes());
+                document.addEventListener('alpine:init', () => window.updateAvailabilitySlotTimes());
+            }
+
+            window.updateAvailabilitySlotTimes();
         </script>
     </div>
 @endforeach
