@@ -1,4 +1,4 @@
-<div x-data="{ isOpen: false, learnerId: null, learnerName: '' }" class="space-y-4">
+<div x-data="{ isOpen: false, learnerId: null, learnerName: '', confirmationTemplate: @js(__('Are you sure you want to delete learner :name?')) }" class="space-y-4">
 
     {{-- Top bar: search + create --}}
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -196,10 +196,7 @@
 
         <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <h3 class="text-lg font-semibold mb-2">{{ __('Confirm deletion') }}</h3>
-            <p class="text-sm">
-                {{ __('Are you sure you want to delete learner') }}
-                <span class="font-bold" x-text="learnerName"></span>?
-            </p>
+            <p class="text-sm" x-text="confirmationTemplate.replace(':name', learnerName || '')"></p>
             <div class="mt-4 flex justify-end gap-2">
                 <button @click="isOpen = false" type="button"
                         class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">

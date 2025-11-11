@@ -49,7 +49,7 @@
             <input type="text" name="first_name" id="first_name"
                    value="{{ old('first_name', $isEdit ? $attributes->first_name : '') }}"
                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                   placeholder="Inserisci il nome">
+                   placeholder="{{ __('Enter first name') }}">
             @error('first_name')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
@@ -61,7 +61,7 @@
             <input type="text" name="last_name" id="last_name"
                    value="{{ old('last_name', $isEdit ? $attributes->last_name : '') }}"
                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                   placeholder="Inserisci il cognome">
+                   placeholder="{{ __('Enter last name') }}">
             @error('last_name')
             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
