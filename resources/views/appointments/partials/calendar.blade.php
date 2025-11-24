@@ -1,576 +1,708 @@
 <style>
     .fc .fc-timegrid-slot {
-        height: 2.5rem ;
+        height: 2.5rem;
         min-height: 2.5rem;
     }
 </style>
 
-<!-- Appointment schedule component -->
-<div x-data="calendarComponent()" x-init="init()" class="space-y-6">
+@php
+    $showFilters = $showFilters ?? true;
+@endphp
+
+    <!-- Appointment schedule component -->
+<div x-data="calendarComponent({ showFilters: @json($showFilters) })" x-init="init()" class="space-y-6">
     <div class="space-y-6 screen-only">
         @if($showFilters)
-        <div class="border rounded-lg overflow-hidden bg-white dark:bg-gray-900 shadow-sm">
-            <button type="button"
-                    class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-100 bg-gray-100 dark:bg-gray-800"
-                    @click="showFilters = !showFilters">
+            <div class="border rounded-lg overflow-hidden bg-white dark:bg-gray-900 shadow-sm">
+                <button type="button"
+                        class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-100 bg-gray-100 dark:bg-gray-800"
+                        @click="showFilters = !showFilters">
                 <span class="inline-flex items-center gap-2">
-                    <svg x-show="!showFilters" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    <svg x-show="!showFilters" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                         stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
                     </svg>
-                    <svg x-show="showFilters" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    <svg x-show="showFilters" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                         stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
                     </svg>
                     <span>{{ __('Filters') }}</span>
                 </span>
-                <span class="text-xs text-gray-500" x-text="activeFilterLabel()"></span>
-            </button>
-            <div x-show="showFilters" x-transition class="px-4 py-5 text-sm text-gray-700 dark:text-gray-100 space-y-6">
-                <div class="grid gap-4 lg:grid-cols-2">
-                    <div class="space-y-3">
-                        <label for="filter_operator" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">{{ __('Filter :resource', ['resource' => __('Operator')]) }}</label>
-                        <select id="filter_operator" name="filter_operator"
-                                x-model="filterOperator" @change="applyFilters()"
-                                class="mt-1 block w-full rounded-md border-gray-300 text-sm dark:bg-gray-800 dark:border-gray-700">
-                            <option value="">{{ __('All') }}</option>
-                            <template x-for="op in operators" :key="op.id">
-                                <option :value="op.id" x-text="op.name"></option>
-                            </template>
-                        </select>
-                    </div>
-                    <div class="space-y-3">
-                        <label for="filter_learner" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">{{ __('Filter :resource', ['resource' => __('Learner')]) }}</label>
-                        <select id="filter_learner" name="filter_learner"
-                                x-model="filterLearner" @change="applyFilters()"
-                                class="mt-1 block w-full rounded-md border-gray-300 text-sm dark:bg-gray-800 dark:border-gray-700">
-                            <option value="">{{ __('All') }}</option>
-                            <template x-for="learner in learners" :key="learner.id">
-                                <option :value="learner.id" x-text="learner.full_name"></option>
-                            </template>
-                        </select>
-                    </div>
-                </div>
-                <div class="space-y-3">
-                    <span class="block text-xs font-semibold uppercase tracking-wide text-gray-500">{{ __('Filter :resource', ['resource' => __('Discipline')]) }}</span>
-                    <div class="flex flex-wrap gap-4">
-                        <label class="inline-flex items-center gap-2 text-sm">
-                            <input type="radio" class="text-blue-600" value="all" x-model="filterDisciplineMode" @change="applyFilters()">
-                            <span>{{ __('All') }}</span>
-                        </label>
-                        <label class="inline-flex items-center gap-2 text-sm">
-                            <input type="radio" class="text-blue-600" value="filter" x-model="filterDisciplineMode" @change="applyFilters()">
-                            <span>{{ __('Filtered') }}</span>
-                        </label>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" x-show="filterDisciplineMode === 'filter'">
-                        <template x-for="disc in disciplines" :key="disc.id">
-                            <label class="inline-flex items-center gap-2 rounded-md border border-gray-200 px-2 py-1 dark:border-gray-700">
-                                <input type="checkbox" class="text-blue-600" :value="disc.id" x-model="filterDisciplines" @change="applyFilters()">
-                                <span class="inline-flex items-center gap-2">
-                                    <span class="inline-block h-3 w-3 rounded-full" :style="`background-color: ${disc.color}`"></span>
-                                    <span x-text="disc.name.it ? disc.name.it : disc.name"></span>
-                                </span>
-                            </label>
-                        </template>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endif
-
-    <div class="print:hidden flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div class="flex flex-wrap items-center gap-2">
-            <span class="text-sm font-semibold text-gray-500 uppercase">{{ __('View') }}</span>
-            <div class="inline-flex rounded-lg border border-gray-200 bg-gray-100 p-1 dark:border-gray-700 dark:bg-gray-800">
-                <button type="button"
-                        @click="viewMode = 'calendar'"
-                        :class="viewMode === 'calendar' ? 'bg-white dark:bg-gray-700 text-blue-600 shadow-sm' : 'text-gray-600 dark:text-gray-300'"
-                        class="relative rounded-md px-3 py-1.5 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
-                    {{ __('Calendar') }}
+                    <span class="text-xs text-gray-500" x-text="activeFilterLabel()"></span>
                 </button>
-                <button type="button"
-                        @click="viewMode = 'list'"
-                        :class="viewMode === 'list' ? 'bg-white dark:bg-gray-700 text-blue-600 shadow-sm' : 'text-gray-600 dark:text-gray-300'"
-                        class="relative rounded-md px-3 py-1.5 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
-                    {{ __('List') }}
-                </button>
-                <button type="button"
-                        @click="viewMode = 'scatter'"
-                        :class="viewMode === 'scatter' ? 'bg-white dark:bg-gray-700 text-blue-600 shadow-sm' : 'text-gray-600 dark:text-gray-300'"
-                        class="relative rounded-md px-3 py-1.5 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
-                    {{ __('Grid') }}
-                </button>
-            </div>
-        </div>
-        <div class="flex flex-wrap items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
-            <button type="button" @click="changeWeek(-1)" class="inline-flex items-center justify-center rounded-md border border-gray-200 bg-white px-3 py-1.5 shadow-sm transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-                </svg>
-            </button>
-            <div class="min-w-[160px] text-center font-semibold" x-text="weekLabel()"></div>
-            <button type="button" @click="changeWeek(1)" class="inline-flex items-center justify-center rounded-md border border-gray-200 bg-white px-3 py-1.5 shadow-sm transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg>
-            </button>
-            <button type="button" @click="goToCurrentWeek()" class="inline-flex items-center justify-center gap-1 rounded-md border border-transparent bg-blue-50 px-3 py-1.5 text-blue-700 transition hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-blue-900/40 dark:text-blue-200 dark:hover:bg-blue-900/60">
-                {{ __('Current week') }}
-            </button>
-            <button type="button" @click="printCalendar()" class="inline-flex items-center justify-center gap-1 rounded-md border border-transparent bg-gray-200 px-3 py-1.5 text-gray-700 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
-                {{ __('Print calendar') }}
-            </button>
-            <button type="button"
-                    @click="openPlanModal()"
-                    class="inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-blue-600 px-3 py-1.5 text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
-                {{ __('Plan Week') }}
-            </button>
-            <div class="flex flex-col items-stretch gap-1 md:flex-row md:items-center md:gap-2">
-                <button type="button"
-                        @click="clearCurrentWeek()"
-                        :disabled="isClearingWeek"
-                        :class="isClearingWeek ? 'cursor-not-allowed opacity-70' : ''"
-                        class="inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-red-50 px-3 py-1.5 text-red-700 transition hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 dark:bg-red-900/40 dark:text-red-200 dark:hover:bg-red-900/60">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.02-2.09 2.2v.917m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                    </svg>
-                    <span x-show="!isClearingWeek">{{ __('Clear week') }}</span>
-                    <span x-show="isClearingWeek">{{ __('Clearing...') }}</span>
-                </button>
-                <p x-show="clearWeekAlert"
-                   x-text="clearWeekAlert.message"
-                   :class="['mt-1 text-sm md:mt-0 md:pl-2', clearWeekAlertClasses()]">
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scatter table view -->
-    <div x-show="viewMode === 'scatter'" class="space-y-4">
-        <div class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-5 md:gap-0 md:overflow-visible md:snap-none">
-            <template x-for="day in weekDays()" :key="day.key">
-                <div class="min-w-[calc(100vw-4rem)] snap-center border border-gray-200 bg-white shadow-sm transition hover:border-blue-200 focus-within:border-blue-400 dark:border-gray-700 dark:bg-gray-900 md:min-w-0">
-                    <div class="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
-                        <div class="flex items-baseline justify-between">
-                            <span class="text-sm font-semibold capitalize" x-text="day.label"></span>
-                            <span class="text-xs font-medium text-gray-500" x-text="day.dateLabel"></span>
-                        </div>
-                    </div>
-                    <div class="divide-y divide-gray-200 dark:divide-gray-700">
-                        <template x-for="span in spans" :key="span">
-                            <section>
-                                <header class="bg-gray-50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:bg-gray-800 dark:text-gray-300">
-                                    <span x-text="spanLabels[span]"></span>
-                                </header>
-                                <div>
-                                    <template x-for="slot in slotsBySpan(span)" :key="slot.start">
-                                        <div class="border-b border-gray-100 last:border-b-0 dark:border-gray-800">
-{{--                                            <div class="px-4 pt-3 text-xs font-semibold text-gray-500" x-text="slot.label"></div>--}}
-                                            <div class="flex flex-col gap-2 px-4 pb-4 pt-2">
-                                                <template x-if="eventsForSlot(day, slot).length === 0">
-                                                    <button type="button"
-                                                            class="flex h-14 items-center justify-center rounded-md border-2 border-dashed border-gray-200 text-xs font-semibold uppercase tracking-wide text-gray-400 transition hover:border-blue-300 hover:text-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:border-gray-700 dark:text-gray-500 dark:hover:border-blue-500"
-                                                            @click="openSlot(day, slot)">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-2 h-4 w-4">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                                        </svg>
-                                                        {{ __('Add appointment') }}
-                                                    </button>
-                                                </template>
-                                                <div class="flex flex-row overflow-x-scroll">
-                                                    <template x-for="event in eventsForSlot(day, slot)" :key="event.id">
-                                                    <button type="button"
-                                                            class="h-16 w-full rounded-md border border-transparent px-3 py-2 text-left text-sm font-medium text-gray-900 shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:text-gray-100"
-                                                            :style="eventBackgroundStyle(event)"
-                                                            @click="openExistingEvent(event)">
-                                                        <div class="flex flex-col items-start justify-between gap-2">
-                                                            <span class="font-semibold" x-text="event.extendedProps.learner.full_name"></span>
-                                                            <span class="text-xs font-semibold" x-text="event.timeRange"></span>
-                                                        </div>
-                                                        <div class="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-600 dark:text-gray-200">
-{{--                                                            <span class="inline-flex items-center gap-1 rounded-full bg-white/70 px-2 py-0.5 text-[11px] font-semibold text-gray-700 shadow-sm dark:bg-gray-800/80 dark:text-gray-100">--}}
-{{--                                                                <span class="inline-block h-2.5 w-2.5 rounded-full" :style="`background-color: ${event.extendedProps.operator.color}`"></span>--}}
-{{--                                                                <span x-text="event.extendedProps.operator.name"></span>--}}
-{{--                                                            </span>--}}
-{{--                                                            <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold text-white" :style="`background-color: ${event.extendedProps.discipline.color || '#4f46e5'}`">--}}
-{{--                                                                <span x-text="disciplineLabel(event.extendedProps.discipline)"></span>--}}
-{{--                                                            </span>--}}
-                                                        </div>
-                                                    </button>
-                                                </template>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </section>
-                        </template>
-                    </div>
-                </div>
-            </template>
-        </div>
-    </div>
-
-    <!-- Calendar view -->
-    <div x-show="viewMode === 'calendar'" class="rounded-lg border border-gray-200 bg-white p-2 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-        <div x-ref="fullCalendar" class="h-[720px]"></div>
-    </div>
-
-    <!-- List view -->
-    <div x-show="viewMode === 'list'" class="space-y-4">
-        <template x-for="day in weekDays()" :key="day.key">
-            <section class="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                <header class="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-700">
-                    <div>
-                        <p class="text-sm font-semibold capitalize" x-text="day.label"></p>
-                        <p class="text-xs text-gray-500" x-text="day.dateLabel"></p>
-                    </div>
-                </header>
-                <div>
-                    <template x-if="eventsForDay(day).length === 0">
-                        <div class="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-300">
-                            {{ __('No appointments for this day.') }}
-                        </div>
-                    </template>
-                    <template x-for="event in eventsForDay(day)" :key="event.id">
-                        <button type="button"
-                                class="flex w-full items-start gap-3 border-b border-gray-100 px-4 py-3 text-left transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 last:border-b-0 dark:border-gray-800 dark:hover:bg-gray-800"
-                                @click="openExistingEvent(event)">
-                            <span class="mt-0.5 inline-flex h-8 w-8 flex-none items-center justify-center rounded-full text-xs font-semibold text-white" :style="`background-color: ${event.extendedProps.operator.color}`" x-text="event.operatorInitials"></span>
-                            <div class="flex-1">
-                                <div class="flex flex-wrap items-center justify-between gap-2">
-                                    <span class="text-sm font-semibold" x-text="event.extendedProps.learner.full_name"></span>
-                                    <span class="text-xs font-semibold text-gray-500" x-text="event.timeRange"></span>
-                                </div>
-                                <div class="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
-                                    <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold text-white" :style="`background-color: ${event.extendedProps.discipline.color || '#4f46e5'}`">
-                                        <span x-text="disciplineLabel(event.extendedProps.discipline)"></span>
-                                    </span>
-                                    <span class="inline-flex items-center gap-1 text-[11px]">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75m-3.75 3h3.75m-9 1.5H6a1.5 1.5 0 0 1-1.5-1.5V6A1.5 1.5 0 0 1 6 4.5h6A1.5 1.5 0 0 1 13.5 6v12a1.5 1.5 0 0 1-1.5 1.5Zm0 0H18a1.5 1.5 0 0 0 1.5-1.5V9A1.5 1.5 0 0 0 18 7.5h-3" />
-                                        </svg>
-                                        <span x-text="event.extendedProps.operator.name"></span>
-                                    </span>
-                                </div>
-                                <template x-if="event.extendedProps.comments">
-                                    <p class="mt-2 text-xs italic text-gray-500 dark:text-gray-400" x-text="event.extendedProps.comments"></p>
-                                </template>
-                            </div>
-                        </button>
-                    </template>
-                </div>
-            </section>
-        </template>
-    </div>
-
-    <!-- Plan week modal -->
-    <div x-show="planModalOpen" class="fixed inset-0 z-50 flex items-center justify-center">
-        <div class="absolute inset-0 bg-gray-900/50"></div>
-        <div class="relative z-10 w-full max-w-xl rounded-xl bg-white p-6 shadow-xl dark:bg-gray-900" @click.away="closePlanModal()">
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ __('Generate Weekly Plan') }}</h3>
-            <template x-if="planAlert.messages.length">
-                <div class="mt-4 rounded-md border px-4 py-3 text-sm" :class="planAlertClasses()">
-                    <p class="font-semibold" x-text="planAlertTitle()"></p>
-                    <ul class="mt-2 list-disc space-y-1 pl-5">
-                        <template x-for="(message, index) in planAlert.messages" :key="`plan-alert-${index}`">
-                            <li x-text="message"></li>
-                        </template>
-                    </ul>
-                </div>
-            </template>
-
-            <form class="mt-6 space-y-5" @submit.prevent>
-                <div>
-                    <label for="plan_starts_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Starting Date') }}</label>
-                    <input type="date" id="plan_starts_at" x-model="planStartsAt" class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800" />
-                    <template x-if="planErrors.starts_at">
-                        <div class="mt-1 space-y-0.5 text-xs text-red-500">
-                            <template x-for="(message, index) in planErrors.starts_at" :key="`plan-error-start-${index}`">
-                                <div x-text="message"></div>
-                            </template>
-                        </div>
-                    </template>
-                </div>
-
-                <div>
-                    <div class="flex items-center justify-between">
-                        <label for="plan_learners" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Choose Learners') }}</label>
-                        <div class="flex gap-2 text-xs font-semibold uppercase">
-                            <button type="button" class="rounded-md border border-gray-200 px-2 py-1 text-gray-600 transition hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800" @click="selectAllPlanLearners()">
-                                {{ __('Select All') }}
-                            </button>
-                            <button type="button" class="rounded-md border border-gray-200 px-2 py-1 text-gray-600 transition hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800" @click="deselectAllPlanLearners()">
-                                {{ __('Deselect All') }}
-                            </button>
-                        </div>
-                    </div>
-                    <select id="plan_learners" multiple size="5" x-model="planLearners" x-ref="planLearnersSelect" class="mt-2 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800">
-                        <template x-for="learner in learners" :key="learner.id">
-                            <option :value="learner.id" x-text="learner.full_name || learner.name || ''"></option>
-                        </template>
-                    </select>
-                </div>
-
-                <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" @click="planAppointments()" :disabled="planIsGenerating" class="inline-flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:cursor-not-allowed disabled:opacity-60">
-                        <template x-if="!planIsGenerating">
-                            <span>{{ __('Plan') }}</span>
-                        </template>
-                        <template x-if="planIsGenerating">
-                            <span>{{ __('Planning in progress') }}...</span>
-                        </template>
-                    </button>
-                    <button type="button" @click="closePlanModal()" class="inline-flex items-center justify-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
-                        {{ __('Cancel') }}
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div x-show="popup" class="fixed inset-0 z-50 flex items-center justify-center">
-        <div class="absolute inset-0 bg-gray-900/50"></div>
-        <div class="relative z-10 w-full max-w-2xl rounded-xl bg-white p-6 shadow-xl dark:bg-gray-900" @click.away="closePopup()">
-            <template x-if="popup === 'add'">
-                <div class="space-y-4">
-                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ __('New :resource', ['resource' => __('Appointment')]) }}</h2>
-                    <template x-if="errors.general">
-                        <div class="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/40 dark:text-red-200">
-                            <span x-text="errors.general[0]"></span>
-                        </div>
-                    </template>
-                    <div class="grid gap-4 sm:grid-cols-2">
-                        <div>
-                            <label class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Start Date') }}</label>
-                            <input type="datetime-local" x-model="selectedEvent.startStr" class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
-                            <template x-if="errors.starts_at">
-                                <p class="mt-1 text-xs text-red-500" x-text="errors.starts_at[0]"></p>
-                            </template>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('End Date') }}</label>
-                            <input type="datetime-local" x-model="selectedEvent.endStr" class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
-                            <template x-if="errors.ends_at">
-                                <p class="mt-1 text-xs text-red-500" x-text="errors.ends_at[0]"></p>
-                            </template>
-                        </div>
-                    </div>
-                    <div class="grid gap-4 sm:grid-cols-2">
-                        <div>
-                            <label class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Learner') }}</label>
-                            <select x-model="selectedLearner" class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
-                                <option value=""></option>
-                                <template x-for="learner in learners" :key="learner.id">
-                                    <option :value="learner.id" x-text="learner.full_name"></option>
-                                </template>
-                            </select>
-                            <template x-if="errors.learner_id">
-                                <p class="mt-1 text-xs text-red-500" x-text="errors.learner_id[0]"></p>
-                            </template>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Operator') }}</label>
-                            <select x-model="selectedOperator" @change="updateAvailableDisciplines()" class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
-                                <option value=""></option>
+                <div x-show="showFilters" x-transition
+                     class="px-4 py-5 text-sm text-gray-700 dark:text-gray-100 space-y-6">
+                    <div class="grid gap-4 lg:grid-cols-2">
+                        <div class="space-y-3">
+                            <label for="filter_operator"
+                                   class="block text-xs font-semibold uppercase tracking-wide text-gray-500">{{ __('Filter :resource', ['resource' => __('Operator')]) }}</label>
+                            <select id="filter_operator" name="filter_operator"
+                                    x-model="filterOperator" @change="applyFilters()"
+                                    class="mt-1 block w-full rounded-md border-gray-300 text-sm dark:bg-gray-800 dark:border-gray-700">
+                                <option value="">{{ __('All') }}</option>
                                 <template x-for="op in operators" :key="op.id">
                                     <option :value="op.id" x-text="op.name"></option>
                                 </template>
                             </select>
-                            <template x-if="errors.operator_id">
-                                <p class="mt-1 text-xs text-red-500" x-text="errors.operator_id[0]"></p>
-                            </template>
+                        </div>
+                        <div class="space-y-3">
+                            <label for="filter_learner"
+                                   class="block text-xs font-semibold uppercase tracking-wide text-gray-500">{{ __('Filter :resource', ['resource' => __('Learner')]) }}</label>
+                            <select id="filter_learner" name="filter_learner"
+                                    x-model="filterLearner" @change="applyFilters()"
+                                    class="mt-1 block w-full rounded-md border-gray-300 text-sm dark:bg-gray-800 dark:border-gray-700">
+                                <option value="">{{ __('All') }}</option>
+                                <template x-for="learner in learners" :key="learner.id">
+                                    <option :value="learner.id" x-text="learner.full_name"></option>
+                                </template>
+                            </select>
                         </div>
                     </div>
-                    <div x-show="selectedOperator" class="space-y-2">
-                        <span class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Discipline') }}</span>
+                    <div class="space-y-3">
+                        <span
+                            class="block text-xs font-semibold uppercase tracking-wide text-gray-500">{{ __('Filter :resource', ['resource' => __('Discipline')]) }}</span>
                         <div class="flex flex-wrap gap-4">
-                            <template x-for="disc in availableDisciplines" :key="disc.id">
-                                <label class="inline-flex items-center gap-2 text-sm">
-                                    <input type="radio" class="text-blue-600" :value="disc.id" x-model="selectedDiscipline">
+                            <label class="inline-flex items-center gap-2 text-sm">
+                                <input type="radio" class="text-blue-600" value="all" x-model="filterDisciplineMode"
+                                       @change="applyFilters()">
+                                <span>{{ __('All') }}</span>
+                            </label>
+                            <label class="inline-flex items-center gap-2 text-sm">
+                                <input type="radio" class="text-blue-600" value="filter" x-model="filterDisciplineMode"
+                                       @change="applyFilters()">
+                                <span>{{ __('Filtered') }}</span>
+                            </label>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
+                             x-show="filterDisciplineMode === 'filter'">
+                            <template x-for="disc in disciplines" :key="disc.id">
+                                <label
+                                    class="inline-flex items-center gap-2 rounded-md border border-gray-200 px-2 py-1 dark:border-gray-700">
+                                    <input type="checkbox" class="text-blue-600" :value="disc.id"
+                                           x-model="filterDisciplines" @change="applyFilters()">
+                                    <span class="inline-flex items-center gap-2">
+                                    <span class="inline-block h-3 w-3 rounded-full"
+                                          :style="`background-color: ${disc.color}`"></span>
                                     <span x-text="disc.name.it ? disc.name.it : disc.name"></span>
+                                </span>
                                 </label>
                             </template>
                         </div>
-                        <template x-if="errors.discipline_id">
-                            <p class="text-xs text-red-500" x-text="errors.discipline_id[0]"></p>
-                        </template>
                     </div>
+                </div>
+            </div>
+        @endif
+
+        <template x-if="loadingError">
+            <div
+                class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/40 dark:text-red-200"
+                x-text="loadingError"></div>
+        </template>
+        <!-- Overlay + Modal -->
+        <div
+            x-show="isInitialLoading || isLoadingData"
+            x-cloak
+            class="fixed inset-0 flex items-center justify-center bg-black/40 z-50"
+        >
+            <div class="flex items-center gap-3 bg-white dark:bg-gray-800 px-6 py-4 rounded-xl shadow-xl">
+                <svg class="h-6 w-6 animate-spin text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v2a6 6 0 0 0-6 6H4z"></path>
+                </svg>
+                <span class="text-sm text-gray-700 dark:text-gray-300">
+                    {{ __('Loading appointments') }} ...
+                </span>
+            </div>
+        </div>
+
+
+        <div class="print:hidden flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-sm font-semibold text-gray-500 uppercase">{{ __('View') }}</span>
+                <div
+                    class="inline-flex rounded-lg border border-gray-200 bg-gray-100 p-1 dark:border-gray-700 dark:bg-gray-800">
+                    <button type="button"
+                            @click="viewMode = 'calendar'"
+                            :class="viewMode === 'calendar' ? 'bg-white dark:bg-gray-700 text-blue-600 shadow-sm' : 'text-gray-600 dark:text-gray-300'"
+                            class="relative rounded-md px-3 py-1.5 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+                        {{ __('Calendar') }}
+                    </button>
+                    <button type="button"
+                            @click="viewMode = 'list'"
+                            :class="viewMode === 'list' ? 'bg-white dark:bg-gray-700 text-blue-600 shadow-sm' : 'text-gray-600 dark:text-gray-300'"
+                            class="relative rounded-md px-3 py-1.5 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+                        {{ __('List') }}
+                    </button>
+{{--                    <button type="button"--}}
+{{--                            @click="viewMode = 'scatter'"--}}
+{{--                            :class="viewMode === 'scatter' ? 'bg-white dark:bg-gray-700 text-blue-600 shadow-sm' : 'text-gray-600 dark:text-gray-300'"--}}
+{{--                            class="relative rounded-md px-3 py-1.5 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">--}}
+{{--                        {{ __('Grid') }}--}}
+{{--                    </button>--}}
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
+                <button type="button" @click="changeWeek(-1)"
+                        class="inline-flex items-center justify-center rounded-md border border-gray-200 bg-white px-3 py-1.5 shadow-sm transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                         stroke="currentColor" class="h-4 w-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
+                    </svg>
+                </button>
+                <div class="min-w-[160px] text-center font-semibold" x-text="weekLabel()"></div>
+                <button type="button" @click="changeWeek(1)"
+                        class="inline-flex items-center justify-center rounded-md border border-gray-200 bg-white px-3 py-1.5 shadow-sm transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                         stroke="currentColor" class="h-4 w-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+                    </svg>
+                </button>
+                {{--            <button type="button" @click="goToCurrentWeek()" class="inline-flex items-center justify-center gap-1 rounded-md border border-transparent bg-blue-50 px-3 py-1.5 text-blue-700 transition hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-blue-900/40 dark:text-blue-200 dark:hover:bg-blue-900/60">--}}
+                {{--                {{ __('Current week') }}--}}
+                {{--            </button>--}}
+                {{--            <button type="button" @click="printCalendar()" class="inline-flex items-center justify-center gap-1 rounded-md border border-transparent bg-gray-200 px-3 py-1.5 text-gray-700 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">--}}
+                {{--                {{ __('Print calendar') }}--}}
+                {{--            </button>--}}
+                <button type="button"
+                        @click="openPlanModal()"
+                        class="inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-blue-600 px-3 py-1.5 text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                         stroke="currentColor" class="size-4">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59"/>
+                    </svg>
+
+                    {{ __('Plan') }}
+                </button>
+
+                <div class="flex flex-col items-stretch gap-1 md:flex-row md:items-center md:gap-2">
+                    <button type="button"
+                            @click="clearCurrentWeek()"
+                            :disabled="isClearingWeek || isInitialLoading || isLoadingData"
+                            :class="isClearingWeek || isInitialLoading || isLoadingData ? 'cursor-not-allowed opacity-70' : ''"
+                            class="inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-red-50 px-3 py-1.5 text-red-700 transition hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 dark:bg-red-900/40 dark:text-red-200 dark:hover:bg-red-900/60">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                             stroke="currentColor" class="h-4 w-4">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.02-2.09 2.2v.917m7.5 0a48.667 48.667 0 0 0-7.5 0"/>
+                        </svg>
+                        <span x-show="!isClearingWeek">{{ __('Clear') }}</span>
+                        <span x-show="isClearingWeek">{{ __('Clearing') }}...</span>
+                    </button>
+                    <p x-show="clearWeekAlert"
+                       x-text="clearWeekAlert.message"
+                       :class="['mt-1 text-sm md:mt-0 md:pl-2', clearWeekAlertClasses()]">
+                    </p>
+                </div>
+            </div>
+        </div>
+
+{{--        <!-- Scatter table view -->--}}
+{{--        <div x-show="viewMode === 'scatter'" class="space-y-4">--}}
+{{--            <div--}}
+{{--                class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-5 md:gap-0 md:overflow-visible md:snap-none">--}}
+{{--                <template x-for="day in weekDays()" :key="day.key">--}}
+{{--                    <div--}}
+{{--                        class="min-w-[calc(100vw-4rem)] snap-center border border-gray-200 bg-white shadow-sm transition hover:border-blue-200 focus-within:border-blue-400 dark:border-gray-700 dark:bg-gray-900 md:min-w-0">--}}
+{{--                        <div class="border-b border-gray-200 px-4 py-3 dark:border-gray-700">--}}
+{{--                            <div class="flex items-baseline justify-between">--}}
+{{--                                <span class="text-sm font-semibold capitalize" x-text="day.label"></span>--}}
+{{--                                <span class="text-xs font-medium text-gray-500" x-text="day.dateLabel"></span>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                        <div class="divide-y divide-gray-200 dark:divide-gray-700">--}}
+{{--                            <template x-for="span in spans" :key="span">--}}
+{{--                                <section>--}}
+{{--                                    <header--}}
+{{--                                        class="bg-gray-50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:bg-gray-800 dark:text-gray-300">--}}
+{{--                                        <span x-text="spanLabels[span]"></span>--}}
+{{--                                    </header>--}}
+{{--                                    <div>--}}
+{{--                                        <template x-for="slot in slotsBySpan(span)" :key="slot.start">--}}
+{{--                                            <div class="border-b border-gray-100 last:border-b-0 dark:border-gray-800">--}}
+{{--                                                --}}{{--                                            <div class="px-4 pt-3 text-xs font-semibold text-gray-500" x-text="slot.label"></div>--}}
+{{--                                                <div class="flex flex-col gap-2 px-4 pb-4 pt-2">--}}
+{{--                                                    <template x-if="eventsForSlot(day, slot).length === 0">--}}
+{{--                                                        <button type="button"--}}
+{{--                                                                class="flex h-14 items-center justify-center rounded-md border-2 border-dashed border-gray-200 text-xs font-semibold uppercase tracking-wide text-gray-400 transition hover:border-blue-300 hover:text-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:border-gray-700 dark:text-gray-500 dark:hover:border-blue-500"--}}
+{{--                                                                @click="openSlot(day, slot)">--}}
+{{--                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"--}}
+{{--                                                                 viewBox="0 0 24 24" stroke-width="1.5"--}}
+{{--                                                                 stroke="currentColor" class="mr-2 h-4 w-4">--}}
+{{--                                                                <path stroke-linecap="round" stroke-linejoin="round"--}}
+{{--                                                                      d="M12 4.5v15m7.5-7.5h-15"/>--}}
+{{--                                                            </svg>--}}
+{{--                                                            {{ __('Add appointment') }}--}}
+{{--                                                        </button>--}}
+{{--                                                    </template>--}}
+{{--                                                    <div class="flex flex-row overflow-x-scroll">--}}
+{{--                                                        <template x-for="event in eventsForSlot(day, slot)"--}}
+{{--                                                                  :key="event.id">--}}
+{{--                                                            <button type="button"--}}
+{{--                                                                    class="h-16 w-full rounded-md border border-transparent px-3 py-2 text-left text-sm font-medium text-gray-900 shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:text-gray-100"--}}
+{{--                                                                    :style="eventBackgroundStyle(event)"--}}
+{{--                                                                    @click="openExistingEvent(event)">--}}
+{{--                                                                <div--}}
+{{--                                                                    class="flex flex-col items-start justify-between gap-2">--}}
+{{--                                                                    <span class="font-semibold"--}}
+{{--                                                                          x-text="event.extendedProps.learner.full_name"></span>--}}
+{{--                                                                    <span class="text-xs font-semibold"--}}
+{{--                                                                          x-text="event.timeRange"></span>--}}
+{{--                                                                </div>--}}
+{{--                                                                <div--}}
+{{--                                                                    class="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-600 dark:text-gray-200">--}}
+{{--                                                                    --}}{{--                                                            <span class="inline-flex items-center gap-1 rounded-full bg-white/70 px-2 py-0.5 text-[11px] font-semibold text-gray-700 shadow-sm dark:bg-gray-800/80 dark:text-gray-100">--}}
+{{--                                                                    --}}{{--                                                                <span class="inline-block h-2.5 w-2.5 rounded-full" :style="`background-color: ${event.extendedProps.operator.color}`"></span>--}}
+{{--                                                                    --}}{{--                                                                <span x-text="event.extendedProps.operator.name"></span>--}}
+{{--                                                                    --}}{{--                                                            </span>--}}
+{{--                                                                    --}}{{--                                                            <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold text-white" :style="`background-color: ${event.extendedProps.discipline.color || '#4f46e5'}`">--}}
+{{--                                                                    --}}{{--                                                                <span x-text="disciplineLabel(event.extendedProps.discipline)"></span>--}}
+{{--                                                                    --}}{{--                                                            </span>--}}
+{{--                                                                </div>--}}
+{{--                                                            </button>--}}
+{{--                                                        </template>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                        </template>--}}
+{{--                                    </div>--}}
+{{--                                </section>--}}
+{{--                            </template>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </template>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+
+        <!-- Calendar view -->
+        <div x-show="viewMode === 'calendar'"
+             class="rounded-lg border border-gray-200 bg-white p-2 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div x-ref="fullCalendar" class="h-[720px]"></div>
+        </div>
+
+        <!-- List view -->
+        <div x-show="viewMode === 'list'" class="space-y-4">
+            <template x-for="day in weekDays()" :key="day.key">
+                <section
+                    class="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                    <header
+                        class="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+                        <div>
+                            <p class="text-sm font-semibold capitalize" x-text="day.label"></p>
+                            <p class="text-xs text-gray-500" x-text="day.dateLabel"></p>
+                        </div>
+                    </header>
                     <div>
-                        <label class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Notes') }}</label>
-                        <textarea rows="3" x-model="selectedEvent.comments" class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700" placeholder="{{ __('Enter appointment notes') }}"></textarea>
-                        <template x-if="errors.comments">
-                            <p class="mt-1 text-xs text-red-500" x-text="errors.comments[0]"></p>
+                        <template x-if="eventsForDay(day).length === 0">
+                            <div class="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-300">
+                                {{ __('No appointments for this day.') }}
+                            </div>
+                        </template>
+                        <template x-for="event in eventsForDay(day)" :key="event.id">
+                            <button type="button"
+                                    class="flex w-full items-start gap-3 border-b border-gray-100 px-4 py-3 text-left transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 last:border-b-0 dark:border-gray-800 dark:hover:bg-gray-800"
+                                    @click="openExistingEvent(event)">
+                                <span
+                                    class="mt-0.5 inline-flex h-8 w-8 flex-none items-center justify-center rounded-full text-xs font-semibold text-white"
+                                    :style="`background-color: ${event.extendedProps.operator.color}`"
+                                    x-text="event.operatorInitials"></span>
+                                <div class="flex-1">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <span class="text-sm font-semibold"
+                                              x-text="event.extendedProps.learner.full_name"></span>
+                                        <span class="text-xs font-semibold text-gray-500"
+                                              x-text="event.timeRange"></span>
+                                    </div>
+                                    <div
+                                        class="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
+                                    <span
+                                        class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold text-white"
+                                        :style="`background-color: ${event.extendedProps.discipline.color || '#4f46e5'}`">
+                                        <span x-text="disciplineLabel(event.extendedProps.discipline)"></span>
+                                    </span>
+                                        <span class="inline-flex items-center gap-1 text-[11px]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                             stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                  d="M15 9h3.75M15 12h3.75m-3.75 3h3.75m-9 1.5H6a1.5 1.5 0 0 1-1.5-1.5V6A1.5 1.5 0 0 1 6 4.5h6A1.5 1.5 0 0 1 13.5 6v12a1.5 1.5 0 0 1-1.5 1.5Zm0 0H18a1.5 1.5 0 0 0 1.5-1.5V9A1.5 1.5 0 0 0 18 7.5h-3"/>
+                                        </svg>
+                                        <span x-text="event.extendedProps.operator.name"></span>
+                                    </span>
+                                    </div>
+                                    <template x-if="event.extendedProps.comments">
+                                        <p class="mt-2 text-xs italic text-gray-500 dark:text-gray-400"
+                                           x-text="event.extendedProps.comments"></p>
+                                    </template>
+                                </div>
+                            </button>
                         </template>
                     </div>
-                    <div class="flex justify-end gap-2">
-                        <button type="button" @click="storeEvent()" class="inline-flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500">
-                            {{ __('Add') }}
+                </section>
+            </template>
+        </div>
+
+        <!-- Plan week modal -->
+        <div x-show="planModalOpen" class="fixed inset-0 z-50 flex items-center justify-center">
+            <div class="absolute inset-0 bg-gray-900/50"></div>
+            <div class="relative z-10 w-full max-w-xl rounded-xl bg-white p-6 shadow-xl dark:bg-gray-900"
+                 @click.away="closePlanModal()">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ __('Generate Weekly Plan') }}</h3>
+                <template x-if="planAlert.messages.length">
+                    <div class="mt-4 rounded-md border px-4 py-3 text-sm" :class="planAlertClasses()">
+                        <p class="font-semibold" x-text="planAlertTitle()"></p>
+                        <ul class="mt-2 list-disc space-y-1 pl-5">
+                            <template x-for="(message, index) in planAlert.messages" :key="`plan-alert-${index}`">
+                                <li x-text="message"></li>
+                            </template>
+                        </ul>
+                    </div>
+                </template>
+
+                <form class="mt-6 space-y-5" @submit.prevent>
+                    <div>
+                        <label for="plan_starts_at"
+                               class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Starting Date') }}</label>
+                        <input type="date" id="plan_starts_at" x-model="planStartsAt"
+                               class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800"/>
+                        <template x-if="planErrors.starts_at">
+                            <div class="mt-1 space-y-0.5 text-xs text-red-500">
+                                <template x-for="(message, index) in planErrors.starts_at"
+                                          :key="`plan-error-start-${index}`">
+                                    <div x-text="message"></div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <label for="plan_learners"
+                                   class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Choose Learners') }}</label>
+                            <div class="flex gap-2 text-xs font-semibold uppercase">
+                                <button type="button"
+                                        class="rounded-md border border-gray-200 px-2 py-1 text-gray-600 transition hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                                        @click="selectAllPlanLearners()">
+                                    {{ __('Select All') }}
+                                </button>
+                                <button type="button"
+                                        class="rounded-md border border-gray-200 px-2 py-1 text-gray-600 transition hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                                        @click="deselectAllPlanLearners()">
+                                    {{ __('Deselect All') }}
+                                </button>
+                            </div>
+                        </div>
+                        <select id="plan_learners" multiple size="5" x-model="planLearners" x-ref="planLearnersSelect"
+                                class="mt-2 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800">
+                            <template x-for="learner in learners" :key="learner.id">
+                                <option :value="learner.id" x-text="learner.full_name || learner.name || ''"></option>
+                            </template>
+                        </select>
+                    </div>
+
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" @click="planAppointments()" :disabled="planIsGenerating"
+                                class="inline-flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:cursor-not-allowed disabled:opacity-60">
+                            <template x-if="!planIsGenerating">
+                                <span>{{ __('Plan') }}</span>
+                            </template>
+                            <template x-if="planIsGenerating">
+                                <span>{{ __('Planning in progress') }}...</span>
+                            </template>
                         </button>
-                        <button type="button" @click="closePopup()" class="inline-flex items-center rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+                        <button type="button" @click="closePlanModal()"
+                                class="inline-flex items-center justify-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
                             {{ __('Cancel') }}
                         </button>
                     </div>
-                </div>
-            </template>
+                </form>
+            </div>
+        </div>
 
-            <template x-if="popup === 'modify'">
-                <div class="space-y-4">
-                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ __('Edit :resource', ['resource' => __('Appointment')]) }}</h2>
-                    <template x-if="errors.general">
-                        <div class="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/40 dark:text-red-200">
-                            <span x-text="errors.general[0]"></span>
-                        </div>
-                    </template>
-                    <div class="grid gap-4 sm:grid-cols-2">
-                        <div>
-                            <label class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Start Date') }}</label>
-                            <input type="datetime-local" x-model="selectedEvent.startStr" class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
-                            <template x-if="errors.starts_at">
-                                <p class="mt-1 text-xs text-red-500" x-text="errors.starts_at[0]"></p>
-                            </template>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('End Date') }}</label>
-                            <input type="datetime-local" x-model="selectedEvent.endStr" class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
-                            <template x-if="errors.ends_at">
-                                <p class="mt-1 text-xs text-red-500" x-text="errors.ends_at[0]"></p>
-                            </template>
-                        </div>
-                    </div>
-                    <div class="grid gap-4 sm:grid-cols-2">
-                        <div>
-                            <label class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Learner') }}</label>
-                            <p class="mt-1 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
-                                <span x-text="learnerName(selectedLearner) || '—'"></span>
-                            </p>
-                            <template x-if="errors.learner_id">
-                                <p class="mt-1 text-xs text-red-500" x-text="errors.learner_id[0]"></p>
-                            </template>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Operator') }}</label>
-                            <template x-if="!editingOperator">
-                                <div class="mt-1 flex items-center gap-2">
-                                    <p class="flex-1 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
-                                        <span x-text="operatorName(selectedOperator) || '—'"></span>
-                                    </p>
-                                    <button type="button"
-                                            class="inline-flex items-center rounded-md border border-transparent bg-gray-200 p-2 text-gray-600 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-                                            @click="editingOperator = true">
-                                        <span class="sr-only">{{ __('Edit operator') }}</span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487a2.1 2.1 0 0 1 2.97 2.97L8.488 18.802a4.2 4.2 0 0 1-1.585.99l-3.18 1.06 1.06-3.18a4.2 4.2 0 0 1 .99-1.585L16.862 4.487Zm0 0L19.5 7.125" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </template>
-                            <template x-if="editingOperator">
-                                <div class="mt-1 flex items-center gap-2">
-                                    <select x-model="selectedOperator" @change="updateAvailableDisciplines(); editingOperator = false" class="flex-1 rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
-                                        <option value="-">Scegli un nuovo operatore</option>
-                                        <template x-for="op in operators" :key="op.id">
-                                            <option :value="op.id" x-text="op.name"></option>
-                                        </template>
-                                    </select>
-                                    <button type="button"
-                                            class="inline-flex items-center rounded-md border border-transparent bg-gray-200 p-2 text-gray-600 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-                                            @click="editingOperator = false">
-                                        <span class="sr-only">{{ __('Cancel operator edit') }}</span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6m0 12L6 6" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </template>
-                            <template x-if="errors.operator_id">
-                                <p class="mt-1 text-xs text-red-500" x-text="errors.operator_id[0]"></p>
-                            </template>
-                        </div>
-                    </div>
-                    <div x-show="selectedOperator" class="space-y-2">
-                        <span class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Discipline') }}</span>
-                        <div class="flex flex-wrap gap-4">
-                            <template x-for="disc in availableDisciplines" :key="disc.id">
-                                <label class="inline-flex items-center gap-2 text-sm">
-                                    <input type="radio" class="text-blue-600" :value="disc.id" x-model="selectedDiscipline">
-                                    <span x-text="disc.name.it ? disc.name.it : disc.name"></span>
-                                </label>
-                            </template>
-                        </div>
-                        <template x-if="errors.discipline_id">
-                            <p class="text-xs text-red-500" x-text="errors.discipline_id[0]"></p>
+        <!-- Modal -->
+        <div x-show="popup" class="fixed inset-0 z-50 flex items-center justify-center">
+            <div class="absolute inset-0 bg-gray-900/50"></div>
+            <div class="relative z-10 w-full max-w-2xl rounded-xl bg-white p-6 shadow-xl dark:bg-gray-900"
+                 @click.away="closePopup()">
+                <template x-if="popup === 'add'">
+                    <div class="space-y-4">
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ __('New :resource', ['resource' => __('Appointment')]) }}</h2>
+                        <template x-if="errors.general">
+                            <div
+                                class="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/40 dark:text-red-200">
+                                <span x-text="errors.general[0]"></span>
+                            </div>
                         </template>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Notes') }}</label>
-                        <textarea rows="3" x-model="selectedEvent.comments" class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700" placeholder="{{ __('Enter appointment notes') }}"></textarea>
-                        <template x-if="errors.comments">
-                            <p class="mt-1 text-xs text-red-500" x-text="errors.comments[0]"></p>
-                        </template>
-                    </div>
-                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                        <a :href="route('appointments.show', { appointment: selectedEvent.id })" class="inline-flex items-center justify-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
-                            {{ __('Details') }}
-                        </a>
-                        <div class="flex flex-col gap-2 sm:flex-row">
-                            <button type="button" @click="updateEvent(selectedEvent)" class="inline-flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
-                                {{ __('Update') }}
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div>
+                                <label
+                                    class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Start Date') }}</label>
+                                <input type="datetime-local" x-model="selectedEvent.startStr"
+                                       class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
+                                <template x-if="errors.starts_at">
+                                    <p class="mt-1 text-xs text-red-500" x-text="errors.starts_at[0]"></p>
+                                </template>
+                            </div>
+                            <div>
+                                <label
+                                    class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('End Date') }}</label>
+                                <input type="datetime-local" x-model="selectedEvent.endStr"
+                                       class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
+                                <template x-if="errors.ends_at">
+                                    <p class="mt-1 text-xs text-red-500" x-text="errors.ends_at[0]"></p>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div>
+                                <label
+                                    class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Learner') }}</label>
+                                <select x-model="selectedLearner"
+                                        class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
+                                    <option value=""></option>
+                                    <template x-for="learner in learners" :key="learner.id">
+                                        <option :value="learner.id" x-text="learner.full_name"></option>
+                                    </template>
+                                </select>
+                                <template x-if="errors.learner_id">
+                                    <p class="mt-1 text-xs text-red-500" x-text="errors.learner_id[0]"></p>
+                                </template>
+                            </div>
+                            <div>
+                                <label
+                                    class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Operator') }}</label>
+                                <select x-model="selectedOperator" @change="updateAvailableDisciplines()"
+                                        class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
+                                    <option value=""></option>
+                                    <template x-for="op in operators" :key="op.id">
+                                        <option :value="op.id" x-text="op.name"></option>
+                                    </template>
+                                </select>
+                                <template x-if="errors.operator_id">
+                                    <p class="mt-1 text-xs text-red-500" x-text="errors.operator_id[0]"></p>
+                                </template>
+                            </div>
+                        </div>
+                        <div x-show="selectedOperator" class="space-y-2">
+                            <span
+                                class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Discipline') }}</span>
+                            <div class="flex flex-wrap gap-4">
+                                <template x-for="disc in availableDisciplines" :key="disc.id">
+                                    <label class="inline-flex items-center gap-2 text-sm">
+                                        <input type="radio" class="text-blue-600" :value="disc.id"
+                                               x-model="selectedDiscipline">
+                                        <span x-text="disc.name.it ? disc.name.it : disc.name"></span>
+                                    </label>
+                                </template>
+                            </div>
+                            <template x-if="errors.discipline_id">
+                                <p class="text-xs text-red-500" x-text="errors.discipline_id[0]"></p>
+                            </template>
+                        </div>
+                        <div>
+                            <label
+                                class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Notes') }}</label>
+                            <textarea rows="3" x-model="selectedEvent.comments"
+                                      class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700"
+                                      placeholder="{{ __('Enter appointment notes') }}"></textarea>
+                            <template x-if="errors.comments">
+                                <p class="mt-1 text-xs text-red-500" x-text="errors.comments[0]"></p>
+                            </template>
+                        </div>
+                        <div class="flex justify-end gap-2">
+                            <button type="button" @click="storeEvent()"
+                                    class="inline-flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500">
+                                {{ __('Add') }}
                             </button>
-                            <button type="button" @click="deleteEvent(selectedEvent)" class="inline-flex items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500">
-                                {{ __('Delete') }}
-                            </button>
-                            <button type="button" @click="closePopup()" class="inline-flex items-center justify-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+                            <button type="button" @click="closePopup()"
+                                    class="inline-flex items-center rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
                                 {{ __('Cancel') }}
                             </button>
                         </div>
                     </div>
-                </div>
-            </template>
+                </template>
+
+                <template x-if="popup === 'modify'">
+                    <div class="space-y-4">
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ __('Edit :resource', ['resource' => __('Appointment')]) }}</h2>
+                        <template x-if="errors.general">
+                            <div
+                                class="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/40 dark:text-red-200">
+                                <span x-text="errors.general[0]"></span>
+                            </div>
+                        </template>
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div>
+                                <label
+                                    class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Start Date') }}</label>
+                                <input type="datetime-local" x-model="selectedEvent.startStr"
+                                       class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
+                                <template x-if="errors.starts_at">
+                                    <p class="mt-1 text-xs text-red-500" x-text="errors.starts_at[0]"></p>
+                                </template>
+                            </div>
+                            <div>
+                                <label
+                                    class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('End Date') }}</label>
+                                <input type="datetime-local" x-model="selectedEvent.endStr"
+                                       class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
+                                <template x-if="errors.ends_at">
+                                    <p class="mt-1 text-xs text-red-500" x-text="errors.ends_at[0]"></p>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div>
+                                <label
+                                    class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Learner') }}</label>
+                                <p class="mt-1 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                                    <span x-text="learnerName(selectedLearner) || '—'"></span>
+                                </p>
+                                <template x-if="errors.learner_id">
+                                    <p class="mt-1 text-xs text-red-500" x-text="errors.learner_id[0]"></p>
+                                </template>
+                            </div>
+                            <div>
+                                <label
+                                    class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Operator') }}</label>
+                                <template x-if="!editingOperator">
+                                    <div class="mt-1 flex items-center gap-2">
+                                        <p class="flex-1 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                                            <span x-text="operatorName(selectedOperator) || '—'"></span>
+                                        </p>
+                                        <button type="button"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-gray-200 p-2 text-gray-600 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                                                @click="editingOperator = true">
+                                            <span class="sr-only">{{ __('Edit operator') }}</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                 stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      d="M16.862 4.487a2.1 2.1 0 0 1 2.97 2.97L8.488 18.802a4.2 4.2 0 0 1-1.585.99l-3.18 1.06 1.06-3.18a4.2 4.2 0 0 1 .99-1.585L16.862 4.487Zm0 0L19.5 7.125"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </template>
+                                <template x-if="editingOperator">
+                                    <div class="mt-1 flex items-center gap-2">
+                                        <select x-model="selectedOperator"
+                                                @change="updateAvailableDisciplines(); editingOperator = false"
+                                                class="flex-1 rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
+                                            <option value="-">Scegli un nuovo operatore</option>
+                                            <template x-for="op in operators" :key="op.id">
+                                                <option :value="op.id" x-text="op.name"></option>
+                                            </template>
+                                        </select>
+                                        <button type="button"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-gray-200 p-2 text-gray-600 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                                                @click="editingOperator = false">
+                                            <span class="sr-only">{{ __('Cancel operator edit') }}</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                 stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      d="M6 18 18 6m0 12L6 6"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </template>
+                                <template x-if="errors.operator_id">
+                                    <p class="mt-1 text-xs text-red-500" x-text="errors.operator_id[0]"></p>
+                                </template>
+                            </div>
+                        </div>
+                        <div x-show="selectedOperator" class="space-y-2">
+                            <span
+                                class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Discipline') }}</span>
+                            <div class="flex flex-wrap gap-4">
+                                <template x-for="disc in availableDisciplines" :key="disc.id">
+                                    <label class="inline-flex items-center gap-2 text-sm">
+                                        <input type="radio" class="text-blue-600" :value="disc.id"
+                                               x-model="selectedDiscipline">
+                                        <span x-text="disc.name.it ? disc.name.it : disc.name"></span>
+                                    </label>
+                                </template>
+                            </div>
+                            <template x-if="errors.discipline_id">
+                                <p class="text-xs text-red-500" x-text="errors.discipline_id[0]"></p>
+                            </template>
+                        </div>
+                        <div>
+                            <label
+                                class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Notes') }}</label>
+                            <textarea rows="3" x-model="selectedEvent.comments"
+                                      class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700"
+                                      placeholder="{{ __('Enter appointment notes') }}"></textarea>
+                            <template x-if="errors.comments">
+                                <p class="mt-1 text-xs text-red-500" x-text="errors.comments[0]"></p>
+                            </template>
+                        </div>
+                        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <a :href="route('appointments.show', { appointment: selectedEvent.id })"
+                               class="inline-flex items-center justify-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+                                {{ __('Details') }}
+                            </a>
+                            <div class="flex flex-col gap-2 sm:flex-row">
+                                <button type="button" @click="updateEvent(selectedEvent)"
+                                        class="inline-flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+                                    {{ __('Update') }}
+                                </button>
+                                <button type="button" @click="deleteEvent(selectedEvent)"
+                                        class="inline-flex items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500">
+                                    {{ __('Delete') }}
+                                </button>
+                                <button type="button" @click="closePopup()"
+                                        class="inline-flex items-center justify-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+                                    {{ __('Cancel') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
         </div>
-    </div>
     </div>
 </div>
 
 @push('scripts')
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
     <script>
-        function calendarComponent() {
+        function calendarComponent(config = {}) {
             return {
                 locale: document.documentElement.lang,
                 popup: false,
                 errors: {},
                 viewMode: 'calendar',
-                showFilters: false,
+                showFilters: config.showFilters ?? true,
                 spans: ['Morning', 'Afternoon'],
                 spanLabels: {
                     Morning: '{{ __('Morning') }}',
                     Afternoon: '{{ __('Afternoon') }}',
                 },
                 buttonText: {
-                    today:   '{{__('Today')}}',
-                    month:    '{{__('Month')}}',
-                    week:     '{{__('Week')}}',
-                    day:      '{{__('Day')}}',
-                    list:     '{{__('List')}}'
+                    today: '{{__('Today')}}',
+                    month: '{{__('Month')}}',
+                    week: '{{__('Week')}}',
+                    day: '{{__('Day')}}',
+                    list: '{{__('List')}}'
                 },
                 slots: [
-                    { span: 'Morning', start: '09:00', end: '10:30' },
-                    { span: 'Morning', start: '10:30', end: '12:00' },
-                    { span: 'Morning', start: '12:00', end: '13:30' },
-                    { span: 'Afternoon', start: '14:00', end: '15:30' },
-                    { span: 'Afternoon', start: '15:30', end: '17:00' },
-                    { span: 'Afternoon', start: '17:00', end: '18:30' },
-                    { span: 'Afternoon', start: '18:30', end: '20:00' },
+                    {span: 'Morning', start: '09:00', end: '10:30'},
+                    {span: 'Morning', start: '10:30', end: '12:00'},
+                    {span: 'Morning', start: '12:00', end: '13:30'},
+                    {span: 'Afternoon', start: '14:00', end: '15:30'},
+                    {span: 'Afternoon', start: '15:30', end: '17:00'},
+                    {span: 'Afternoon', start: '17:00', end: '18:30'},
+                    {span: 'Afternoon', start: '18:30', end: '20:00'},
                 ],
-                operators: @json($operators),
-                learners: @json($learners),
-                disciplines: @json($disciplines),
+                operators: [],
+                learners: [],
+                disciplines: [],
                 filterOperator: "",
                 filterLearner: "",
                 filterDisciplineMode: "all",
                 filterDisciplines: [],
-                allEvents: @json($events),
+                monthEvents: {},
+                loadedMonths: {},
+                allEvents: [],
                 filteredEvents: [],
                 currentWeekStart: null,
                 selectedOperator: '',
@@ -587,10 +719,13 @@
                 planLearners: [],
                 planLearnersById: {},
                 planErrors: {},
-                planAlert: { type: null, messages: [] },
+                planAlert: {type: null, messages: []},
                 planIsGenerating: false,
                 isClearingWeek: false,
                 clearWeekAlert: null,
+                isInitialLoading: true,
+                isLoadingData: false,
+                loadingError: null,
 
                 init() {
                     this.currentWeekStart = this.startOfWeek(new Date());
@@ -598,33 +733,58 @@
                         ...slot,
                         label: `${slot.start} – ${slot.end}`,
                     }));
-                    this.allEvents = this.allEvents.map(event => this.enrichEvent(event));
-                    this.applyFilters();
-                    this.planLearnersById = this.learners.reduce((acc, learner) => {
-                        acc[String(learner.id)] = learner.full_name || learner.name || `Learner ${learner.id}`;
-                        return acc;
-                    }, {});
                     this.planStartsAt = this.formatDateForPlan(this.getNextWeekMonday());
+
                     this.$watch('viewMode', value => {
                         if (value === 'calendar') {
                             this.$nextTick(() => this.ensureCalendar());
                         }
                     });
-                    this.$watch('currentWeekStart', () => {
-                        this.setClearWeekAlert(null);
-                        this.syncCalendarDate();
+
+                    this.$watch('currentWeekStart', value => {
+                        this.handleWeekChange(value);
                     });
+
                     if (this.viewMode === 'calendar') {
                         this.$nextTick(() => this.ensureCalendar());
                     }
+
+                    this.initData();
+                },
+
+                async initData() {
+                    try {
+                        await this.ensureMonthDataForRange(
+                            this.currentWeekStart,
+                            this.weekEnd(this.currentWeekStart),
+                            true,
+                        );
+                    } catch (error) {
+                        console.error(error);
+                        this.setLoadingError('{{ __('Unable to load appointments. Please try again later.') }}');
+                    } finally {
+                        this.isInitialLoading = false;
+                    }
+                },
+
+                handleWeekChange(weekStart) {
+                    this.setClearWeekAlert(null);
+                    this.syncCalendarDate();
+
+                    this.ensureMonthDataForRange(weekStart, this.weekEnd(weekStart)).catch(error => {
+                        console.error(error);
+                        this.setLoadingError('{{ __('Unable to load appointments. Please try again later.') }}');
+                    });
                 },
 
                 enrichEvent(event) {
-                        const startDate = new Date(event.start);
+                    const startDate = new Date(event.start);
                     const endDate = new Date(event.end);
-                    const operatorName = event.extendedProps.operator.name || '';
+                    const operatorName = event.extendedProps?.operator?.name || '';
                     return {
                         ...event,
+                        start: event.start,
+                        end: event.end,
                         startDate,
                         endDate,
                         dayKey: this.dateKey(startDate),
@@ -633,18 +793,45 @@
                     };
                 },
 
+                updateOptionsFromApi(data) {
+                    if (Array.isArray(data.operators)) {
+                        this.operators = data.operators;
+                    }
+                    if (Array.isArray(data.learners)) {
+                        this.learners = data.learners;
+                    }
+                    if (Array.isArray(data.disciplines)) {
+                        this.disciplines = data.disciplines;
+                    }
+                    this.syncPlanLearnersMap();
+                },
+
+                syncPlanLearnersMap() {
+                    this.planLearnersById = this.learners.reduce((acc, learner) => {
+                        acc[String(learner.id)] = learner.full_name || learner.name || `Learner ${learner.id}`;
+                        return acc;
+                    }, {});
+                    this.planLearners = this.planLearners
+                        .map(id => String(id))
+                        .filter(id => this.planLearnersById[id]);
+                },
+
                 applyFilters() {
                     const disciplineSet = new Set(this.filterDisciplines);
                     this.filteredEvents = this.allEvents.filter(event => {
                         let ok = true;
+                        const operatorId = event.extendedProps?.operator?.id;
+                        const learnerId = event.extendedProps?.learner?.id;
+                        const disciplineId = event.extendedProps?.discipline?.id;
+
                         if (this.filterOperator) {
-                            ok = ok && event.extendedProps.operator.id === this.filterOperator;
+                            ok = ok && String(operatorId) === String(this.filterOperator);
                         }
                         if (this.filterLearner) {
-                            ok = ok && event.extendedProps.learner.id === this.filterLearner;
+                            ok = ok && String(learnerId) === String(this.filterLearner);
                         }
                         if (this.filterDisciplineMode === 'filter' && disciplineSet.size > 0) {
-                            ok = ok && disciplineSet.has(event.extendedProps.discipline.id);
+                            ok = ok && disciplineId && disciplineSet.has(String(disciplineId));
                         }
                         return ok;
                     });
@@ -664,6 +851,142 @@
                     return active.join(' • ');
                 },
 
+                monthKey(date) {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    return `${year}-${month}`;
+                },
+
+                monthsBetween(start, end) {
+                    const result = [];
+                    if (!(start instanceof Date) || Number.isNaN(start.getTime())) {
+                        return result;
+                    }
+                    if (!(end instanceof Date) || Number.isNaN(end.getTime())) {
+                        end = new Date(start);
+                    }
+                    const current = new Date(start.getFullYear(), start.getMonth(), 1);
+                    const last = new Date(end.getFullYear(), end.getMonth(), 1);
+                    while (current <= last) {
+                        result.push({
+                            key: this.monthKey(current),
+                            date: new Date(current),
+                        });
+                        current.setMonth(current.getMonth() + 1);
+                    }
+                    return result;
+                },
+
+                formatDateISO(date) {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                },
+
+                async ensureMonthDataForRange(start, end, force = false) {
+                    if (!start) {
+                        return;
+                    }
+                    const startDate = start instanceof Date ? new Date(start) : new Date(start);
+                    const endDate = end instanceof Date ? new Date(end) : new Date(end);
+                    const months = this.monthsBetween(startDate, endDate);
+                    if (!months.length) {
+                        return;
+                    }
+
+                    this.isLoadingData = true;
+                    try {
+                        for (const {date} of months) {
+                            await this.fetchMonthData(date, force);
+                        }
+                    } finally {
+                        this.isLoadingData = false;
+                    }
+                },
+
+                async fetchMonthData(date, force = false) {
+                    const key = this.monthKey(date);
+                    if (!force && this.loadedMonths[key]) {
+                        return;
+                    }
+
+                    const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+                    const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+                    const baseUrl = '{{ route('api.appointments.index') }}';
+                    const url = new URL(baseUrl, window.location.origin);
+                    url.searchParams.set('starts_at', this.formatDateISO(monthStart));
+                    url.searchParams.set('ends_at', this.formatDateISO(monthEnd));
+
+                    const response = await fetch(url.toString(), {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        credentials: 'same-origin',
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to load appointments');
+                    }
+
+                    const data = await response.json();
+                    const events = Array.isArray(data.appointments)
+                        ? data.appointments.map(event => this.enrichEvent(event))
+                        : [];
+
+                    this.monthEvents[key] = events;
+                    this.loadedMonths[key] = true;
+                    this.updateOptionsFromApi(data);
+                    this.rebuildAllEvents();
+                    this.setLoadingError(null);
+                },
+
+                rebuildAllEvents() {
+                    this.allEvents = Object.values(this.monthEvents).flat();
+                    this.applyFilters();
+                },
+
+                upsertEvent(event) {
+                    if (!event || !event.id) {
+                        return;
+                    }
+                    this.removeEvent(event.id, false);
+                    const key = this.monthKey(event.startDate instanceof Date ? event.startDate : new Date(event.start));
+                    if (!this.monthEvents[key]) {
+                        this.monthEvents[key] = [];
+                    }
+                    this.monthEvents[key].push(event);
+                    this.loadedMonths[key] = true;
+                    this.rebuildAllEvents();
+                },
+
+                removeEvent(id, rebuild = true) {
+                    Object.keys(this.monthEvents).forEach(key => {
+                        this.monthEvents[key] = this.monthEvents[key].filter(event => event.id !== id);
+                    });
+                    if (rebuild) {
+                        this.rebuildAllEvents();
+                    }
+                },
+
+                removeEventsInRange(start, end) {
+                    const startDate = start instanceof Date ? start : new Date(start);
+                    const endDate = end instanceof Date ? end : new Date(end);
+                    Object.keys(this.monthEvents).forEach(key => {
+                        this.monthEvents[key] = this.monthEvents[key].filter(event => {
+                            const date = event.startDate instanceof Date ? event.startDate : new Date(event.start);
+                            return !(date >= startDate && date <= endDate);
+                        });
+                    });
+                    this.rebuildAllEvents();
+                },
+
+                setLoadingError(message) {
+                    this.loadingError = message;
+                },
+
                 weekDays() {
                     const start = new Date(this.currentWeekStart);
                     const weekdayFormatter = new Intl.DateTimeFormat(document.documentElement.lang || 'en', {
@@ -673,7 +996,7 @@
                         day: '2-digit',
                         month: '2-digit',
                     });
-                    return Array.from({ length: 5 }).map((_, index) => {
+                    return Array.from({length: 5}).map((_, index) => {
                         const date = new Date(start);
                         date.setDate(start.getDate() + index);
                         const label = weekdayFormatter.format(date);
@@ -702,7 +1025,7 @@
                 startOfWeek(date) {
                     const d = new Date(date);
                     const day = d.getDay();
-                    const diff = (day === 0 ? -6 : 1) - day; // start Monday
+                    const diff = (day === 0 ? -6 : 1) - day;
                     d.setDate(d.getDate() + diff);
                     d.setHours(0, 0, 0, 0);
                     return d;
@@ -742,7 +1065,7 @@
                         return;
                     }
 
-                    this.clearWeekAlert = { type, message };
+                    this.clearWeekAlert = {type, message};
                 },
 
                 clearWeekAlertClasses() {
@@ -755,13 +1078,21 @@
                         : 'text-green-600 dark:text-green-400';
                 },
 
-                async clearCurrentWeek() {
-                    if (this.isClearingWeek) {
-                        return;
-                    }
 
-                    const confirmMessage = '{{ __('Are you sure you want to delete all appointments for this week?') }}';
-                    if (!window.confirm(confirmMessage)) {
+                async refreshAppointmentsForCurrentWeek(force = false) {
+                    await this.ensureMonthDataForRange(
+                        this.currentWeekStart,
+                        this.weekEnd(this.currentWeekStart),
+                        force,
+                    );
+                },
+
+                async refreshAppointmentsForRange(start, end, force = false) {
+                    await this.ensureMonthDataForRange(start, end, force);
+                },
+
+                async clearCurrentWeek() {
+                    if (this.isClearingWeek || this.isInitialLoading) {
                         return;
                     }
 
@@ -769,8 +1100,9 @@
                     this.setClearWeekAlert(null);
 
                     const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                    const payload = { week_start: this.formatDateForPlan(this.currentWeekStart) };
-                    const defaultError = '{{ __('Unable to clear the selected week. Please try again later.') }}';
+                    const payload = {
+                        week_start: this.formatDateISO(this.currentWeekStart),
+                    };
 
                     try {
                         const response = await fetch(`{{ route('appointments.week.clear') }}`, {
@@ -781,32 +1113,20 @@
                                 'X-CSRF-TOKEN': token,
                                 'X-Requested-With': 'XMLHttpRequest',
                             },
+                            credentials: 'same-origin',
                             body: JSON.stringify(payload),
                         });
 
                         const data = await response.json().catch(() => ({}));
 
                         if (!response.ok) {
-                            if (response.status === 422 && data.errors) {
-                                const firstError = Object.values(data.errors).flat().find(Boolean);
-                                this.setClearWeekAlert('error', firstError || defaultError);
-                                return;
-                            }
-
-                            this.setClearWeekAlert('error', data.message || defaultError);
+                            const message = data.message || '{{ __('Unexpected error. Please try again later.') }}';
+                            this.setClearWeekAlert('error', message);
                             return;
                         }
 
-                        this.allEvents = this.allEvents.filter(event => {
-                            return !this.isWithinWeek(event.startDate, this.currentWeekStart);
-                        });
-                        this.applyFilters();
-
-                        const successMessage = data.message || '{{ __('Appointments for the selected week have been cleared.') }}';
-                        this.setClearWeekAlert('success', successMessage);
-                        setTimeout(() => {
-                            this.setClearWeekAlert(null);
-                        }, 4000);
+                        await this.refreshAppointmentsForCurrentWeek(true);
+                        this.setClearWeekAlert('success', data.message || '{{ __('Appointments for the selected week have been cleared.') }}');
                     } catch (error) {
                         console.error(error);
                         this.setClearWeekAlert('error', '{{ __('Network error. Please check your connection.') }}');
@@ -815,27 +1135,8 @@
                     }
                 },
 
-                openPlanModal() {
-                    if (!this.planStartsAt) {
-                        this.planStartsAt = this.formatDateForPlan(this.getNextWeekMonday());
-                    }
-                    this.planModalOpen = true;
-                    this.planErrors = {};
-                    this.planAlert = { type: null, messages: [] };
-                },
-
-                closePlanModal() {
-                    this.planModalOpen = false;
-                    this.planErrors = {};
-                    this.planIsGenerating = false;
-                },
-
                 selectAllPlanLearners() {
-                    const select = this.$refs.planLearnersSelect;
-                    if (!select) {
-                        return;
-                    }
-                    this.planLearners = Array.from(select.options).map(option => option.value);
+                    this.planLearners = this.learners.map(learner => String(learner.id));
                 },
 
                 deselectAllPlanLearners() {
@@ -860,6 +1161,19 @@
                         return 'border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-900/40 dark:text-green-200';
                     }
                     return 'border-gray-200 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200';
+                },
+
+                openPlanModal() {
+                    this.planErrors = {};
+                    this.planAlert = {type: null, messages: []};
+                    this.planModalOpen = true;
+                    this.$nextTick(() => {
+                        this.$refs.planLearnersSelect?.focus?.();
+                    });
+                },
+
+                closePlanModal() {
+                    this.planModalOpen = false;
                 },
 
                 prettyPlanLearnerKey(key) {
@@ -887,7 +1201,7 @@
 
                 async planAppointments() {
                     this.planErrors = {};
-                    this.planAlert = { type: null, messages: [] };
+                    this.planAlert = {type: null, messages: []};
                     this.planIsGenerating = true;
 
                     const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -905,6 +1219,7 @@
                                 'X-CSRF-TOKEN': token,
                                 'X-Requested-With': 'XMLHttpRequest',
                             },
+                            credentials: 'same-origin',
                             body: JSON.stringify(payload),
                         });
 
@@ -944,7 +1259,7 @@
                             messages: ['{{ __('Planning completed successfully.') }}'],
                         };
                         this.closePlanModal();
-                        setTimeout(() => { window.location.reload(); }, 200);
+                        await this.refreshAppointmentsForCurrentWeek(true);
                     } catch (error) {
                         console.error(error);
                         this.planAlert = {
@@ -1021,7 +1336,7 @@
                 },
 
                 formatTime(date) {
-                    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+                    return date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', hour12: false});
                 },
 
                 dateKey(date) {
@@ -1082,42 +1397,37 @@
                     this.popup = 'modify';
                 },
 
-                toInputValue(date) {
-                    const d = new Date(date);
-                    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-                    return d.toISOString().slice(0, 16);
-                },
-
-                toIsoString(value) {
-                    if (!value) {
-                        return value;
-                    }
-
-                    const date = new Date(value);
-                    if (Number.isNaN(date.getTime())) {
-                        return value;
-                    }
-
-                    return date.toISOString();
-                },
-
                 updateAvailableDisciplines() {
-                    const op = this.operators.find(o => o.id === this.selectedOperator);
-                    this.availableDisciplines = op ? op.disciplines : [];
-                    if (!this.availableDisciplines.find(d => d.id === this.selectedDiscipline)) {
+                    if (!this.selectedOperator) {
+                        this.availableDisciplines = [];
+                        return;
+                    }
+                    const operator = this.operators.find(op => String(op.id) === String(this.selectedOperator));
+                    this.availableDisciplines = operator?.disciplines || [];
+                    if (!this.availableDisciplines.find(disc => String(disc.id) === String(this.selectedDiscipline))) {
                         this.selectedDiscipline = "";
                     }
                 },
 
+                toInputValue(date) {
+                    if (!(date instanceof Date)) {
+                        return '';
+                    }
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const hours = String(date.getHours()).padStart(2, '0');
+                    const minutes = String(date.getMinutes()).padStart(2, '0');
+                    return `${year}-${month}-${day}T${hours}:${minutes}`;
+                },
+
+                toIsoString(value) {
+                    const date = new Date(value);
+                    return date.toISOString();
+                },
+
                 ensureCalendar() {
                     if (this.calendar) {
-                        this.syncCalendarDate();
-                        this.syncCalendarEvents();
-                        return;
-                    }
-
-                    if (typeof FullCalendar === 'undefined') {
-                        console.error('FullCalendar library is not loaded.');
                         return;
                     }
 
@@ -1127,13 +1437,7 @@
                     }
 
                     this.calendar = new FullCalendar.Calendar(calendarEl, {
-                        slotLabelFormat: {
-                            hour12: false,
-                            hour: 'numeric',
-                            minute: '2-digit',
-                            omitZeroMinute: false,
-                            meridiem: 'short'
-                        },
+                        locale: this.locale,
                         initialView: this.calendarViewType,
                         initialDate: this.currentWeekStart,
                         firstDay: 1,
@@ -1144,11 +1448,7 @@
                         slotDuration: '01:30:00',
                         slotLabelInterval: '01:30:00',
                         height: 'auto',
-                        headerToolbar: {
-                            left: '',
-                            center: '',
-                            right: 'timeGridDay,timeGridWeek,dayGridMonth'
-                        },
+                        headerToolbar: false,
                         selectable: true,
                         selectMirror: true,
                         selectOverlap: false,
@@ -1236,12 +1536,15 @@
                             'X-Requested-With': 'XMLHttpRequest',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                         },
+                        credentials: 'same-origin',
                         body: JSON.stringify(payload),
                     })
                         .then(response => {
                             if (!response.ok) {
                                 if (response.status === 422) {
-                                    return response.json().then(json => { throw json.errors; });
+                                    return response.json().then(json => {
+                                        throw json.errors;
+                                    });
                                 }
                                 throw new Error('Network response was not ok');
                             }
@@ -1249,12 +1552,11 @@
                         })
                         .then(data => {
                             const newEvent = this.enrichEvent(data.appointment);
-                            this.allEvents.push(newEvent);
-                            this.applyFilters();
+                            this.upsertEvent(newEvent);
                             this.closePopup();
                         })
                         .catch(errors => {
-                            this.errors = errors instanceof Error ? { general: [errors.message] } : errors;
+                            this.errors = errors instanceof Error ? {general: [errors.message]} : errors;
                         });
                 },
 
@@ -1278,12 +1580,15 @@
                             'X-Requested-With': 'XMLHttpRequest',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                         },
+                        credentials: 'same-origin',
                         body: JSON.stringify(payload),
                     })
                         .then(response => {
                             if (!response.ok) {
                                 if (response.status === 422) {
-                                    return response.json().then(json => { throw json.errors; });
+                                    return response.json().then(json => {
+                                        throw json.errors;
+                                    });
                                 }
                                 throw new Error('Network response was not ok');
                             }
@@ -1291,17 +1596,11 @@
                         })
                         .then(data => {
                             const updated = this.enrichEvent(data.appointment);
-                            const idx = this.allEvents.findIndex(event => event.id === updated.id);
-                            if (idx !== -1) {
-                                this.allEvents.splice(idx, 1, updated);
-                            } else {
-                                this.allEvents.push(updated);
-                            }
-                            this.applyFilters();
+                            this.upsertEvent(updated);
                             this.closePopup();
                         })
                         .catch(errors => {
-                            this.errors = errors instanceof Error ? { general: [errors.message] } : errors;
+                            this.errors = errors instanceof Error ? {general: [errors.message]} : errors;
                         });
                 },
 
@@ -1312,6 +1611,7 @@
                             'X-Requested-With': 'XMLHttpRequest',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                         },
+                        credentials: 'same-origin',
                     })
                         .then(response => {
                             if (!response.ok) {
@@ -1320,12 +1620,11 @@
                             return response.json();
                         })
                         .then(() => {
-                            this.allEvents = this.allEvents.filter(event => event.id !== eventData.id);
-                            this.applyFilters();
+                            this.removeEvent(eventData.id);
                             this.closePopup();
                         })
                         .catch(error => {
-                            this.errors = { general: [error.message] };
+                            this.errors = {general: [error.message]};
                         });
                 },
 
@@ -1347,3 +1646,4 @@
         });
     </script>
 @endpush
+

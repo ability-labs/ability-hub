@@ -7,7 +7,6 @@ use App\Http\Requests\ClearWeeklyAppointmentsRequest;
 use App\Http\Requests\StoreAppointmentRequest;
 use App\Http\Requests\UpdateAppointmentRequest;
 use App\Models\Appointment;
-use App\Models\Discipline;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -16,23 +15,9 @@ class AppointmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $user = $request->user();
-        $events = $user
-            ->appointments()
-            ->with(['learner', 'operator', 'discipline'])
-            ->get()
-            ->map(fn (Appointment $appointment) => $appointment->toFullCalendar());
-
-        $operators = $user->operators()->with('disciplines')->get();
-        $learners  = $user->learners()->get();
-        $disciplines = Discipline::all();
-
-        return view(
-            'appointments.index',
-            compact('events', 'operators', 'learners', 'disciplines')
-        );
+        return view('appointments.index');
     }
 
     /**
