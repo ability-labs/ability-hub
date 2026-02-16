@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Appointments\ClearWeeklyAppointments;
+use App\Actions\Appointments\DuplicateWeeklyAppointments;
 use App\Http\Requests\ClearWeeklyAppointmentsRequest;
+use App\Http\Requests\DuplicateWeeklyAppointmentsRequest;
 use App\Http\Requests\StoreAppointmentRequest;
 use App\Http\Requests\UpdateAppointmentRequest;
 use App\Models\Appointment;

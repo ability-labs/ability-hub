@@ -1,18 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Appointments;
 
-use App\Actions\Appointments\DuplicateWeeklyAppointments;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\DuplicateWeeklyAppointmentsRequest;
 use App\Http\Requests\FetchAppointmentsRequest;
 use App\Models\Discipline;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Carbon;
 
-class AppointmentController extends Controller
+class ListAppointmentsController extends Controller
 {
-    public function index(FetchAppointmentsRequest $request): JsonResponse
+    public function __invoke(FetchAppointmentsRequest $request): JsonResponse
     {
         $user = $request->user();
 

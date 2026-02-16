@@ -178,6 +178,22 @@
 
                 <div class="flex flex-col items-stretch gap-1 md:flex-row md:items-center md:gap-2">
                     <button type="button"
+                            @click="duplicateCurrentWeek()"
+                            :disabled="isDuplicatingWeek || isInitialLoading || isLoadingData"
+                            :class="isDuplicatingWeek || isInitialLoading || isLoadingData ? 'cursor-not-allowed opacity-70' : ''"
+                            class="inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-indigo-50 px-3 py-1.5 text-indigo-700 transition hover:bg-indigo-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 dark:bg-indigo-900/40 dark:text-indigo-200 dark:hover:bg-indigo-900/60">
+                        <svg x-show="!isDuplicatingWeek" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 7.5h9.75M7.5 12h9.75M7.5 16.5h9.75M3.75 7.5h.008v.008H3.75zm0 4.5h.008v.008H3.75zm0 4.5h.008v.008H3.75z" />
+                        </svg>
+                        <svg x-show="isDuplicatingWeek" class="h-4 w-4 animate-spin text-indigo-700 dark:text-indigo-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v2a6 6 0 0 0-6 6H4z"></path>
+                        </svg>
+                        <span x-show="!isDuplicatingWeek">{{ __('Duplicate week') }}</span>
+                        <span x-show="isDuplicatingWeek">{{ __('Duplicating') }}...</span>
+                    </button>
+
+                    <button type="button"
                             @click="clearCurrentWeek()"
                             :disabled="isClearingWeek || isInitialLoading || isLoadingData"
                             :class="isClearingWeek || isInitialLoading || isLoadingData ? 'cursor-not-allowed opacity-70' : ''"
@@ -190,13 +206,24 @@
                         <span x-show="!isClearingWeek">{{ __('Clear') }}</span>
                         <span x-show="isClearingWeek">{{ __('Clearing') }}...</span>
                     </button>
-                    <p x-show="clearWeekAlert"
-                       x-text="clearWeekAlert.message"
-                       :class="['mt-1 text-sm md:mt-0 md:pl-2', clearWeekAlertClasses()]">
-                    </p>
                 </div>
             </div>
         </div>
+
+            <div>
+                <template x-if="clearWeekAlert">
+                    <p
+                        x-text="clearWeekAlert.message"
+                        :class="['mt-1 text-sm md:mt-0 md:pl-2', clearWeekAlertClasses()]"
+                    ></p>
+                </template>
+                <template x-if="duplicateWeekAlert">
+                    <p
+                        x-text="duplicateWeekAlert.message"
+                        :class="['mt-1 text-sm md:mt-0 md:pl-2', duplicateWeekAlertClasses()]"
+                    ></p>
+                </template>
+            </div>
 
 {{--        <!-- Scatter table view -->--}}
 {{--        <div x-show="viewMode === 'scatter'" class="space-y-4">--}}
@@ -721,8 +748,10 @@
                 planErrors: {},
                 planAlert: {type: null, messages: []},
                 planIsGenerating: false,
+                isDuplicatingWeek: false,
                 isClearingWeek: false,
                 clearWeekAlert: null,
+                duplicateWeekAlert: null,
                 isInitialLoading: true,
                 isLoadingData: false,
                 loadingError: null,
@@ -1068,12 +1097,31 @@
                     this.clearWeekAlert = {type, message};
                 },
 
+                setDuplicateWeekAlert(type, message = '') {
+                    if (!type) {
+                        this.duplicateWeekAlert = null;
+                        return;
+                    }
+
+                    this.duplicateWeekAlert = {type, message};
+                },
+
                 clearWeekAlertClasses() {
                     if (!this.clearWeekAlert) {
                         return '';
                     }
 
                     return this.clearWeekAlert.type === 'error'
+                        ? 'text-red-600 dark:text-red-400'
+                        : 'text-green-600 dark:text-green-400';
+                },
+
+                duplicateWeekAlertClasses() {
+                    if (!this.duplicateWeekAlert) {
+                        return '';
+                    }
+
+                    return this.duplicateWeekAlert.type === 'error'
                         ? 'text-red-600 dark:text-red-400'
                         : 'text-green-600 dark:text-green-400';
                 },
@@ -1089,6 +1137,71 @@
 
                 async refreshAppointmentsForRange(start, end, force = false) {
                     await this.ensureMonthDataForRange(start, end, force);
+                },
+
+                async duplicateCurrentWeek() {
+                    if (this.isDuplicatingWeek || this.isInitialLoading) {
+                        return;
+                    }
+
+                    this.isDuplicatingWeek = true;
+                    this.setDuplicateWeekAlert(null);
+
+                    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    const payload = {
+                        week_start: this.formatDateISO(this.currentWeekStart),
+                        week_end: this.formatDateISO(this.weekEnd(this.currentWeekStart)),
+                    };
+
+                    try {
+                        const response = await fetch(`{{ route('api.appointments.week.duplicate') }}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': token,
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                            credentials: 'same-origin',
+                            body: JSON.stringify(payload),
+                        });
+
+                        const data = await response.json().catch(() => ({}));
+
+                        if (!response.ok) {
+                            const message = data.message || '{{ __('Unexpected error. Please try again later.') }}';
+                            this.setDuplicateWeekAlert('error', message);
+                            return;
+                        }
+
+                        const nextWeekStart = this.startOfWeek(new Date(this.currentWeekStart));
+                        nextWeekStart.setDate(nextWeekStart.getDate() + 7);
+                        const nextWeekEnd = this.weekEnd(nextWeekStart);
+
+                        // Invalidate cache for the next week so the watcher will refetch fresh data
+                        const monthsToInvalidate = this.monthsBetween(nextWeekStart, nextWeekEnd);
+                        monthsToInvalidate.forEach(({ date }) => {
+                            const key = this.monthKey(date);
+                            delete this.loadedMonths[key];
+                            // We don't strictly need to delete monthEvents[key] because fetchMonthData will overwrite it,
+                            // but deleting it ensures no stale data is shown briefly.
+                            delete this.monthEvents[key];
+                        });
+                        
+                        // We also need to rebuild events to remove the stale ones from allEvents
+                        this.rebuildAllEvents();
+
+                        this.currentWeekStart = nextWeekStart;
+                        this.setDuplicateWeekAlert(
+                            'success',
+                            data.message || '{{ __('Appointments duplicated successfully.') }}',
+                        );
+                    } catch (error) {
+                        console.error(error);
+                        this.setDuplicateWeekAlert('error', '{{ __('Network error. Please check your connection.') }}');
+                    } finally {
+                        this.isDuplicatingWeek = false;
+                    }
                 },
 
                 async clearCurrentWeek() {
