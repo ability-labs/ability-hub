@@ -130,7 +130,7 @@
                         
                         const bgColor = info.event.extendedProps.operator?.color || '#2563eb';
                         const borderColor = info.event.extendedProps.appointment_type?.color || bgColor;
-                        info.el.style.background = `linear-gradient(90deg, ${bgColor}1a, ${bgColor}33)`;
+                        info.el.style.backgroundColor = bgColor;
                         info.el.style.borderLeft = `4px solid ${borderColor}`;
 
                         // Tooltip or basic info
