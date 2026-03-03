@@ -1,7 +1,19 @@
 <style>
     .fc .fc-timegrid-slot {
-        height: 2.5rem;
-        min-height: 2.5rem;
+        height: 4rem;
+        min-height: 4rem;
+    }
+
+    /* Mejora legibilidad eventos con fondo claro */
+    .fc-event.is-light {
+        color: #000000 !important;
+    }
+    .fc-event.is-light .fc-event-main {
+        color: #000000 !important;
+    }
+    .fc-event.is-light .fc-event-time, 
+    .fc-event.is-light .fc-event-title {
+        color: #000000 !important;
     }
 </style>
 
@@ -1025,7 +1037,7 @@
                         day: '2-digit',
                         month: '2-digit',
                     });
-                    return Array.from({length: 5}).map((_, index) => {
+                    return Array.from({length: 6}).map((_, index) => {
                         const date = new Date(start);
                         date.setDate(start.getDate() + index);
                         const label = weekdayFormatter.format(date);
@@ -1072,7 +1084,7 @@
 
                 weekEnd(weekStart) {
                     const end = new Date(weekStart);
-                    end.setDate(end.getDate() + 5);
+                    end.setDate(end.getDate() + 6);
                     end.setHours(23, 59, 59, 999);
                     return end;
                 },
@@ -1427,7 +1439,19 @@
 
                 eventBackgroundStyle(event) {
                     const color = event.extendedProps.operator.color || '#2563eb';
-                    return `background: linear-gradient(90deg, ${color}1a, ${color}33); border-left: 4px solid ${color};`;
+                    const textColor = this.isLightColor(color) ? '#000' : 'inherit';
+                    return `background: linear-gradient(90deg, ${color}1a, ${color}33); border-left: 4px solid ${color}; color: ${textColor};`;
+                },
+
+                isLightColor(hex) {
+                    if (!hex || hex.length < 6) return false;
+                    const c = hex.substring(1);
+                    const rgb = parseInt(c, 16);
+                    const r = (rgb >> 16) & 0xff;
+                    const g = (rgb >>  8) & 0xff;
+                    const b = (rgb >>  0) & 0xff;
+                    const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+                    return luma > 165; // Umbral para considerar un color "claro"
                 },
 
                 disciplineLabel(discipline) {
@@ -1554,7 +1578,7 @@
                         initialView: this.calendarViewType,
                         initialDate: this.currentWeekStart,
                         firstDay: 1,
-                        hiddenDays: [0, 6],
+                        hiddenDays: [0],
                         allDaySlot: false,
                         slotMinTime: '09:00:00',
                         slotMaxTime: '20:00:00',
@@ -1593,6 +1617,12 @@
                             hour: '2-digit',
                             minute: '2-digit',
                             hour12: false,
+                        },
+                        eventDidMount: (info) => {
+                            const color = info.event.extendedProps.operator?.color || '#2563eb';
+                            if (this.isLightColor(color)) {
+                                info.el.classList.add('is-light');
+                            }
                         },
                     });
 
