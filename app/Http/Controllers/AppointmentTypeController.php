@@ -10,7 +10,7 @@ class AppointmentTypeController extends Controller
     const VALIDATION_RULES = [
         'name' => 'required|array',
         'name.it' => 'required|string|max:255',
-        'color' => 'nullable|string|regex:/^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/',
+        'color' => 'nullable|hex_color',
     ];
 
     /**
