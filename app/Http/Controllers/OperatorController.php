@@ -44,7 +44,7 @@ class OperatorController extends Controller
             $query->where('name', 'like', '%' . $params['search'] . '%');
         }
 
-        $operators = $query->paginate(25);
+        $operators = $query->paginate(50);
 
         return view('operators.index', [
             'operators'      => $operators,

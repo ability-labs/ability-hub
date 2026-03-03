@@ -57,7 +57,7 @@ class LearnerController extends Controller
                 ->orWhere('last_name', 'like', '%' . $params['search'] . '%');
         }
 
-        $learners = $query->paginate(25);
+        $learners = $query->paginate(50);
 
         return view('learners.index', [
             'learners' => $learners,
