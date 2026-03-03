@@ -536,6 +536,21 @@
                                 <p class="text-xs text-red-500" x-text="errors.discipline_id[0]"></p>
                             </template>
                         </div>
+                        <div class="space-y-2">
+                            <span class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Appointment Type') }}</span>
+                            <div class="flex flex-wrap gap-4">
+                                <template x-for="type in appointmentTypes" :key="type.id">
+                                    <label class="inline-flex items-center gap-2 text-sm">
+                                        <input type="radio" class="text-blue-600" :value="type.id"
+                                               x-model="selectedAppointmentType">
+                                        <span x-text="type.name.it ? type.name.it : type.name"></span>
+                                    </label>
+                                </template>
+                            </div>
+                            <template x-if="errors.appointment_type_id">
+                                <p class="text-xs text-red-500" x-text="errors.appointment_type_id[0]"></p>
+                            </template>
+                        </div>
                         <div>
                             <label
                                 class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Notes') }}</label>
@@ -695,6 +710,21 @@
                                 <p class="text-xs text-red-500" x-text="errors.discipline_id[0]"></p>
                             </template>
                         </div>
+                        <div class="space-y-2">
+                            <span class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Appointment Type') }}</span>
+                            <div class="flex flex-wrap gap-4">
+                                <template x-for="type in appointmentTypes" :key="type.id">
+                                    <label class="inline-flex items-center gap-2 text-sm">
+                                        <input type="radio" class="text-blue-600" :value="type.id"
+                                               x-model="selectedAppointmentType">
+                                        <span x-text="type.name.it ? type.name.it : type.name"></span>
+                                    </label>
+                                </template>
+                            </div>
+                            <template x-if="errors.appointment_type_id">
+                                <p class="text-xs text-red-500" x-text="errors.appointment_type_id[0]"></p>
+                            </template>
+                        </div>
                         <div>
                             <label
                                 class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Notes') }}</label>
@@ -779,7 +809,9 @@
                 selectedLearners: [],
                 selectedDiscipline: "",
                 availableDisciplines: [],
+                appointmentTypes: [],
                 selectedEvent: {},
+                selectedAppointmentType: "",
                 editingOperator: false,
                 editingLearner: false,
                 calendar: null,
@@ -873,8 +905,8 @@
                     if (Array.isArray(data.learners)) {
                         this.learners = data.learners;
                     }
-                    if (Array.isArray(data.disciplines)) {
-                        this.disciplines = data.disciplines;
+                    if (Array.isArray(data.appointment_types)) {
+                        this.appointmentTypes = data.appointment_types;
                     }
                     this.syncPlanLearnersMap();
                 },
@@ -1703,6 +1735,7 @@
                         operator_ids: this.selectedOperators,
                         learner_ids: this.selectedLearners,
                         discipline_id: this.selectedDiscipline,
+                        appointment_type_id: this.selectedAppointmentType,
                         comments: this.selectedEvent.comments,
                     };
 
@@ -1747,6 +1780,7 @@
                         operator_ids: this.selectedOperators,
                         learner_ids: this.selectedLearners,
                         discipline_id: this.selectedDiscipline,
+                        appointment_type_id: this.selectedAppointmentType,
                         comments: this.selectedEvent.comments,
                     };
                     fetch(`/appointments/${eventData.id}`, {
