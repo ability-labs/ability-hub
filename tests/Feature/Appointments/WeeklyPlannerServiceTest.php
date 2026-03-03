@@ -24,6 +24,9 @@ class WeeklyPlannerServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        // Seed appointment types
+        $this->seed(\Database\Seeders\AppointmentTypeSeeder::class);
+        
         // Create a test user for the service
         $this->testUser = User::factory()->create();
         // Initialize the WeeklyPlannerService with the test user

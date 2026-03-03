@@ -6,6 +6,7 @@ use App\Models\Discipline;
 use App\Models\Learner;
 use App\Models\Operator;
 use App\Models\User;
+use App\Models\AppointmentType;
 use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -29,6 +30,7 @@ class AppointmentFactory extends Factory
             'title' => $this->faker->sentence(),
             'discipline_id' => Discipline::factory(),    // <<< aggiunto
             'user_id'       => User::factory(),          // <<< aggiunto
+            'appointment_type_id' => AppointmentType::where('name->it', 'Terapia')->first()?->id ?? AppointmentType::factory(),
             'starts_at' => $starts_at,
             'ends_at' => $ends_at,
             'comments' => $this->faker->text(),

@@ -15,6 +15,13 @@ class AppointmentsApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Seed appointment types
+        $this->seed(\Database\Seeders\AppointmentTypeSeeder::class);
+    }
+
     public function test_it_returns_appointments_for_given_range(): void
     {
         $user = User::factory()->create();

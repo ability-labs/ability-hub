@@ -7,11 +7,14 @@ use App\Models\AppointmentType;
 use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 
 class UpsertAppointment
 {
     public function execute(User $user, array $data, ?Appointment $appointment = null): Appointment
     {
+        Log::info("UpsertAppointment execution started");
         return DB::transaction(function () use ($user, $data, $appointment) {
             $isNew = !$appointment;
             
@@ -28,6 +31,8 @@ class UpsertAppointment
 
             $appointment->starts_at = $data['starts_at'];
             $appointment->ends_at = $data['ends_at'];
+            $appointment->duration_minutes = $appointment->starts_at->diffInMinutes($appointment->ends_at);
+            
             $appointment->discipline_id = $data['discipline_id'] ?? $appointment->discipline_id;
             $appointment->appointment_type_id = $data['appointment_type_id'];
             $appointment->comments = $data['comments'] ?? '';
@@ -64,6 +69,8 @@ class UpsertAppointment
             $appointment->update([
                 'title' => $learnerNames . " (" . $operatorNames . ")"
             ]);
+
+            Log::info("UpsertAppointment saved successfully: ID " . $appointment->id);
 
             return $appointment->refresh();
         });

@@ -11,6 +11,8 @@ use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 
 class WeeklyPlannerService
 {
@@ -110,10 +112,13 @@ class WeeklyPlannerService
             $match = $this->findOperatorSlotMatch($operator->slots, $learnerSlot);
             if (!$match) continue;
 
+            Log::info("Found match for slot {$learnerSlot->id} with operator {$operator->id}");
             if ($this->isReservedOrConflicting($learner, $operator, $match, $weekStart, $daysTaken, $reserved)) {
+                Log::info("Conflict detected for slot {$learnerSlot->id} with operator {$operator->id}");
                 continue;
             }
 
+            Log::info("Creating appointment for learner {$learner->id} with operator {$operator->id} for slot {$learnerSlot->id}");
             return $this->createAppointment($learner, $operator, $match, $weekStart, $remaining, $daysTaken, $reserved);
         }
 
@@ -258,6 +263,10 @@ class WeeklyPlannerService
                   ->orWhere('operator_id', $op->id);
             })
             ->exists();
+
+        if ($learnerBusy || $opBusy) {
+            Log::info("Conflict: LearnerBusy=" . ($learnerBusy?'Yes':'No') . ", OpBusy=" . ($opBusy?'Yes':'No') . " for TypeID=" . ($therapyType?->id ?? 'NULL') . " Range: {$start} - {$end}");
+        }
 
         return $learnerBusy || $opBusy;
     }

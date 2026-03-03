@@ -12,6 +12,13 @@ use Tests\TestCase;
 
 class DuplicateWeeklyAppointmentsTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Seed appointment types
+        $this->seed(\Database\Seeders\AppointmentTypeSeeder::class);
+    }
+
     public function test_it_duplicates_appointments_for_a_specific_week_and_user_only()
     {
         // 1. Arrange

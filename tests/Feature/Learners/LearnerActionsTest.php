@@ -15,12 +15,13 @@ class LearnerActionsTest extends TestCase
         $attributes = Learner::factory()->make()->toArray();
         unset($attributes['full_name']);
         unset($attributes['age']);
+        unset($attributes['weekly_hours']);
 
         $learner = $action->execute($attributes);
         $this->assertModelExists($learner);
         $this->assertArrayIsEqualToArrayIgnoringListOfKeys(
             $attributes, $learner->toArray(),
-            ['id', 'created_at', 'updated_at', 'birth_date', 'full_name', 'age']
+            ['id', 'created_at', 'updated_at', 'birth_date', 'full_name', 'age', 'weekly_hours']
         );
     }
 
@@ -31,12 +32,13 @@ class LearnerActionsTest extends TestCase
         $new_attributes = Learner::factory()->make()->toArray();
         unset($new_attributes['full_name']);
         unset($new_attributes['age']);
+        unset($new_attributes['weekly_hours']);
 
         $learner = $action->execute($learner, $new_attributes);
         $this->assertModelExists($learner);
         $this->assertArrayIsEqualToArrayIgnoringListOfKeys(
             $new_attributes, $learner->toArray(),
-            ['id', 'created_at', 'updated_at', 'birth_date', 'full_name', 'age']
+            ['id', 'created_at', 'updated_at', 'birth_date', 'full_name', 'age', 'weekly_hours']
         );
     }
 }
