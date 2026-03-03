@@ -17,6 +17,8 @@ class FetchAppointmentsRequest extends FormRequest
         return [
             'starts_at' => ['nullable', 'date_format:Y-m-d'],
             'ends_at' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:starts_at'],
+            'operator_id' => ['nullable', 'uuid', 'exists:operators,id'],
+            'learner_id' => ['nullable', 'uuid', 'exists:learners,id'],
         ];
     }
 

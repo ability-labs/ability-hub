@@ -29,12 +29,8 @@
             </div>
         </div>
         <div class="w-3/4">
-            @include('appointments.partials.calendar', [
-                        'events' => $events,
-                        'operators' => $operators,
-                        'learners'  => $learners,
-                        'disciplines' => $disciplines,
-                        'showFilters' => false,
+            @include('appointments.partials.simple-calendar', [
+                        'filterOperator' => $operator->id,
                     ])
         </div>
     </div>

@@ -20,6 +20,12 @@ class ListAppointmentsController extends Controller
             ->appointments()
             ->with(['learner', 'operator', 'discipline'])
             ->whereBetween('starts_at', [$start, $end])
+            ->when($request->validated('operator_id'), function ($query, $operatorId) {
+                return $query->where('operator_id', $operatorId);
+            })
+            ->when($request->validated('learner_id'), function ($query, $learnerId) {
+                return $query->where('learner_id', $learnerId);
+            })
             ->orderBy('starts_at')
             ->get()
             ->map(fn ($appointment) => $appointment->toFullCalendar())

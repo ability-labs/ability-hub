@@ -104,12 +104,8 @@
             <!-- Tab Content -->
             <div x-show="activeTab === 'appointments'" class="mt-4 h-full">
                 <h2 class="text-xl mb-4 font-bold">{{ __('Appointments Calendar') }}</h2>
-                @include('appointments.partials.calendar', [
-                  'events' => $events,
-                  'operators' => $operators,
-                  'learners'  => $learners,
-                  'disciplines' => $disciplines,
-                  'showFilters' => false,
+                @include('appointments.partials.simple-calendar', [
+                  'filterLearner' => $learner->id,
                 ])
             </div>
             <div x-show="activeTab === 'preferences'">
