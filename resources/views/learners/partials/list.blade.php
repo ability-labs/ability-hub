@@ -40,6 +40,7 @@
                                 {{ __('Registration') }}:
                                 {{ \Carbon\Carbon::parse($learner->created_at)->format('d/m/Y') }}
                             </span>
+                            <span class="whitespace-nowrap">{{ __('Weekly Hours') }}: {{ $learner->weekly_hours }}h</span>
                         </div>
                     </div>
                 </div>
@@ -106,19 +107,10 @@
                     @endif
                 </th>
                 <th class="px-6 py-3 border-b border-gray-200">
-                    @if(in_array('birth_date', $sortable_fields))
-                        <a href="{{ route('learners.index', array_merge(request()->all(), [
-                            'sort' => 'birth_date',
-                            'sort_order' => ($sort === 'birth_date' && $sort_order === 'ASC') ? 'DESC' : 'ASC'
-                        ])) }}" class="hover:underline whitespace-nowrap inline-flex items-center gap-1">
-                            {{ __('Age') }}
-                            @if($sort === 'birth_date')
-                                <span>{{ $sort_order === 'ASC' ? '↑' : '↓' }}</span>
-                            @endif
-                        </a>
-                    @else
-                        <span class="whitespace-nowrap">{{ __('Age') }}</span>
-                    @endif
+                    <span class="whitespace-nowrap">{{ __('Age') }}</span>
+                </th>
+                <th class="px-6 py-3 border-b border-gray-200">
+                    <span class="whitespace-nowrap">{{ __('Weekly Hours') }}</span>
                 </th>
                 <th class="px-6 py-3 border-b border-gray-200">
                     @if(in_array('created_at', $sortable_fields))
@@ -150,6 +142,9 @@
                     </td>
                     <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">
                         {{ $learner->age }}
+                    </td>
+                    <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">
+                        {{ $learner->weekly_hours }}h
                     </td>
                     <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">
                         {{ \Carbon\Carbon::parse($learner->created_at)->format('d/m/Y') }}

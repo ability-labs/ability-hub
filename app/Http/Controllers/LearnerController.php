@@ -89,7 +89,7 @@ class LearnerController extends Controller
             $hours = (float) str_replace(',', '.', $attributes['weekly_hours']);
             $attributes['weekly_minutes'] = (int) round($hours * 60); // 4.5 -> 270
         } else {
-            $attributes['weekly_minutes'] = null;
+            $attributes['weekly_minutes'] = 0;
         }
         unset($attributes['weekly_hours']);
 
@@ -160,7 +160,7 @@ class LearnerController extends Controller
 
         if (array_key_exists('weekly_hours', $attributes)) {
             if ($attributes['weekly_hours'] === '' || $attributes['weekly_hours'] === null) {
-                $attributes['weekly_minutes'] = $learner->weekly_minutes;
+                $attributes['weekly_minutes'] = 0;
             } else {
                 $hours = (float) str_replace(',', '.', $attributes['weekly_hours']);
                 $attributes['weekly_minutes'] = (int) round($hours * 60);

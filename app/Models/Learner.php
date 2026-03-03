@@ -21,7 +21,13 @@ class Learner extends Model
     protected $appends = [
         'full_name',
         'age',
+        'weekly_hours',
     ];
+
+    public function getWeeklyHoursAttribute(): float
+    {
+        return round(($this->weekly_minutes ?? 0) / 60, 2);
+    }
 
     protected $casts = [
         'birth_date' => 'datetime',

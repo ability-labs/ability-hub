@@ -1335,7 +1335,7 @@
 
                 prettyPlanLearnerKey(key) {
                     const id = key.split('.')[1];
-                    return this.planLearnersById[id] ?? `Learner ${id}`;
+                    return this.planLearnersById[id] ?? `{{ __('Learner') }} ${id}`;
                 },
 
                 flattenPlanErrors(errs) {
@@ -1348,7 +1348,7 @@
                             const label = this.prettyPlanLearnerKey(key);
                             messages.forEach(message => out.push(`${label}: ${message}`));
                         } else if (key === 'learners') {
-                            messages.forEach(message => out.push(`Learners: ${message}`));
+                            messages.forEach(message => out.push(`{{ __('Learners') }}: ${message}`));
                         } else {
                             messages.forEach(message => out.push(`${key}: ${message}`));
                         }
