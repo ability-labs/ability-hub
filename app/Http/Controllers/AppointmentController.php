@@ -26,33 +26,15 @@ class AppointmentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreAppointmentRequest $request)
+    public function store(StoreAppointmentRequest $request, \App\Actions\Appointments\UpsertAppointment $action)
     {
-        $data = $request->validated();
-        
-        $operatorIds = $request->input('operator_ids', [$request->input('operator_id')]);
-        $learnerIds = $request->input('learner_ids', [$request->input('learner_id')]);
-
-        $data['operator_id'] = $operatorIds[0];
-        $data['learner_id'] = $learnerIds[0];
-        $data['title'] = 'temp';
-        $data['user_id'] = $request->user()->id;
-
-        $appointment = Appointment::create(Arr::except($data, ['operator_ids', 'learner_ids']));
-        $appointment->learners()->sync($learnerIds);
-        $appointment->operators()->sync($operatorIds);
-
-        $appointment->load(['learners', 'operators', 'discipline']);
-        
-        $learnerNames = $appointment->learners->pluck('full_name')->join(', ');
-        $operatorNames = $appointment->operators->pluck('name')->join(', ');
-        $appointment->update(['title' => $learnerNames . " (". $operatorNames .")"]);
+        $appointment = $action->execute($request->user(), $request->validated());
 
         $message = __("The :resource was created!", ['resource' => __('Appointment')]);
         return $request->expectsJson() ?
             response()->json([
                 'message'     => __('Appointment created successfully.'),
-                'appointment' => $appointment->refresh()->toFullCalendar(),
+                'appointment' => $appointment->toFullCalendar(),
             ])
             : redirect()
             ->route('appointments.index')
@@ -62,29 +44,13 @@ class AppointmentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAppointmentRequest $request, Appointment $appointment)
+    public function update(UpdateAppointmentRequest $request, Appointment $appointment, \App\Actions\Appointments\UpsertAppointment $action)
     {
         if ($request->user()->cannot('update', $appointment)) {
             abort(403);
         }
 
-        $data = $request->validated();
-        
-        $operatorIds = $request->input('operator_ids', [$request->input('operator_id')]);
-        $learnerIds = $request->input('learner_ids', [$request->input('learner_id')]);
-
-        $data['operator_id'] = $operatorIds[0];
-        $data['learner_id'] = $learnerIds[0];
-
-        $appointment->update(Arr::except($data, ['operator_ids', 'learner_ids']));
-        $appointment->learners()->sync($learnerIds);
-        $appointment->operators()->sync($operatorIds);
-
-        $appointment->load(['learners', 'operators', 'discipline']);
-        
-        $learnerNames = $appointment->learners->pluck('full_name')->join(', ');
-        $operatorNames = $appointment->operators->pluck('name')->join(', ');
-        $appointment->update(['title' => $learnerNames . " (". $operatorNames .")"]);
+        $appointment = $action->execute($request->user(), $request->validated(), $appointment);
 
         $message = __("The :resource was updated!", ['resource' => __('Appointment')]);
         return $request->expectsJson() ?

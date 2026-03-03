@@ -192,15 +192,13 @@ class WeeklyPlannerService
         $useMinutes = min($slot->duration_minutes, $remaining);
         $end = $start->copy()->addMinutes($useMinutes);
 
-        $app = Appointment::create([
-            'user_id'          => $this->user->id,
+        $action = new \App\Actions\Appointments\UpsertAppointment();
+        $app = $action->execute($this->user, [
             'learner_id'       => $learner->id,
             'operator_id'      => $op->id,
             'discipline_id'    => $slot->discipline_id,
-            'title'            => $this->generateAppointmentTitle($learner, $op),
             'starts_at'        => $start,
             'ends_at'          => $end,
-            'duration_minutes' => $useMinutes,
             'comments'         => '',
         ]);
 
@@ -244,20 +242,21 @@ class WeeklyPlannerService
 
     private function hasConflictingAppointment(Learner $learner, Operator $op, Carbon $start, Carbon $end): bool
     {
-        $learnerBusy = Appointment::where(function($q) use ($learner) {
+        $therapyType = \App\Models\AppointmentType::where('name->it', 'Terapia')->first();
+        $baseQuery = Appointment::where('appointment_type_id', $therapyType?->id)
+            ->where('starts_at', '<', $end)
+            ->where('ends_at', '>', $start);
+
+        $learnerBusy = (clone $baseQuery)->where(function($q) use ($learner) {
                 $q->whereHas('learners', fn($sq) => $sq->where('learners.id', $learner->id))
                   ->orWhere('learner_id', $learner->id);
             })
-            ->where('starts_at', '<', $end)
-            ->where('ends_at', '>', $start)
             ->exists();
 
-        $opBusy = Appointment::where(function($q) use ($op) {
+        $opBusy = (clone $baseQuery)->where(function($q) use ($op) {
                 $q->whereHas('operators', fn($sq) => $sq->where('operators.id', $op->id))
                   ->orWhere('operator_id', $op->id);
             })
-            ->where('starts_at', '<', $end)
-            ->where('ends_at', '>', $start)
             ->exists();
 
         return $learnerBusy || $opBusy;
@@ -265,7 +264,9 @@ class WeeklyPlannerService
 
     private function getLearnerScheduledDaysInWeek(Learner $learner, Carbon $start, Carbon $end): array
     {
+        $therapyType = \App\Models\AppointmentType::where('name->it', 'Terapia')->first();
         return $learner->appointments()
+            ->where('appointment_type_id', $therapyType?->id)
             ->whereBetween('starts_at', [$start, $end])
             ->get()
             ->map(fn($a) => (int) $a->starts_at->dayOfWeekIso)
@@ -292,7 +293,11 @@ class WeeklyPlannerService
     private function getRemainingMinutesForWeek(Learner $learner, Carbon $weekStart): int
     {
         $weekEnd = $weekStart->copy()->endOfWeek();
-        $scheduled = $learner->appointments()->whereBetween('starts_at', [$weekStart, $weekEnd])->sum('duration_minutes');
+        $therapyType = \App\Models\AppointmentType::where('name->it', 'Terapia')->first();
+        $scheduled = $learner->appointments()
+            ->where('appointment_type_id', $therapyType?->id)
+            ->whereBetween('starts_at', [$weekStart, $weekEnd])
+            ->sum('duration_minutes');
         return max(0, $learner->weekly_minutes - $scheduled);
     }
 

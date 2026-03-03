@@ -31,6 +31,7 @@ class UpdateAppointmentRequest extends FormRequest
             'learner_ids'   => 'sometimes|required_without:learner_id|array|min:1',
             'learner_ids.*' => 'uuid|exists:learners,id',
             'discipline_id' => 'required|uuid|exists:disciplines,id',
+            'appointment_type_id' => 'nullable|uuid|exists:appointment_types,id',
             'starts_at'     => 'required|date',
             'ends_at'       => 'required|date|after:starts_at',
             'comments'      => 'string|nullable|max:2048'

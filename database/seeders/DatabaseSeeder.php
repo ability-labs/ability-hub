@@ -14,10 +14,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(DisciplineSeeder::class);
-        $this->call(ReinforcerSeeder::class);
-        $this->call(ContentCardSeeder::class);
-        $this->call(DatasheetTypeSeeder::class);
+        $this->call(AppointmentTypeSeeder::class);
         $this->call(SlotsSeeder::class);
     }
 }

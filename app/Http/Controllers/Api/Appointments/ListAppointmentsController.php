@@ -28,12 +28,14 @@ class ListAppointmentsController extends Controller
         $operators = $user->operators()->with('disciplines')->get();
         $learners = $user->learners()->get();
         $disciplines = Discipline::all();
+        $appointmentTypes = \App\Models\AppointmentType::all();
 
         return response()->json([
             'appointments' => $appointments,
             'operators' => $operators,
             'learners' => $learners,
             'disciplines' => $disciplines,
+            'appointment_types' => $appointmentTypes,
             'range' => [
                 'starts_at' => $start->toDateString(),
                 'ends_at' => $end->toDateString(),

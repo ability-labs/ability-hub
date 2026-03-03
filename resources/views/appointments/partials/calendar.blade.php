@@ -1540,8 +1540,10 @@
                     };
                     this.selectedOperators = [];
                     this.selectedLearners = [];
-                    this.selectedDiscipline = "";
                     this.availableDisciplines = [];
+                    // Default to Terapia
+                    const therapy = this.appointmentTypes.find(t => t.name && (t.name.it === 'Terapia' || t.name === 'Terapia'));
+                    this.selectedAppointmentType = therapy ? therapy.id : "";
                     this.editingOperator = false;
                     this.editingLearner = false;
                     this.popup = 'add';
@@ -1558,6 +1560,7 @@
                     this.selectedOperators = event.extendedProps.operators ? event.extendedProps.operators.map(o => o.id) : [event.extendedProps.operator.id];
                     this.selectedLearners = event.extendedProps.learners ? event.extendedProps.learners.map(l => l.id) : [event.extendedProps.learner.id];
                     this.selectedDiscipline = event.extendedProps.discipline.id;
+                    this.selectedAppointmentType = event.extendedProps.appointment_type_id || "";
                     this.updateAvailableDisciplines();
                     this.editingOperator = false;
                     this.editingLearner = false;

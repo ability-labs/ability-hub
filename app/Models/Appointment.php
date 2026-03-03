@@ -70,6 +70,11 @@ class Appointment extends Model
             );
     }
 
+    public function appointmentType(): BelongsTo
+    {
+        return $this->belongsTo(AppointmentType::class);
+    }
+
     public function toFullCalendar(): array
     {
         $learnerNames = $this->learners->pluck('full_name')->join(', ');
@@ -87,6 +92,7 @@ class Appointment extends Model
                 'learners' => $this->learners,
                 'operators' => $this->operators,
                 'discipline' => $this->discipline,
+                'appointment_type_id' => $this->appointment_type_id,
                 'comments' => $this->comments
             ]
         ];
