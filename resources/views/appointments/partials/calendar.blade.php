@@ -1389,17 +1389,13 @@
                                     type: 'error',
                                     messages: this.flattenPlanErrors(this.planErrors),
                                 };
-                                return;
+                            } else {
+                                this.planAlert = {
+                                    type: 'error',
+                                    messages: ['{{ __('Unexpected error. Please try again later.') }}'],
+                                };
                             }
-
-                            this.planAlert = {
-                                type: 'error',
-                                messages: ['{{ __('Unexpected error. Please try again later.') }}'],
-                            };
-                            return;
-                        }
-
-                        if (data.errors && Object.keys(data.errors).length) {
+                        } else if (data.errors && Object.keys(data.errors).length) {
                             this.planErrors = data.errors;
                             this.planAlert = {
                                 type: 'warning',
@@ -1408,14 +1404,14 @@
                                     ...this.flattenPlanErrors(this.planErrors),
                                 ],
                             };
-                            return;
+                        } else {
+                            this.planAlert = {
+                                type: 'success',
+                                messages: ['{{ __('Planning completed successfully.') }}'],
+                            };
+                            this.closePlanModal();
                         }
 
-                        this.planAlert = {
-                            type: 'success',
-                            messages: ['{{ __('Planning completed successfully.') }}'],
-                        };
-                        this.closePlanModal();
                         await this.refreshAppointmentsForCurrentWeek(true);
                     } catch (error) {
                         console.error(error);
