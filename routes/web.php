@@ -25,6 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Appointments Section Routes
     Route::resource('appointments', AppointmentController::class);
+    Route::resource('appointment-types', \App\Http\Controllers\AppointmentTypeController::class);
 
     // Appointments Section Routes
     Route::resource('learners.datasheets', DatasheetController::class)

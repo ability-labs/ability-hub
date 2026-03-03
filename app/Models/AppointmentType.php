@@ -12,7 +12,7 @@ class AppointmentType extends Model
     /** @use HasFactory<\Database\Factories\AppointmentTypeFactory> */
     use HasFactory, HasUuids, HasTranslations;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'color'];
 
     public $translatable = ['name'];
 }

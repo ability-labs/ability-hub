@@ -187,48 +187,70 @@
                 {{--            <button type="button" @click="printCalendar()" class="inline-flex items-center justify-center gap-1 rounded-md border border-transparent bg-gray-200 px-3 py-1.5 text-gray-700 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">--}}
                 {{--                {{ __('Print calendar') }}--}}
                 {{--            </button>--}}
-                <button type="button"
-                        @click="openPlanModal()"
-                        class="inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-blue-600 px-3 py-1.5 text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                         stroke="currentColor" class="size-4">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59"/>
+                <a href="{{ route('appointment-types.index') }}"
+                   class="inline-flex items-center justify-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
                     </svg>
+                    <span class="hidden sm:inline">{{ __('Appointment Types') }}</span>
+                </a>
 
-                    {{ __('Plan') }}
-                </button>
-
-                <div class="flex flex-col items-stretch gap-1 md:flex-row md:items-center md:gap-2">
+                <div class="relative" x-data="{ openOptions: false }">
                     <button type="button"
-                            @click="duplicateCurrentWeek()"
-                            :disabled="isDuplicatingWeek || isInitialLoading || isLoadingData"
-                            :class="isDuplicatingWeek || isInitialLoading || isLoadingData ? 'cursor-not-allowed opacity-70' : ''"
-                            class="inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-indigo-50 px-3 py-1.5 text-indigo-700 transition hover:bg-indigo-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 dark:bg-indigo-900/40 dark:text-indigo-200 dark:hover:bg-indigo-900/60">
-                        <svg x-show="!isDuplicatingWeek" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 7.5h9.75M7.5 12h9.75M7.5 16.5h9.75M3.75 7.5h.008v.008H3.75zm0 4.5h.008v.008H3.75zm0 4.5h.008v.008H3.75z" />
+                            @click="openOptions = !openOptions"
+                            @click.outside="openOptions = false"
+                            class="inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
                         </svg>
-                        <svg x-show="isDuplicatingWeek" class="h-4 w-4 animate-spin text-indigo-700 dark:text-indigo-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v2a6 6 0 0 0-6 6H4z"></path>
+                        <span>{{ __('Manage Planning') }}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
-                        <span x-show="!isDuplicatingWeek">{{ __('Duplicate week') }}</span>
-                        <span x-show="isDuplicatingWeek">{{ __('Duplicating') }}...</span>
                     </button>
 
-                    <button type="button"
-                            @click="clearCurrentWeek()"
-                            :disabled="isClearingWeek || isInitialLoading || isLoadingData"
-                            :class="isClearingWeek || isInitialLoading || isLoadingData ? 'cursor-not-allowed opacity-70' : ''"
-                            class="inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-red-50 px-3 py-1.5 text-red-700 transition hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 dark:bg-red-900/40 dark:text-red-200 dark:hover:bg-red-900/60">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                             stroke="currentColor" class="h-4 w-4">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.02-2.09 2.2v.917m7.5 0a48.667 48.667 0 0 0-7.5 0"/>
-                        </svg>
-                        <span x-show="!isClearingWeek">{{ __('Clear') }}</span>
-                        <span x-show="isClearingWeek">{{ __('Clearing') }}...</span>
-                    </button>
+                    <div x-show="openOptions"
+                         x-transition.opacity
+                         class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800 dark:ring-gray-700" 
+                         role="menu" aria-orientation="vertical" tabindex="-1">
+                        <div class="py-1" role="none">
+                            <button type="button"
+                                    @click="openPlanModal(); openOptions = false"
+                                    class="text-gray-700 flex w-full items-center px-4 py-2 text-sm hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700" role="menuitem" tabindex="-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-3 h-5 w-5 text-gray-400">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59"/>
+                                </svg>
+                                {{ __('Plan') }}
+                            </button>
+
+                            <button type="button"
+                                    @click="duplicateCurrentWeek(); openOptions = false"
+                                    :disabled="isDuplicatingWeek || isInitialLoading || isLoadingData"
+                                    class="text-gray-700 flex w-full items-center px-4 py-2 text-sm hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 disabled:opacity-50" role="menuitem" tabindex="-1">
+                                <svg x-show="!isDuplicatingWeek" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-3 h-5 w-5 text-gray-400">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 7.5h9.75M7.5 12h9.75M7.5 16.5h9.75M3.75 7.5h.008v.008H3.75zm0 4.5h.008v.008H3.75zm0 4.5h.008v.008H3.75z" />
+                                </svg>
+                                <svg x-show="isDuplicatingWeek" class="mr-3 h-5 w-5 animate-spin text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v2a6 6 0 0 0-6 6H4z"></path>
+                                </svg>
+                                <span x-show="!isDuplicatingWeek">{{ __('Duplicate week') }}</span>
+                                <span x-show="isDuplicatingWeek">{{ __('Duplicating') }}...</span>
+                            </button>
+
+                            <button type="button"
+                                    @click="clearCurrentWeek(); openOptions = false"
+                                    :disabled="isClearingWeek || isInitialLoading || isLoadingData"
+                                    class="text-gray-700 flex w-full items-center px-4 py-2 text-sm hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 disabled:opacity-50" role="menuitem" tabindex="-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-3 h-5 w-5 text-red-500">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.02-2.09 2.2v.917m7.5 0a48.667 48.667 0 0 0-7.5 0"/>
+                                </svg>
+                                <span x-show="!isClearingWeek" class="text-red-500">{{ __('Clear') }}</span>
+                                <span x-show="isClearingWeek" class="text-red-500">{{ __('Clearing') }}...</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1517,9 +1539,10 @@
                 },
 
                 eventBackgroundStyle(event) {
-                    const color = event.extendedProps.operators?.[0]?.color || event.extendedProps.operator?.color || '#2563eb';
-                    const textColor = this.isLightColor(color) ? '#000' : 'inherit';
-                    return `background: linear-gradient(90deg, ${color}1a, ${color}33); border-left: 4px solid ${color}; color: ${textColor};`;
+                    const bgColor = event.extendedProps.operators?.[0]?.color || event.extendedProps.operator?.color || '#2563eb';
+                    const textColor = this.isLightColor(bgColor) ? '#000' : 'inherit';
+                    const borderColor = event.extendedProps.appointment_type?.color || bgColor;
+                    return `background: linear-gradient(90deg, ${bgColor}1a, ${bgColor}33); border-left: 4px solid ${borderColor}; color: ${textColor};`;
                 },
 
                 isLightColor(hex) {

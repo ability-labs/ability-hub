@@ -79,19 +79,24 @@ class Appointment extends Model
     {
         $learnerNames = $this->learners->pluck('full_name')->join(', ');
         $operatorNames = $this->operators->pluck('name')->join(', ');
+        
+        $bgColor = $this->operators->first()?->color ?? '#2563eb';
+        $borderColor = $this->appointmentType?->color ?? $bgColor;
 
         return [
             'id'      => $this->id,
             'title'   => $learnerNames . ' (' . $operatorNames . ')',
             'start'   => $this->starts_at,
             'end'     => $this->ends_at,
-            'color'   => $this->operators->first()?->color ?? '#2563eb',
+            'color'   => $bgColor,
+            'borderColor' => $borderColor,
             'extendedProps' => [
                 'learner' => $this->learners->first(), // For BC with some UI parts
                 'operator'=> $this->operators->first(), // For BC with some UI parts
                 'learners' => $this->learners,
                 'operators' => $this->operators,
                 'discipline' => $this->discipline,
+                'appointment_type' => $this->appointmentType,
                 'appointment_type_id' => $this->appointment_type_id,
                 'comments' => $this->comments
             ]
