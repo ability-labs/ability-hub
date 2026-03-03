@@ -110,7 +110,19 @@
                     <span class="whitespace-nowrap">{{ __('Age') }}</span>
                 </th>
                 <th class="px-6 py-3 border-b border-gray-200">
-                    <span class="whitespace-nowrap">{{ __('Weekly Hours') }}</span>
+                    @if(in_array('weekly_hours', $sortable_fields))
+                        <a href="{{ route('learners.index', array_merge(request()->all(), [
+                            'sort' => 'weekly_hours',
+                            'sort_order' => ($sort === 'weekly_hours' && $sort_order === 'ASC') ? 'DESC' : 'ASC'
+                        ])) }}" class="hover:underline whitespace-nowrap inline-flex items-center gap-1">
+                            {{ __('Weekly Hours') }}
+                            @if($sort === 'weekly_hours')
+                                <span>{{ $sort_order === 'ASC' ? '↑' : '↓' }}</span>
+                            @endif
+                        </a>
+                    @else
+                        <span class="whitespace-nowrap">{{ __('Weekly Hours') }}</span>
+                    @endif
                 </th>
                 <th class="px-6 py-3 border-b border-gray-200">
                     @if(in_array('created_at', $sortable_fields))

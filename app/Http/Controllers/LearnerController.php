@@ -22,6 +22,7 @@ class LearnerController extends Controller
         'birth_date',
         'firstname',
         'lastname',
+        'weekly_hours',
     ];
 
     /**
@@ -38,8 +39,18 @@ class LearnerController extends Controller
         $sort = array_key_exists('sort', $params) ? $params['sort'] : 'created_at';
         $sort_order = array_key_exists('sort', $params) ? $params['sort_order'] : 'DESC';
 
+        $sortMapping = [
+            'firstname' => 'first_name',
+            'lastname' => 'last_name',
+            'weekly_hours' => 'weekly_minutes',
+            'created_at' => 'created_at',
+            'birth_date' => 'birth_date',
+        ];
+
+        $column = $sortMapping[$sort] ?? 'created_at';
+
         $query = $request->user()->learners()
-            ->orderBy($sort, $sort_order);
+            ->orderBy($column, $sort_order);
 
         if (array_key_exists('search', $params)) {
             $query->where('first_name', 'like', '%' . $params['search'] . '%')
