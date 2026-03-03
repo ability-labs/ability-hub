@@ -170,6 +170,17 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
                     </svg>
                 </button>
+                <button type="button" @click="showSaturday = !showSaturday"
+                        class="inline-flex items-center justify-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 shadow-sm transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+                        title="{{ __('Toggle Saturday') }}">
+                    <svg x-show="!showSaturday" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-gray-500">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    <svg x-show="showSaturday" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-gray-500">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" />
+                    </svg>
+                    <span class="text-xs font-semibold">{{ __('Saturday') }}</span>
+                </button>
                 {{--            <button type="button" @click="goToCurrentWeek()" class="inline-flex items-center justify-center gap-1 rounded-md border border-transparent bg-blue-50 px-3 py-1.5 text-blue-700 transition hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-blue-900/40 dark:text-blue-200 dark:hover:bg-blue-900/60">--}}
                 {{--                {{ __('Current week') }}--}}
                 {{--            </button>--}}
@@ -831,6 +842,7 @@
                 isInitialLoading: true,
                 isLoadingData: false,
                 loadingError: null,
+                showSaturday: false,
 
                 init() {
                     this.currentWeekStart = this.startOfWeek(new Date());
@@ -843,6 +855,12 @@
                     this.$watch('viewMode', value => {
                         if (value === 'calendar') {
                             this.$nextTick(() => this.ensureCalendar());
+                        }
+                    });
+
+                    this.$watch('showSaturday', value => {
+                        if (this.calendar) {
+                            this.calendar.setOption('hiddenDays', value ? [0] : [0, 6]);
                         }
                     });
 
@@ -1101,7 +1119,8 @@
                         day: '2-digit',
                         month: '2-digit',
                     });
-                    return Array.from({length: 6}).map((_, index) => {
+                    const len = this.showSaturday ? 6 : 5;
+                    return Array.from({length: len}).map((_, index) => {
                         const date = new Date(start);
                         date.setDate(start.getDate() + index);
                         const label = weekdayFormatter.format(date);
@@ -1645,7 +1664,7 @@
                         initialView: this.calendarViewType,
                         initialDate: this.currentWeekStart,
                         firstDay: 1,
-                        hiddenDays: [0],
+                        hiddenDays: this.showSaturday ? [0] : [0, 6],
                         allDaySlot: false,
                         slotMinTime: '09:00:00',
                         slotMaxTime: '20:00:00',
