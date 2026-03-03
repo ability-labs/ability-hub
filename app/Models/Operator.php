@@ -30,9 +30,9 @@ class Operator extends Model
         return $this->belongsToMany(Slot::class, 'availability_operator');
     }
 
-    public function appointments(): HasMany
+    public function appointments(): BelongsToMany
     {
-        return $this->hasMany(Appointment::class);
+        return $this->belongsToMany(Appointment::class);
     }
 
     public function learners(): BelongsToMany

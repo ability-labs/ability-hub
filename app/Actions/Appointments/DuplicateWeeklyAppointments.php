@@ -14,6 +14,7 @@ class DuplicateWeeklyAppointments
         $end = $weekEnd->copy()->endOfDay();
 
         $appointments = Appointment::query()
+            ->with(['learners', 'operators'])
             ->where('user_id', $user->id)
             ->whereBetween('starts_at', [$start, $end])
             ->get();
@@ -27,6 +28,10 @@ class DuplicateWeeklyAppointments
             $duplicate->ends_at = $this->shiftDateByWeek($appointment->ends_at);
 
             $duplicate->save();
+            
+            $duplicate->learners()->sync($appointment->learners->pluck('id'));
+            $duplicate->operators()->sync($appointment->operators->pluck('id'));
+
             $created++;
         }
 

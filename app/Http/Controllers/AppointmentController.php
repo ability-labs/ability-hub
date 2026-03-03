@@ -11,6 +11,7 @@ use App\Http\Requests\UpdateAppointmentRequest;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Arr;
 
 class AppointmentController extends Controller
 {
@@ -28,15 +29,27 @@ class AppointmentController extends Controller
     public function store(StoreAppointmentRequest $request)
     {
         $data = $request->validated();
+        
+        $operatorIds = $request->input('operator_ids', [$request->input('operator_id')]);
+        $learnerIds = $request->input('learner_ids', [$request->input('learner_id')]);
+
+        $data['operator_id'] = $operatorIds[0];
+        $data['learner_id'] = $learnerIds[0];
         $data['title'] = 'temp';
         $data['user_id'] = $request->user()->id;
 
-        $appointment = Appointment::create($data);
-        $appointment->load(['learner', 'operator', 'discipline']);
-        $appointment->update(['title' => $appointment->learner->full_name . " (". $appointment->operator->name .")"]);
+        $appointment = Appointment::create(Arr::except($data, ['operator_ids', 'learner_ids']));
+        $appointment->learners()->sync($learnerIds);
+        $appointment->operators()->sync($operatorIds);
+
+        $appointment->load(['learners', 'operators', 'discipline']);
+        
+        $learnerNames = $appointment->learners->pluck('full_name')->join(', ');
+        $operatorNames = $appointment->operators->pluck('name')->join(', ');
+        $appointment->update(['title' => $learnerNames . " (". $operatorNames .")"]);
 
         $message = __("The :resource was created!", ['resource' => __('Appointment')]);
-        return $request->ajax() ?
+        return $request->expectsJson() ?
             response()->json([
                 'message'     => __('Appointment created successfully.'),
                 'appointment' => $appointment->refresh()->toFullCalendar(),
@@ -56,12 +69,25 @@ class AppointmentController extends Controller
         }
 
         $data = $request->validated();
-        $appointment->update($data);
-        $appointment->load(['learner', 'operator', 'discipline']);
-        $appointment->update(['title' => $appointment->learner->full_name . " (". $appointment->operator->name .")"]);
+        
+        $operatorIds = $request->input('operator_ids', [$request->input('operator_id')]);
+        $learnerIds = $request->input('learner_ids', [$request->input('learner_id')]);
+
+        $data['operator_id'] = $operatorIds[0];
+        $data['learner_id'] = $learnerIds[0];
+
+        $appointment->update(Arr::except($data, ['operator_ids', 'learner_ids']));
+        $appointment->learners()->sync($learnerIds);
+        $appointment->operators()->sync($operatorIds);
+
+        $appointment->load(['learners', 'operators', 'discipline']);
+        
+        $learnerNames = $appointment->learners->pluck('full_name')->join(', ');
+        $operatorNames = $appointment->operators->pluck('name')->join(', ');
+        $appointment->update(['title' => $learnerNames . " (". $operatorNames .")"]);
 
         $message = __("The :resource was updated!", ['resource' => __('Appointment')]);
-        return $request->ajax() ?
+        return $request->expectsJson() ?
             response()->json([
                 'message'     => $message,
                 'appointment' => $appointment->toFullCalendar(),
@@ -83,7 +109,7 @@ class AppointmentController extends Controller
         $appointment->delete();
 
         $message = __("The :resource was deleted!", ['resource' => __('Appointment')]);
-        return $request->ajax() ?
+        return $request->expectsJson() ?
             response()->json([
                 'message' => $message
             ])

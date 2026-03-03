@@ -54,9 +54,9 @@ class Learner extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function appointments(): HasMany
+    public function appointments(): BelongsToMany
     {
-        return $this->hasMany(Appointment::class);
+        return $this->belongsToMany(Appointment::class);
     }
 
     public function datasheets(): HasMany

@@ -496,33 +496,31 @@
                             <div>
                                 <label
                                     class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Learner') }}</label>
-                                <select x-model="selectedLearner"
+                                <select x-model="selectedLearners" multiple size="5"
                                         class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
-                                    <option value=""></option>
                                     <template x-for="learner in learners" :key="learner.id">
                                         <option :value="learner.id" x-text="learner.full_name"></option>
                                     </template>
                                 </select>
-                                <template x-if="errors.learner_id">
-                                    <p class="mt-1 text-xs text-red-500" x-text="errors.learner_id[0]"></p>
+                                <template x-if="errors.learner_ids">
+                                    <p class="mt-1 text-xs text-red-500" x-text="errors.learner_ids[0]"></p>
                                 </template>
                             </div>
                             <div>
                                 <label
                                     class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Operator') }}</label>
-                                <select x-model="selectedOperator" @change="updateAvailableDisciplines()"
+                                <select x-model="selectedOperators" @change="updateAvailableDisciplines()" multiple size="5"
                                         class="mt-1 w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
-                                    <option value=""></option>
                                     <template x-for="op in operators" :key="op.id">
                                         <option :value="op.id" x-text="op.name"></option>
                                     </template>
                                 </select>
-                                <template x-if="errors.operator_id">
-                                    <p class="mt-1 text-xs text-red-500" x-text="errors.operator_id[0]"></p>
+                                <template x-if="errors.operator_ids">
+                                    <p class="mt-1 text-xs text-red-500" x-text="errors.operator_ids[0]"></p>
                                 </template>
                             </div>
                         </div>
-                        <div x-show="selectedOperator" class="space-y-2">
+                        <div x-show="selectedOperators.length > 0" class="space-y-2">
                             <span
                                 class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Discipline') }}</span>
                             <div class="flex flex-wrap gap-4">
@@ -594,11 +592,45 @@
                             <div>
                                 <label
                                     class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Learner') }}</label>
-                                <p class="mt-1 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
-                                    <span x-text="learnerName(selectedLearner) || '—'"></span>
-                                </p>
-                                <template x-if="errors.learner_id">
-                                    <p class="mt-1 text-xs text-red-500" x-text="errors.learner_id[0]"></p>
+                                <template x-if="!editingLearner">
+                                    <div class="mt-1 flex items-center gap-2">
+                                        <p class="flex-1 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                                            <span x-text="selectedLearners.map(id => learnerName(id)).join(', ') || '—'"></span>
+                                        </p>
+                                        <button type="button"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-gray-200 p-2 text-gray-600 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                                                @click="editingLearner = true">
+                                            <span class="sr-only">{{ __('Edit learners') }}</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                 stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      d="M16.862 4.487a2.1 2.1 0 0 1 2.97 2.97L8.488 18.802a4.2 4.2 0 0 1-1.585.99l-3.18 1.06 1.06-3.18a4.2 4.2 0 0 1 .99-1.585L16.862 4.487Zm0 0L19.5 7.125"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </template>
+                                <template x-if="editingLearner">
+                                    <div class="mt-1 flex items-center gap-2">
+                                        <select x-model="selectedLearners" multiple size="5"
+                                                class="flex-1 rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
+                                            <template x-for="l in learners" :key="l.id">
+                                                <option :value="l.id" x-text="l.full_name"></option>
+                                            </template>
+                                        </select>
+                                        <button type="button"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-gray-200 p-2 text-gray-600 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                                                @click="editingLearner = false">
+                                            <span class="sr-only">{{ __('Cancel learner edit') }}</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                 stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      d="M6 18 18 6m0 12L6 6"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </template>
+                                <template x-if="errors.learner_ids">
+                                    <p class="mt-1 text-xs text-red-500" x-text="errors.learner_ids[0]"></p>
                                 </template>
                             </div>
                             <div>
@@ -607,12 +639,12 @@
                                 <template x-if="!editingOperator">
                                     <div class="mt-1 flex items-center gap-2">
                                         <p class="flex-1 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
-                                            <span x-text="operatorName(selectedOperator) || '—'"></span>
+                                            <span x-text="selectedOperators.map(id => operatorName(id)).join(', ') || '—'"></span>
                                         </p>
                                         <button type="button"
                                                 class="inline-flex items-center rounded-md border border-transparent bg-gray-200 p-2 text-gray-600 transition hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                                                 @click="editingOperator = true">
-                                            <span class="sr-only">{{ __('Edit operator') }}</span>
+                                            <span class="sr-only">{{ __('Edit operators') }}</span>
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                  stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -623,10 +655,9 @@
                                 </template>
                                 <template x-if="editingOperator">
                                     <div class="mt-1 flex items-center gap-2">
-                                        <select x-model="selectedOperator"
-                                                @change="updateAvailableDisciplines(); editingOperator = false"
+                                        <select x-model="selectedOperators" multiple size="5"
+                                                @change="updateAvailableDisciplines()"
                                                 class="flex-1 rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700">
-                                            <option value="-">Scegli un nuovo operatore</option>
                                             <template x-for="op in operators" :key="op.id">
                                                 <option :value="op.id" x-text="op.name"></option>
                                             </template>
@@ -643,12 +674,12 @@
                                         </button>
                                     </div>
                                 </template>
-                                <template x-if="errors.operator_id">
-                                    <p class="mt-1 text-xs text-red-500" x-text="errors.operator_id[0]"></p>
+                                <template x-if="errors.operator_ids">
+                                    <p class="mt-1 text-xs text-red-500" x-text="errors.operator_ids[0]"></p>
                                 </template>
                             </div>
                         </div>
-                        <div x-show="selectedOperator" class="space-y-2">
+                        <div x-show="selectedOperators.length > 0" class="space-y-2">
                             <span
                                 class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ __('Discipline') }}</span>
                             <div class="flex flex-wrap gap-4">
@@ -744,12 +775,13 @@
                 allEvents: [],
                 filteredEvents: [],
                 currentWeekStart: null,
-                selectedOperator: '',
-                selectedLearner: '',
+                selectedOperators: [],
+                selectedLearners: [],
                 selectedDiscipline: "",
                 availableDisciplines: [],
                 selectedEvent: {},
                 editingOperator: false,
+                editingLearner: false,
                 calendar: null,
                 calendarEventSourceId: 'appointments-calendar-source',
                 calendarViewType: 'timeGridWeek',
@@ -1438,7 +1470,7 @@
                 },
 
                 eventBackgroundStyle(event) {
-                    const color = event.extendedProps.operator.color || '#2563eb';
+                    const color = event.extendedProps.operators?.[0]?.color || event.extendedProps.operator?.color || '#2563eb';
                     const textColor = this.isLightColor(color) ? '#000' : 'inherit';
                     return `background: linear-gradient(90deg, ${color}1a, ${color}33); border-left: 4px solid ${color}; color: ${textColor};`;
                 },
@@ -1510,11 +1542,12 @@
                         endStr: this.toInputValue(end),
                         comments: '',
                     };
-                    this.selectedOperator = '';
-                    this.selectedLearner = '';
+                    this.selectedOperators = [];
+                    this.selectedLearners = [];
                     this.selectedDiscipline = "";
                     this.availableDisciplines = [];
                     this.editingOperator = false;
+                    this.editingLearner = false;
                     this.popup = 'add';
                 },
 
@@ -1526,20 +1559,23 @@
                         endStr: this.toInputValue(event.endDate),
                         comments: event.extendedProps.comments || '',
                     };
-                    this.selectedOperator = event.extendedProps.operator.id;
-                    this.selectedLearner = event.extendedProps.learner.id;
+                    this.selectedOperators = event.extendedProps.operators ? event.extendedProps.operators.map(o => o.id) : [event.extendedProps.operator.id];
+                    this.selectedLearners = event.extendedProps.learners ? event.extendedProps.learners.map(l => l.id) : [event.extendedProps.learner.id];
                     this.selectedDiscipline = event.extendedProps.discipline.id;
                     this.updateAvailableDisciplines();
                     this.editingOperator = false;
+                    this.editingLearner = false;
                     this.popup = 'modify';
                 },
 
                 updateAvailableDisciplines() {
-                    if (!this.selectedOperator) {
+                    if (this.selectedOperators.length === 0) {
                         this.availableDisciplines = [];
                         return;
                     }
-                    const operator = this.operators.find(op => String(op.id) === String(this.selectedOperator));
+                    // Use first operator's disciplines for now, or merge them
+                    const firstOpId = this.selectedOperators[0];
+                    const operator = this.operators.find(op => String(op.id) === String(firstOpId));
                     this.availableDisciplines = operator?.disciplines || [];
                     if (!this.availableDisciplines.find(disc => String(disc.id) === String(this.selectedDiscipline))) {
                         this.selectedDiscipline = "";
@@ -1665,8 +1701,8 @@
                         title: '',
                         starts_at: this.toIsoString(this.selectedEvent.startStr),
                         ends_at: this.toIsoString(this.selectedEvent.endStr),
-                        operator_id: this.selectedOperator,
-                        learner_id: this.selectedLearner,
+                        operator_ids: this.selectedOperators,
+                        learner_ids: this.selectedLearners,
                         discipline_id: this.selectedDiscipline,
                         comments: this.selectedEvent.comments,
                     };
@@ -1709,12 +1745,11 @@
                         title: '',
                         starts_at: this.toIsoString(eventData.startStr),
                         ends_at: this.toIsoString(eventData.endStr),
-                        operator_id: this.selectedOperator,
-                        learner_id: this.selectedLearner,
+                        operator_ids: this.selectedOperators,
+                        learner_ids: this.selectedLearners,
                         discipline_id: this.selectedDiscipline,
                         comments: this.selectedEvent.comments,
                     };
-
                     fetch(`/appointments/${eventData.id}`, {
                         method: 'PUT',
                         headers: {
@@ -1774,12 +1809,13 @@
                 closePopup() {
                     this.popup = false;
                     this.selectedEvent = {};
-                    this.selectedOperator = '';
-                    this.selectedLearner = '';
+                    this.selectedOperators = [];
+                    this.selectedLearners = [];
                     this.selectedDiscipline = "";
                     this.availableDisciplines = [];
                     this.errors = {};
                     this.editingOperator = false;
+                    this.editingLearner = false;
                 },
             }
         }

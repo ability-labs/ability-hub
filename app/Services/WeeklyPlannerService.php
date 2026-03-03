@@ -244,12 +244,18 @@ class WeeklyPlannerService
 
     private function hasConflictingAppointment(Learner $learner, Operator $op, Carbon $start, Carbon $end): bool
     {
-        $learnerBusy = Appointment::where('learner_id', $learner->id)
+        $learnerBusy = Appointment::where(function($q) use ($learner) {
+                $q->whereHas('learners', fn($sq) => $sq->where('learners.id', $learner->id))
+                  ->orWhere('learner_id', $learner->id);
+            })
             ->where('starts_at', '<', $end)
             ->where('ends_at', '>', $start)
             ->exists();
 
-        $opBusy = Appointment::where('operator_id', $op->id)
+        $opBusy = Appointment::where(function($q) use ($op) {
+                $q->whereHas('operators', fn($sq) => $sq->where('operators.id', $op->id))
+                  ->orWhere('operator_id', $op->id);
+            })
             ->where('starts_at', '<', $end)
             ->where('ends_at', '>', $start)
             ->exists();
