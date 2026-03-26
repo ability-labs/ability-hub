@@ -98,8 +98,8 @@
                                                             class="relative w-full text-center py-2.5 px-2 rounded-xl border transition-all duration-200 group flex items-center justify-center">
                                                         
                                                         <span class="text-[11px] font-bold tracking-tight slot-time-label"
-                                                              data-slot-start="{{ $slotStartUtc->toIso8601String() }}"
-                                                              data-slot-end="{{ $slotEndUtc->toIso8601String() }}">
+                                                              data-slot-start="{{ $slotStartUtc->toDateTimeLocalString() }}"
+                                                              data-slot-end="{{ $slotEndUtc->toDateTimeLocalString() }}">
                                                             {{ sprintf('%02d:%02d–%02d:%02d', $slot->start_time_hour, $slot->start_time_minute, $slot->end_time_hour, $slot->end_time_minute) }}
                                                         </span>
 
