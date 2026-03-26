@@ -79,7 +79,7 @@
 
     <!-- Calendar Container -->
     <div class="rounded-lg border border-gray-200 bg-white p-2 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-        <div x-ref="calendarEl" class="h-[700px]"></div>
+        <div x-ref="calendarEl" class="min-h-[500px]"></div>
     </div>
 </div>
 
@@ -109,6 +109,7 @@
                     firstDay: 1,
                     headerToolbar: false,
                     height: 'auto',
+                    dayMaxEvents: true,
                     allDaySlot: false,
                     slotMinTime: '08:30:00',
                     slotMaxTime: '20:30:00',

@@ -12,7 +12,7 @@
 @endphp
 
 <div x-data="{ activeTab: 'appointments', showDetails: true }" class="space-y-4">
-    <div class="flex flex-col space-y-8 lg:flex-row lg:space-y-0 h-min-screen">
+    <div class="flex flex-col space-y-8 lg:flex-row lg:space-y-0 min-h-screen">
         <div x-show="!showDetails" class="lg:w-1/4">
             <div class="{{ $backgroundClass }} flex items-start space-x-4 p-4 mr-8 rounded-lg">
                 <button x-on:click="showDetails = true" type="button">
