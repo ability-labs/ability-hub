@@ -86,8 +86,8 @@ class Appointment extends Model
         return [
             'id'      => $this->id,
             'title'   => $learnerNames . ' (' . $operatorNames . ')',
-            'start'   => $this->starts_at,
-            'end'     => $this->ends_at,
+            'start'   => $this->starts_at->toIso8601String(),
+            'end'     => $this->ends_at->toIso8601String(),
             'color'   => $bgColor,
             'borderColor' => $borderColor,
             'extendedProps' => [

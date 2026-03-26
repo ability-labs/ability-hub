@@ -1063,6 +1063,7 @@
                     const url = new URL(baseUrl, window.location.origin);
                     url.searchParams.set('starts_at', this.formatDateISO(monthStart));
                     url.searchParams.set('ends_at', this.formatDateISO(monthEnd));
+                    url.searchParams.set('_v', Date.now());
 
                     const response = await fetch(url.toString(), {
                         headers: {
@@ -1754,8 +1755,8 @@
                         id: this.calendarEventSourceId,
                         events: this.filteredEvents.map(event => ({
                             ...event,
-                            start: event.start,
-                            end: event.end,
+                            start: event.startDate,
+                            end: event.endDate,
                         })),
                     });
                 },

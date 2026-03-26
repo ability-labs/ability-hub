@@ -61,8 +61,8 @@ class AppointmentsApiTest extends TestCase
         $response->assertOk();
         $response->assertJsonCount(1, 'appointments');
         $response->assertJsonFragment(['id' => $appointmentInRange->id]);
-        $response->assertJsonPath('appointments.0.start', $inRangeStart->toJSON());
-        $response->assertJsonPath('appointments.0.end', $inRangeEnd->toJSON());
+        $response->assertJsonPath('appointments.0.start', $inRangeStart->toIso8601String());
+        $response->assertJsonPath('appointments.0.end', $inRangeEnd->toIso8601String());
         $response->assertJsonStructure([
             'appointments' => [['id', 'start', 'end', 'extendedProps']],
             'operators',

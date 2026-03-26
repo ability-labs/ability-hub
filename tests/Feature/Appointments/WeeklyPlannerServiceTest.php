@@ -80,9 +80,10 @@ class WeeklyPlannerServiceTest extends TestCase
 
         // Verify that the appointment times correctly correspond to the slot definitions
         $appointments = $learner->appointments()->orderBy('starts_at')->get();
-        $this->assertEquals('2025-06-23 09:00:00', $appointments[0]->starts_at->format('Y-m-d H:i:s'));
-        $this->assertEquals('2025-06-24 10:00:00', $appointments[1]->starts_at->format('Y-m-d H:i:s'));
-        $this->assertEquals('2025-06-25 11:00:00', $appointments[2]->starts_at->format('Y-m-d H:i:s'));
+        $timezone = config('app.display_timezone', 'Europe/Rome');
+        $this->assertEquals('2025-06-23 09:00:00', $appointments[0]->starts_at->copy()->setTimezone('Europe/Rome')->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-06-24 10:00:00', $appointments[1]->starts_at->setTimezone($timezone)->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-06-25 11:00:00', $appointments[2]->starts_at->setTimezone($timezone)->format('Y-m-d H:i:s'));
     }
 
     public function test_it_normalizes_slot_times_with_timezone_offset(): void
@@ -90,9 +91,6 @@ class WeeklyPlannerServiceTest extends TestCase
         $originalConfigTz = config('app.timezone');
         $originalPhpTz = date_default_timezone_get();
         $targetTimezone = 'Europe/Rome';
-
-        config(['app.timezone' => $targetTimezone]);
-        date_default_timezone_set($targetTimezone);
 
         try {
             $discipline = Discipline::factory()->create();
@@ -148,11 +146,12 @@ class WeeklyPlannerServiceTest extends TestCase
 
         $otherLearner = Learner::factory()->create();
 
+        $timezone = config('app.display_timezone', 'Europe/Rome');
         Appointment::factory()->for($primaryOperator, 'operator')
             ->for($otherLearner, 'learner')
             ->create([
-                'starts_at' => $weekStart->copy()->setTime(9, 0),
-                'ends_at' => $weekStart->copy()->setTime(10, 0),
+                'starts_at' => $weekStart->copy()->setTime(9, 0, 0)->setTimezone($timezone)->setTime(9, 0, 0)->setTimezone('UTC'),
+                'ends_at' => $weekStart->copy()->setTime(9, 0, 0)->setTimezone($timezone)->setTime(10, 0, 0)->setTimezone('UTC'),
                 'duration_minutes' => 60,
             ]);
 
@@ -162,7 +161,7 @@ class WeeklyPlannerServiceTest extends TestCase
 
         $this->assertCount(1, $appointments);
         $this->assertEquals($secondaryOperator->id, $appointments->first()->operator_id);
-        $this->assertEquals('2025-07-07 09:00:00', $appointments->first()->starts_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-07-07 09:00:00', $appointments->first()->starts_at->setTimezone(config('app.display_timezone', 'Europe/Rome'))->format('Y-m-d H:i:s'));
     }
 
     public function test_it_uses_same_time_slot_from_next_operator_even_with_different_slot_records(): void
@@ -195,11 +194,12 @@ class WeeklyPlannerServiceTest extends TestCase
 
         $otherLearner = Learner::factory()->create();
 
+        $timezone = config('app.display_timezone', 'Europe/Rome');
         Appointment::factory()->for($primaryOperator, 'operator')
             ->for($otherLearner, 'learner')
             ->create([
-                'starts_at' => $weekStart->copy()->addDays($learnerSlot->week_day - 1)->setTime(17, 0),
-                'ends_at' => $weekStart->copy()->addDays($learnerSlot->week_day - 1)->setTime(18, 0),
+                'starts_at' => $weekStart->copy()->addDays($learnerSlot->week_day - 1)->setTime(17, 0, 0)->setTimezone($timezone)->setTime(17, 0, 0)->setTimezone('UTC'),
+                'ends_at' => $weekStart->copy()->addDays($learnerSlot->week_day - 1)->setTime(17, 0, 0)->setTimezone($timezone)->setTime(18, 0, 0)->setTimezone('UTC'),
                 'duration_minutes' => 60,
             ]);
 
@@ -209,7 +209,7 @@ class WeeklyPlannerServiceTest extends TestCase
 
         $this->assertCount(1, $appointments);
         $this->assertEquals($secondaryOperator->id, $appointments->first()->operator_id);
-        $this->assertEquals('2025-07-09 17:00:00', $appointments->first()->starts_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-07-09 17:00:00', $appointments->first()->starts_at->setTimezone(config('app.display_timezone', 'Europe/Rome'))->format('Y-m-d H:i:s'));
     }
 
     public function test_it_falls_back_to_alternative_slot_when_all_operators_conflict_on_preferred_one(): void
@@ -244,19 +244,20 @@ class WeeklyPlannerServiceTest extends TestCase
 
         $otherLearner = Learner::factory()->create();
 
+        $timezone = config('app.display_timezone', 'Europe/Rome');
         Appointment::factory()->for($primaryOperator, 'operator')
             ->for($otherLearner, 'learner')
             ->create([
-                'starts_at' => $weekStart->copy()->setTime(9, 0),
-                'ends_at' => $weekStart->copy()->setTime(10, 0),
+                'starts_at' => $weekStart->copy()->setTime(9, 0, 0)->setTimezone($timezone)->setTime(9, 0, 0)->setTimezone('UTC'),
+                'ends_at' => $weekStart->copy()->setTime(9, 0, 0)->setTimezone($timezone)->setTime(10, 0, 0)->setTimezone('UTC'),
                 'duration_minutes' => 60,
             ]);
 
         Appointment::factory()->for($secondaryOperator, 'operator')
             ->for($otherLearner, 'learner')
             ->create([
-                'starts_at' => $weekStart->copy()->setTime(9, 0),
-                'ends_at' => $weekStart->copy()->setTime(10, 0),
+                'starts_at' => $weekStart->copy()->setTime(9, 0, 0)->setTimezone($timezone)->setTime(9, 0, 0)->setTimezone('UTC'),
+                'ends_at' => $weekStart->copy()->setTime(9, 0, 0)->setTimezone($timezone)->setTime(10, 0, 0)->setTimezone('UTC'),
                 'duration_minutes' => 60,
             ]);
 
@@ -266,7 +267,7 @@ class WeeklyPlannerServiceTest extends TestCase
 
         $this->assertCount(1, $appointments);
         $this->assertEquals($secondaryOperator->id, $appointments->first()->operator_id);
-        $this->assertEquals('2026-01-05 10:00:00', $appointments->first()->starts_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('2026-01-05 10:00:00', $appointments->first()->starts_at->setTimezone(config('app.display_timezone', 'Europe/Rome'))->format('Y-m-d H:i:s'));
     }
 
     public function test_it_prefers_fallback_slot_on_same_day_and_span_before_expanding_search(): void
@@ -326,20 +327,21 @@ class WeeklyPlannerServiceTest extends TestCase
 
         $otherLearner = Learner::factory()->create();
 
+        $timezone = config('app.display_timezone', 'Europe/Rome');
         // Both operators are busy on the preferred slot, forcing fallback evaluation.
         Appointment::factory()->for($primaryOperator, 'operator')
             ->for($otherLearner, 'learner')
             ->create([
-                'starts_at' => $weekStart->copy()->setTime(9, 0),
-                'ends_at' => $weekStart->copy()->setTime(10, 0),
+                'starts_at' => $weekStart->copy()->setTime(9, 0, 0)->setTimezone($timezone)->setTime(9, 0, 0)->setTimezone('UTC'),
+                'ends_at' => $weekStart->copy()->setTime(9, 0, 0)->setTimezone($timezone)->setTime(10, 0, 0)->setTimezone('UTC'),
                 'duration_minutes' => 60,
             ]);
 
         Appointment::factory()->for($secondaryOperator, 'operator')
             ->for($otherLearner, 'learner')
             ->create([
-                'starts_at' => $weekStart->copy()->setTime(9, 0),
-                'ends_at' => $weekStart->copy()->setTime(10, 0),
+                'starts_at' => $weekStart->copy()->setTime(9, 0, 0)->setTimezone($timezone)->setTime(9, 0, 0)->setTimezone('UTC'),
+                'ends_at' => $weekStart->copy()->setTime(9, 0, 0)->setTimezone($timezone)->setTime(10, 0, 0)->setTimezone('UTC'),
                 'duration_minutes' => 60,
             ]);
 
@@ -349,7 +351,7 @@ class WeeklyPlannerServiceTest extends TestCase
 
         $this->assertCount(1, $appointments);
         $this->assertEquals($primaryOperator->id, $appointments->first()->operator_id);
-        $this->assertEquals('2026-02-02 11:00:00', $appointments->first()->starts_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('2026-02-02 11:00:00', $appointments->first()->starts_at->setTimezone(config('app.display_timezone', 'Europe/Rome'))->format('Y-m-d H:i:s'));
     }
 
     public function test_it_honours_learner_slots_even_if_operator_has_earlier_availability(): void
@@ -464,9 +466,10 @@ class WeeklyPlannerServiceTest extends TestCase
         $this->assertEquals(270, $appointments->sum('duration_minutes'));
 
         // Ensure appointments align with the learner-declared slots (not the earlier operator slots)
-        $this->assertEquals('2025-10-06 12:00:00', $appointments[0]->starts_at->format('Y-m-d H:i:s'));
-        $this->assertEquals('2025-10-08 12:00:00', $appointments[1]->starts_at->format('Y-m-d H:i:s'));
-        $this->assertEquals('2025-10-10 17:00:00', $appointments[2]->starts_at->format('Y-m-d H:i:s'));
+        $timezone = config('app.display_timezone', 'Europe/Rome');
+        $this->assertEquals('2025-10-06 12:00:00', $appointments[0]->starts_at->setTimezone($timezone)->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-10-08 12:00:00', $appointments[1]->starts_at->setTimezone($timezone)->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-10-10 17:00:00', $appointments[2]->starts_at->setTimezone($timezone)->format('Y-m-d H:i:s'));
     }
 
     public function test_it_prioritizes_learner_slots_even_without_operator_overlap(): void
@@ -505,9 +508,10 @@ class WeeklyPlannerServiceTest extends TestCase
         $this->assertCount(3, $appointments);
         $this->assertEquals(180, $appointments->sum('duration_minutes'));
 
-        $this->assertEquals('2025-06-26 09:00:00', $appointments[0]->starts_at->format('Y-m-d H:i:s'));
-        $this->assertEquals('2025-06-27 09:00:00', $appointments[1]->starts_at->format('Y-m-d H:i:s'));
-        $this->assertEquals('2025-06-28 09:00:00', $appointments[2]->starts_at->format('Y-m-d H:i:s'));
+        $timezone = config('app.display_timezone', 'Europe/Rome');
+        $this->assertEquals('2025-06-26 09:00:00', $appointments[0]->starts_at->setTimezone($timezone)->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-06-27 09:00:00', $appointments[1]->starts_at->setTimezone($timezone)->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-06-28 09:00:00', $appointments[2]->starts_at->setTimezone($timezone)->format('Y-m-d H:i:s'));
     }
 
     public function test_it_falls_back_to_operator_slots_after_using_learner_preferences(): void
@@ -544,12 +548,13 @@ class WeeklyPlannerServiceTest extends TestCase
         $this->assertCount(3, $appointments);
         $this->assertEquals(180, $appointments->sum('duration_minutes'));
 
+        $timezone = config('app.display_timezone', 'Europe/Rome');
         // First two appointments must match learner preferred slots (Mon/Tue)
-        $this->assertEquals('2025-06-23 09:00:00', $appointments[0]->starts_at->format('Y-m-d H:i:s'));
-        $this->assertEquals('2025-06-24 09:00:00', $appointments[1]->starts_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-06-23 09:00:00', $appointments[0]->starts_at->setTimezone($timezone)->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-06-24 09:00:00', $appointments[1]->starts_at->setTimezone($timezone)->format('Y-m-d H:i:s'));
 
         // Remaining minutes should be fulfilled using operator fallback availability
-        $this->assertEquals('2025-06-25 09:00:00', $appointments[2]->starts_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-06-25 09:00:00', $appointments[2]->starts_at->setTimezone($timezone)->format('Y-m-d H:i:s'));
     }
 
     public function test_it_handles_learner_with_no_declared_availability(): void
@@ -614,7 +619,7 @@ class WeeklyPlannerServiceTest extends TestCase
 
         $this->assertNotNull($appointment);
         $this->assertEquals($operatorB->id, $appointment->operator_id);
-        $this->assertEquals('2025-07-07 10:00:00', $appointment->starts_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-07-07 10:00:00', $appointment->starts_at->setTimezone(config('app.display_timezone', 'Europe/Rome'))->format('Y-m-d H:i:s'));
     }
 
     public function test_it_uses_operator_priority_when_only_fallback_slots_are_available(): void
@@ -650,7 +655,7 @@ class WeeklyPlannerServiceTest extends TestCase
 
         $this->assertNotNull($appointment);
         $this->assertEquals($highPriorityOperator->id, $appointment->operator_id);
-        $this->assertEquals('2025-07-07 09:00:00', $appointment->starts_at->format('Y-m-d H:i:s'));
+        $this->assertEquals('2025-07-07 09:00:00', $appointment->starts_at->setTimezone(config('app.display_timezone', 'Europe/Rome'))->format('Y-m-d H:i:s'));
     }
 
     public function test_it_handles_partial_weekly_minutes_scheduling(): void
@@ -708,13 +713,14 @@ class WeeklyPlannerServiceTest extends TestCase
         // Set the start of the week for scheduling
         $weekStart = Carbon::parse('2025-06-23');
 
+        $timezone = config('app.display_timezone', 'Europe/Rome');
         // Create an existing appointment for 60 minutes that matches one of the slots
         Appointment::factory()->create([
             'user_id' => $this->testUser->id,
             'learner_id' => $learner->id,
             'operator_id' => $operator->id,
-            'starts_at' => $weekStart->copy()->setTime(9, 0), // Monday 9:00
-            'ends_at' => $weekStart->copy()->setTime(10, 0),
+            'starts_at' => $weekStart->copy()->setTime(9, 0, 0)->setTimezone($timezone)->setTime(9, 0, 0)->setTimezone('UTC'), // Monday 9:00
+            'ends_at' => $weekStart->copy()->setTime(9, 0, 0)->setTimezone($timezone)->setTime(10, 0, 0)->setTimezone('UTC'),
             'duration_minutes' => 60,
         ]);
 
@@ -751,11 +757,12 @@ class WeeklyPlannerServiceTest extends TestCase
         // Set the start of the week
         $weekStart = Carbon::parse('2025-06-23');
 
+        $timezone = config('app.display_timezone', 'Europe/Rome');
         // Create an existing conflicting appointment for the learner that overlaps the slot
         Appointment::factory()->create([
             'learner_id' => $learner->id,
-            'starts_at' => $weekStart->copy()->setTime(9, 30), // Starts within the 9:00-10:00 slot
-            'ends_at' => $weekStart->copy()->setTime(10, 30),
+            'starts_at' => $weekStart->copy()->setTime(9, 30, 0)->setTimezone($timezone)->setTime(9, 30, 0)->setTimezone('UTC'), // Starts within the 9:00-10:00 slot
+            'ends_at' => $weekStart->copy()->setTime(9, 30, 0)->setTimezone($timezone)->setTime(10, 30, 0)->setTimezone('UTC'),
             'duration_minutes' => 60,
         ]);
 

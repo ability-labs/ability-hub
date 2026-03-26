@@ -183,6 +183,7 @@ class WeeklyPlannerService
         if (isset($reserved[$key])) return true;
         if (in_array($slot->week_day, $daysTaken, true)) return true;
 
+        $timezone = config('app.display_timezone', 'Europe/Rome');
         $start = $this->calculateAppointmentStartTime($slot, $weekStart);
         $end   = $start->copy()->addMinutes($slot->duration_minutes);
         return $this->hasConflictingAppointment($learner, $op, $start, $end);
@@ -242,7 +243,25 @@ class WeeklyPlannerService
 
     private function calculateAppointmentStartTime(Slot $slot, Carbon $weekStart): Carbon
     {
-        return $weekStart->copy()->addDays($slot->week_day - 1)->setTime($slot->start_time_hour, $slot->start_time_minute);
+        $timezone = 'Europe/Rome';
+
+        // We create the date based on the week_day and slot time, interpreted in the local timezone
+        // Then we convert it to UTC for storage in the database.
+        $calculated = Carbon::create(
+            $weekStart->year,
+            $weekStart->month,
+            $weekStart->day,
+            $slot->start_time_hour,
+            $slot->start_time_minute,
+            0,
+            $timezone
+        )
+        ->startOfWeek()
+        ->addDays($slot->week_day - 1)
+        ->setTime($slot->start_time_hour, $slot->start_time_minute)
+        ->setTimezone('UTC');
+
+        return $calculated;
     }
 
     private function hasConflictingAppointment(Learner $learner, Operator $op, Carbon $start, Carbon $end): bool
@@ -273,12 +292,13 @@ class WeeklyPlannerService
 
     private function getLearnerScheduledDaysInWeek(Learner $learner, Carbon $start, Carbon $end): array
     {
+        $timezone = 'Europe/Rome';
         $therapyType = \App\Models\AppointmentType::where('name->it', 'Terapia')->first();
         return $learner->appointments()
             ->where('appointment_type_id', $therapyType?->id)
             ->whereBetween('starts_at', [$start, $end])
             ->get()
-            ->map(fn($a) => (int) $a->starts_at->dayOfWeekIso)
+            ->map(fn($a) => (int) $a->starts_at->setTimezone($timezone)->dayOfWeekIso)
             ->unique()
             ->values()
             ->toArray();
