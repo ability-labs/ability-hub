@@ -1,7 +1,5 @@
 
 <div x-data="{ activeTab: 'appointments' }" class="space-y-6">
-    <x-resource-header-card :resource="$learner" />
-
     <div class="w-full">
         <!-- Navigation Tabs -->
         <div class="mb-4 border-b">

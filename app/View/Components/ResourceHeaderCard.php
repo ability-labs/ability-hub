@@ -14,13 +14,14 @@ class ResourceHeaderCard extends Component
     public array $details = [];
     public array $badges = [];
     public string $badgeLabel;
-    public string $editRoute;
+    public string $primaryRoute;
+    public string $primaryLabel;
     public string $backRoute;
 
     /**
      * Create a new component instance.
      */
-    public function __construct(public $resource)
+    public function __construct(public $resource, public string $mode = 'show')
     {
         $this->isOperator = $resource instanceof Operator;
         $this->isLearner = $resource instanceof Learner;
@@ -59,7 +60,13 @@ class ResourceHeaderCard extends Component
 
     private function calculateRoutes(): void
     {
-        $this->editRoute = $this->isOperator ? route('operators.edit', $this->resource) : route('learners.edit', $this->resource);
+        if ($this->mode === 'edit') {
+            $this->primaryRoute = $this->isOperator ? route('operators.show', $this->resource) : route('learners.show', $this->resource);
+            $this->primaryLabel = __('Show Sheet');
+        } else {
+            $this->primaryRoute = $this->isOperator ? route('operators.edit', $this->resource) : route('learners.edit', $this->resource);
+            $this->primaryLabel = __('Edit');
+        }
         $this->backRoute = $this->isOperator ? route('operators.index') : route('learners.index');
     }
 
@@ -73,8 +80,10 @@ class ResourceHeaderCard extends Component
             'details' => $this->details,
             'badges' => $this->badges,
             'badgeLabel' => $this->badgeLabel,
-            'editRoute' => $this->editRoute,
+            'primaryRoute' => $this->primaryRoute,
+            'primaryLabel' => $this->primaryLabel,
             'backRoute' => $this->backRoute,
+            'mode' => $this->mode,
         ]);
     }
 }
