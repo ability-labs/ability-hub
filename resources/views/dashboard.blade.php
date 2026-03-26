@@ -30,9 +30,12 @@
                     $statsConfig = [
                         'learners' => ['icon' => 'academic-cap', 'color' => 'blue', 'label' => __('Learners')],
                         'operators' => ['icon' => 'user-group', 'color' => 'emerald', 'label' => __('Operators')],
-                        'appointments' => ['icon' => 'calendar', 'color' => 'purple', 'label' => __('Appointments')],
+                        'appointments' => ['icon' => 'calendar', 'color' => 'indigo', 'label' => __('Appointments')],
                     ];
                 @endphp
+                
+                {{-- Helper for Tailwind dynamic colors --}}
+                <div class="hidden bg-blue-500 bg-emerald-500 bg-indigo-500 text-blue-600 text-emerald-600 text-indigo-600 bg-blue-100 bg-emerald-100 bg-indigo-100 bg-blue-500/10 bg-emerald-500/10 bg-indigo-500/10"></div>
 
                 @foreach($dataService->getStats() as $key => $count)
                     @php $config = $statsConfig[$key] ?? ['icon' => 'circle', 'color' => 'gray', 'label' => ucfirst($key)]; @endphp

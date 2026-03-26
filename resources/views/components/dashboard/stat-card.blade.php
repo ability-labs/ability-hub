@@ -27,7 +27,7 @@
     </div>
     <div class="mt-4">
          <div class="w-full bg-{{ $color }}-500/10 h-1 rounded-full overflow-hidden">
-            <div class="bg-{{ $color }}-500 h-full transition-all duration-1000 shadow-[0_0_8px_rgba(var(--tw-color-{{ $color }}-500-rgb),0.5)]" style="width: {{ min(100, $count > 0 ? 100 : 5) }}%"></div>
+            <div class="bg-{{ $color }}-500 h-full transition-all duration-1000" style="width: {{ min(100, $count > 0 ? 100 : 5) }}%"></div>
          </div>
     </div>
 </div>
