@@ -36,8 +36,16 @@ class LearnerController extends Controller
             'sort_order' => ['string', 'in:DESC,ASC'],
         ]);
 
-        $sort = array_key_exists('sort', $params) ? $params['sort'] : 'created_at';
-        $sort_order = array_key_exists('sort', $params) ? $params['sort_order'] : 'DESC';
+        $sort = $request->input('sort', 'created_at');
+        $sort_order = $request->input('sort_order', 'DESC');
+
+        if (!in_array($sort, self::SORTABLE_FIELDS)) {
+            $sort = 'created_at';
+        }
+
+        if (!in_array($sort_order, ['ASC', 'DESC'])) {
+            $sort_order = 'DESC';
+        }
 
         $sortMapping = [
             'firstname' => 'first_name',
@@ -61,7 +69,6 @@ class LearnerController extends Controller
 
         return view('learners.index', [
             'learners' => $learners,
-            'sortable_fields' => self::SORTABLE_FIELDS,
             'sort' => $sort,
             'sort_order' => $sort_order,
         ]);

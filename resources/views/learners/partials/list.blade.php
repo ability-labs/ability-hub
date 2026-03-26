@@ -20,31 +20,41 @@
                 </div>
             </form>
 
-            <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+            <div class="flex items-center gap-2 w-full sm:w-auto">
                 <div class="relative group" x-data="{ open: false }" @click.away="open = false">
+                    @php
+                        $sortFields = [
+                            'firstname' => __('Firstname'),
+                            'lastname' => __('Lastname'),
+                            'weekly_hours' => __('Weekly Hours'),
+                            'created_at' => __('Registration')
+                        ];
+                        $currentLabel = $sortFields[$sort] ?? __('Sort by');
+                    @endphp
                     <button @click="open = !open" 
                             class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21l3.75-3.75" />
                         </svg>
-                        <span>{{ __('Sort by') }}</span>
+                        <span>{{ $currentLabel }}</span>
+                        @if(isset($sort))
+                            <span class="text-xs text-blue-600 dark:text-blue-400 font-bold ml-1">
+                                {{ $sort_order === 'ASC' ? '↑' : '↓' }}
+                            </span>
+                        @endif
                     </button>
                     <div x-show="open" 
+                         x-cloak
                          x-transition:enter="transition ease-out duration-100" 
                          x-transition:enter-start="transform opacity-0 scale-95" 
                          x-transition:enter-end="transform opacity-100 scale-100"
-                         class="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-10 overflow-hidden">
-                        @foreach([
-                            'firstname' => __('Firstname'),
-                            'lastname' => __('Lastname'),
-                            'weekly_hours' => __('Weekly Hours'),
-                            'created_at' => __('Registration')
-                        ] as $field => $label)
+                         class="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
+                        @foreach($sortFields as $field => $label)
                             <a href="{{ route('learners.index', array_merge(request()->all(), [
                                 'sort' => $field,
                                 'sort_order' => ($sort === $field && $sort_order === 'ASC') ? 'DESC' : 'ASC'
                             ])) }}" 
-                               class="flex items-center justify-between px-4 py-2.5 text-sm {{ $sort === $field ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300' }} hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                               class="flex items-center justify-between px-4 py-2.5 text-sm {{ $sort === $field ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 font-bold' : 'text-gray-700 dark:text-gray-300' }} hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                 {{ $label }}
                                 @if($sort === $field)
                                     <span>{{ $sort_order === 'ASC' ? '↑' : '↓' }}</span>
