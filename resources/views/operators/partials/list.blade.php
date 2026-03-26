@@ -1,174 +1,80 @@
 <div x-data="{ isOpen: false, operatorId: null, operatorName: '' }" class="space-y-4">
 
-    {{-- Top bar: search + create --}}
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <form action="{{ route('operators.index') }}" method="GET" class="w-full sm:w-auto">
-            <label for="search" class="sr-only">{{ __('Search by name') }}</label>
-            <div class="flex w-full max-w-xl">
-                <input
-                    id="search"
-                    type="text"
-                    name="search"
-                    value="{{ request('search') }}"
-                    placeholder="{{ __('Search by name') }}"
-                    class="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700">
-                    {{ __('Search') }}
-                </button>
+    {{-- Top bar: search + create + sorting --}}
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col sm:flex-row gap-3 items-center w-full sm:w-auto">
+            <form action="{{ route('operators.index') }}" method="GET" class="w-full sm:w-auto">
+                <label for="search" class="sr-only">{{ __('Search by name') }}</label>
+                <div class="flex w-full max-w-xl">
+                    <input
+                        id="search"
+                        type="text"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="{{ __('Search by name') }}"
+                        class="flex-1 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    >
+                    <button type="submit" class="px-5 py-2 bg-blue-600 text-white rounded-r-xl hover:bg-blue-700 transition-colors shadow-sm text-sm font-medium">
+                        {{ __('Search') }}
+                    </button>
+                </div>
+            </form>
+
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <div class="relative group" x-data="{ open: false }" @click.away="open = false">
+                    <button @click="open = !open" 
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21l3.75-3.75" />
+                        </svg>
+                        <span>{{ __('Sort by') }}</span>
+                    </button>
+                    <div x-show="open" 
+                         x-transition:enter="transition ease-out duration-100" 
+                         x-transition:enter-start="transform opacity-0 scale-95" 
+                         x-transition:enter-end="transform opacity-100 scale-100"
+                         class="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-10 overflow-hidden">
+                        @foreach([
+                            'name' => __('Name'),
+                            'created_at' => __('Registration')
+                        ] as $field => $label)
+                            <a href="{{ route('operators.index', array_merge(request()->all(), [
+                                'sort' => $field,
+                                'sort_order' => (request('sort') === $field && request('sort_order') === 'ASC') ? 'DESC' : 'ASC'
+                            ])) }}" 
+                               class="flex items-center justify-between px-4 py-2.5 text-sm {{ request('sort') === $field ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300' }} hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                {{ $label }}
+                                @if(request('sort') === $field)
+                                    <span>{{ request('sort_order') === 'ASC' ? '↑' : '↓' }}</span>
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>
 
         <a href="{{ route('operators.create') }}"
-           class="inline-flex justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+           class="inline-flex items-center justify-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all shadow-md hover:shadow-lg text-sm font-bold tracking-tight">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="size-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
             {{ __('New') . ' ' . __('Operator') }}
         </a>
     </div>
 
-    {{-- MOBILE: card list (<= md) --}}
-    <ul class="divide-y divide-gray-200 md:hidden rounded-lg overflow-hidden bg-white dark:bg-gray-800">
-        @forelse($operators as $operator)
-            <li class="p-4">
-                <div class="flex items-start gap-3">
-                    <span class="mt-1 inline-block size-8 rounded-full ring-1 ring-black/10"
-                          style="background-color: {{ $operator->color ?? '#ccc' }}"></span>
-                    <div class="min-w-0 flex-1">
-                        <h3 class="font-semibold text-gray-900 dark:text-gray-100 truncate">
-                            {{ $operator->name }}
-                        </h3>
-
-                        <div class="mt-1 text-sm text-gray-600 dark:text-gray-300 flex flex-wrap gap-x-3 gap-y-1">
-                            <span class="whitespace-nowrap">{{ __('Slots') }}: {{ $operator->slots->count() }}</span>
-                            <span class="whitespace-nowrap">
-                                {{ __('Registration') }}:
-                                {{ \Carbon\Carbon::parse($operator->created_at)->format('d/m/Y') }}
-                            </span>
-                        </div>
-
-                        <div class="mt-2 flex flex-wrap gap-1">
-                            @if($operator->disciplines->isNotEmpty())
-                                @foreach($operator->disciplines as $discipline)
-                                    <span class="inline-block bg-gray-200 dark:bg-gray-600 rounded-full px-2 py-1 text-xs font-semibold text-gray-700 dark:text-gray-300">
-                                        {{ __($discipline->getTranslation('name', app()->getLocale())) }}
-                                    </span>
-                                @endforeach
-                            @else
-                                <span class="text-gray-500 text-sm">{{ __('None') }}</span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Actions: top row Edit/Delete (outlined), bottom row View (primary, full width) --}}
-                <div class="mt-3 grid grid-cols-2 gap-2">
-                    <a href="{{ route('operators.edit', $operator) }}"
-                       class="inline-flex items-center justify-center px-2 py-1 border border-green-600 text-green-600 rounded-md hover:bg-green-50">
-                        {{ __('Edit') }}
-                    </a>
-                    <button
-                        @click="isOpen = true; operatorId = '{{ $operator->id }}'; operatorName = '{{ addslashes($operator->name) }}'"
-                        class="inline-flex items-center justify-center px-2 py-1 border border-red-600 text-red-600 rounded-md hover:bg-red-50">
-                        {{ __('Delete') }}
-                    </button>
-
-                    <a href="{{ route('operators.show', $operator) }}"
-                       class="col-span-2 inline-flex items-center justify-center px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium">
-                        {{ __('View') }}
-                    </a>
-                </div>
-            </li>
-        @empty
-            <li class="p-6">
-                <x-empty-state />
-            </li>
-        @endforelse
-    </ul>
-
-    {{-- DESKTOP: table (>= md) --}}
-    <div class="hidden md:block overflow-x-auto">
-        <table class="min-w-full bg-white dark:bg-gray-700 text-center">
-            <thead>
-            <tr class="text-sm">
-                <th class="px-6 py-3 border-b border-gray-200 whitespace-nowrap">{{ __('Name') }}</th>
-                <th class="px-6 py-3 border-b border-gray-200 whitespace-nowrap">{{ __('Slots') }}</th>
-                <th class="px-6 py-3 border-b border-gray-200 whitespace-nowrap">{{ __('Disciplines') }}</th>
-                <th class="px-6 py-3 border-b border-gray-200 whitespace-nowrap">
-                    @if(in_array('created_at', $sortable_fields))
-                        <a href="{{ route('operators.index', array_merge(request()->all(), [
-                                'sort' => 'created_at',
-                                'sort_order' => (request('sort') === 'created_at' && request('sort_order') === 'ASC') ? 'DESC' : 'ASC'
-                            ])) }}" class="hover:underline inline-flex items-center gap-1">
-                            {{ __('Registration') }}
-                            @if(request('sort') === 'created_at')
-                                <span>{{ request('sort_order') === 'ASC' ? '↑' : '↓' }}</span>
-                            @endif
-                        </a>
-                    @else
-                        {{ __('Registration') }}
-                    @endif
-                </th>
-                <th class="px-6 py-3 border-b border-gray-200 whitespace-nowrap">{{ __('Actions') }}</th>
-            </tr>
-            </thead>
-
-            <tbody class="text-sm">
-            @forelse($operators as $operator)
-                <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <td class="px-6 py-4 border-b border-gray-200 text-left">
-                        <div class="flex items-center gap-2">
-                            <span class="inline-block size-8 rounded-full ring-1 ring-black/10"
-                                  style="background-color: {{ $operator->color ?? '#ccc' }}"></span>
-                            <span class="whitespace-nowrap text-ellipsis">{{ $operator->name }}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">
-                        {{ $operator->slots->count() }}
-                    </td>
-                    <td class="px-6 py-4 border-b border-gray-200">
-                        <div class="flex flex-wrap gap-1 justify-center">
-                            @if($operator->disciplines->isNotEmpty())
-                                @foreach($operator->disciplines as $discipline)
-                                    <span class="inline-block bg-gray-200 dark:bg-gray-600 rounded-full px-2 py-1 text-xs font-semibold text-gray-700 dark:text-gray-300">
-                                        {{ __($discipline->getTranslation('name', app()->getLocale())) }}
-                                    </span>
-                                @endforeach
-                            @else
-                                <span class="text-gray-500">{{ __('None') }}</span>
-                            @endif
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">
-                        {{ \Carbon\Carbon::parse($operator->created_at)->format('d/m/Y') }}
-                    </td>
-
-                    <td class="px-6 py-4 border-b border-gray-200">
-                        <div class="flex items-center justify-center gap-2">
-                            <a href="{{ route('operators.show', $operator) }}"
-                               class="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                                {{ __('View') }}
-                            </a>
-                            <a href="{{ route('operators.edit', $operator) }}"
-                               class="px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700">
-                                {{ __('Edit') }}
-                            </a>
-                            <button
-                                @click="isOpen = true; operatorId = '{{ $operator->id }}'; operatorName = '{{ addslashes($operator->name) }}'"
-                                class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700">
-                                {{ __('Delete') }}
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="5" class="px-6 py-6 text-center">
-                        <x-empty-state />
-                    </td>
-                </tr>
-            @endforelse
-            </tbody>
-        </table>
-    </div>
+    {{-- Cards Grid - Always 1 column --}}
+    @if($operators->isNotEmpty())
+        <div class="grid grid-cols-1 gap-4">
+            @foreach($operators as $operator)
+                <x-resource-list-card :resource="$operator" />
+            @endforeach
+        </div>
+    @else
+        <div class="bg-white dark:bg-gray-800 rounded-3xl p-12 border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center shadow-sm">
+            <x-empty-state />
+        </div>
+    @endif
 
     {{-- Pagination --}}
     <div class="mt-2">

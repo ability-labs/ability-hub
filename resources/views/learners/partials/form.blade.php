@@ -83,8 +83,8 @@
             <select name="gender" id="gender"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                 @foreach(\App\Enums\PersonGender::cases() as $case)
-                    <option {{ old('gender', $isEdit ? $attributes->gender : '') === $case->value ? 'selected' : '' }} value="{{ $case }}">
-                        {{ $case }}
+                    <option {{ (string) old('gender', $isEdit ? ($attributes->gender->value ?? $attributes->gender) : '') === $case->value ? 'selected' : '' }} value="{{ $case->value }}">
+                        {{ __($case->value) }}
                     </option>
                 @endforeach
             </select>
