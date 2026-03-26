@@ -11,7 +11,6 @@ class Avatar extends Component
 {
     public string $initials;
     public string $gradient;
-    public string $sizeClasses;
 
     /**
      * Create a new component instance.
@@ -22,7 +21,6 @@ class Avatar extends Component
     ) {
         $this->initials = $this->calculateInitials();
         $this->gradient = $this->calculateGradient();
-        $this->sizeClasses = $this->getSizeClasses();
     }
 
     private function calculateInitials(): string
@@ -54,22 +52,6 @@ class Avatar extends Component
         };
 
         return "linear-gradient(135deg, $bgColor 0%, " . ($bgColor . 'cc') . " 100%)";
-    }
-
-    public function getSizeClasses(): string
-    {
-        $base = 'flex-shrink-0 aspect-square';
-        
-        $dims = match ($this->size) {
-            'xs' => 'w-8 h-8 text-[10px]',
-            'sm' => 'w-10 h-10 text-xs',
-            'md' => 'w-12 h-12 text-sm',
-            'lg' => 'w-16 h-16 text-xl',
-            'xl' => 'w-24 h-24 text-3xl',
-            default => 'w-12 h-12 text-sm'
-        };
-
-        return "$base $dims";
     }
 
     /**
