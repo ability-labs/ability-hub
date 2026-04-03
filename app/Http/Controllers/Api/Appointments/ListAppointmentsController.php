@@ -18,7 +18,7 @@ class ListAppointmentsController extends Controller
 
         $appointments = $user
             ->appointments()
-            ->with(['learner', 'operator', 'discipline'])
+            ->with(['learner', 'operator', 'discipline', 'learners', 'operators', 'appointmentType'])
             ->whereBetween('starts_at', [$start, $end])
             ->when($request->validated('operator_id'), function ($query, $operatorId) {
                 return $query->where('operator_id', $operatorId);
@@ -31,21 +31,23 @@ class ListAppointmentsController extends Controller
             ->map(fn ($appointment) => $appointment->toFullCalendar())
             ->values();
 
-        $operators = $user->operators()->with('disciplines')->get();
-        $learners = $user->learners()->get();
-        $disciplines = Discipline::all();
-        $appointmentTypes = \App\Models\AppointmentType::all();
+        $includeMeta = $request->boolean('include_meta', true);
+        $metaData = [];
+        if ($includeMeta) {
+            $metaData = [
+                'operators' => $user->operators()->with('disciplines')->get(),
+                'learners' => $user->learners()->get(),
+                'disciplines' => Discipline::all(),
+                'appointment_types' => \App\Models\AppointmentType::all(),
+            ];
+        }
 
-        return response()->json([
+        return response()->json(array_merge([
             'appointments' => $appointments,
-            'operators' => $operators,
-            'learners' => $learners,
-            'disciplines' => $disciplines,
-            'appointment_types' => $appointmentTypes,
             'range' => [
                 'starts_at' => $start->toDateString(),
                 'ends_at' => $end->toDateString(),
             ],
-        ]);
+        ], $metaData));
     }
 }

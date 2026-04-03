@@ -32,7 +32,7 @@ $showFilters = $showFilters ?? true;
 @endphp
 
 <!-- Appointment schedule component -->
-<div x-data="calendarComponent({ showFilters: @json($showFilters) })" x-init="init()" class="space-y-6">
+<div x-data="calendarComponent({ showFilters: @json($showFilters) })" class="space-y-6">
     <div class="space-y-6 screen-only">
         @if($showFilters)
         <div class="border rounded-lg overflow-hidden bg-white dark:bg-gray-900 shadow-sm">
@@ -883,13 +883,13 @@ $showFilters = $showFilters ?? true;
             isClearingWeek: false,
             clearWeekAlert: null,
             duplicateWeekAlert: null,
+            activeRequests: {},
             isInitialLoading: true,
             isLoadingData: false,
             loadingError: null,
             showSaturday: false,
 
             init() {
-                this.currentWeekStart = this.startOfWeek(new Date());
                 this.slots = this.slots.map(slot => ({
                     ...slot,
                     label: `${slot.start} – ${slot.end}`,
@@ -912,11 +912,12 @@ $showFilters = $showFilters ?? true;
                     this.handleWeekChange(value);
                 });
 
+                // Set initial value. This triggers the watcher above once we are initialized.
+                this.currentWeekStart = this.startOfWeek(new Date());
+
                 if (this.viewMode === 'calendar') {
                     this.$nextTick(() => this.ensureCalendar());
                 }
-
-                this.initData();
             },
 
             async initData() {
@@ -935,14 +936,15 @@ $showFilters = $showFilters ?? true;
             },
 
             handleWeekChange(weekStart) {
+                this.isInitialLoading = false; // Ensures overlay shows correctly from init
                 this.setClearWeekAlert(null);
                 this.syncCalendarDate();
 
                 this.ensureMonthDataForRange(weekStart, this.weekEnd(weekStart)).catch(error => {
                     console.error(error);
                     this.setLoadingError('{{ __('Unable to load appointments.Please try again later.') }}');
-            });
-        },
+                });
+            },
 
             enrichEvent(event) {
             const startDate = new Date(event.start);
@@ -1051,7 +1053,7 @@ $showFilters = $showFilters ?? true;
             return `${year}-${month}-${day}`;
         },
 
-                async ensureMonthDataForRange(start, end, force = false) {
+        async ensureMonthDataForRange(start, end, force = false) {
             if (!start) {
                 return;
             }
@@ -1064,51 +1066,73 @@ $showFilters = $showFilters ?? true;
 
             this.isLoadingData = true;
             try {
-                for (const { date } of months) {
-                    await this.fetchMonthData(date, force);
-                }
+                // Fetch months in parallel, deduplication handled in fetchMonthData
+                await Promise.all(months.map(({ date }) => this.fetchMonthData(date, force)));
             } finally {
                 this.isLoadingData = false;
             }
         },
 
-                async fetchMonthData(date, force = false) {
+        async fetchMonthData(date, force = false) {
             const key = this.monthKey(date);
-            if (!force && this.loadedMonths[key]) {
+            const isLoaded = this.loadedMonths[key];
+
+            // If it's already being fetched, wait for that promise
+            if (this.activeRequests[key]) {
+                return this.activeRequests[key];
+            }
+
+            if (!force && isLoaded) {
                 return;
             }
 
-            const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
-            const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            // Create a tracking promise for this month's fetch
+            this.activeRequests[key] = (async () => {
+                try {
+                    const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+                    const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
-            const baseUrl = '{{ route('api.appointments.index') }}';
-            const url = new URL(baseUrl, window.location.origin);
-            url.searchParams.set('starts_at', this.formatDateISO(monthStart));
-            url.searchParams.set('ends_at', this.formatDateISO(monthEnd));
-            url.searchParams.set('_v', Date.now());
+                    const baseUrl = '{{ route('api.appointments.index') }}';
+                    const url = new URL(baseUrl, window.location.origin);
+                    url.searchParams.set('starts_at', this.formatDateISO(monthStart));
+                    url.searchParams.set('ends_at', this.formatDateISO(monthEnd));
+                    url.searchParams.set('_v', Date.now());
 
-            const response = await fetch(url.toString(), {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                credentials: 'same-origin',
-            });
+                    // Only fetch meta information if we don't have it yet
+                    const needsMeta = force || this.operators.length === 0;
+                    if (!needsMeta) {
+                        url.searchParams.set('include_meta', '0');
+                    }
 
-            if (!response.ok) {
-                throw new Error('Failed to load appointments');
-            }
+                    const response = await fetch(url.toString(), {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        credentials: 'same-origin',
+                    });
 
-            const data = await response.json();
-            const events = Array.isArray(data.appointments)
-                ? data.appointments.map(event => this.enrichEvent(event))
-                : [];
+                    if (!response.ok) {
+                        throw new Error('Failed to load appointments');
+                    }
 
-            this.monthEvents[key] = events;
-            this.loadedMonths[key] = true;
-            this.updateOptionsFromApi(data);
-            this.rebuildAllEvents();
-            this.setLoadingError(null);
+                    const data = await response.json();
+                    const events = Array.isArray(data.appointments)
+                        ? data.appointments.map(event => this.enrichEvent(event))
+                        : [];
+
+                    this.monthEvents[key] = events;
+                    this.loadedMonths[key] = true;
+                    this.updateOptionsFromApi(data);
+                    this.rebuildAllEvents();
+                    this.setLoadingError(null);
+                } finally {
+                    // Clean up tracking promise
+                    delete this.activeRequests[key];
+                }
+            })();
+
+            return this.activeRequests[key];
         },
 
         rebuildAllEvents() {
