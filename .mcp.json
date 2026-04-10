@@ -1,0 +1,12 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "wsl.exe",
+            "args": [
+                "/home/salvobee/.config/herd-lite/bin/php",
+                "/home/salvobee/apps/pro-bono/ability-hub/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}

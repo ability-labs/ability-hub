@@ -8,6 +8,7 @@ use App\Http\Controllers\LearnerController;
 use App\Http\Controllers\OperatorAvailabilityController;
 use App\Http\Controllers\OperatorController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\WeeklyPlanController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,7 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Appointments Section Routes
     Route::resource('learners.datasheets', DatasheetController::class)
-        ->except(['index','create','edit'])
+        ->except(['index', 'create', 'edit'])
         ->shallow();
 
     Route::post('/appointments/plan', [WeeklyPlanController::class, 'store'])
@@ -43,6 +44,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/learners/{learner}/availability/toggle', [LearnerAvailabilityController::class, 'toggle'])
         ->name('learners.availability.toggle');
+
+    // Reports Section Routes
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/print', [ReportController::class, 'print'])->name('reports.print');
+    Route::get('/reports/download', [ReportController::class, 'download'])->name('reports.download');
+    Route::get('/reports/share-link', [ReportController::class, 'shareLink'])->name('reports.share-link');
 });
 
 Route::middleware('auth')->group(function () {
@@ -54,5 +61,12 @@ Route::middleware('auth')->group(function () {
 Route::post('/locale', LanguageSelectorController::class)
     ->name('locale.update');
 
+Route::get('/reports/shared', [ReportController::class, 'shared'])
+    ->name('reports.shared')
+    ->middleware('signed');
+
+Route::get('/reports/shared/download', [ReportController::class, 'download'])
+    ->name('reports.shared.download')
+    ->middleware('signed');
 
 require __DIR__.'/auth.php';
